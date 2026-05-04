@@ -1,0 +1,3925 @@
+{
+  "mode": "gold",
+  "query_count": 8,
+  "reserve_output": 100,
+  "strategies": [
+    "document-prefix",
+    "full-document",
+    "top-k",
+    "budget-top-k",
+    "mmr",
+    "knapsack",
+    "knapsack-redundancy"
+  ],
+  "budgets": [
+    {
+      "budget": 350,
+      "reserve_output": 100,
+      "effective_budget": 250,
+      "query_count": 8,
+      "summary": {
+        "document-prefix": {
+          "evidence_recall_at_budget": 0.25,
+          "evidence_precision": 0.25,
+          "coverage_ratio": 0.25,
+          "avg_used_tokens": 180.0,
+          "budget_utilization": 0.7199999999999999,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 0.4168601086101073,
+          "value_density": 0.002315889492278374,
+          "redundancy_score": 0.0,
+          "latency_seconds": 9.38749872148037e-06
+        },
+        "full-document": {
+          "evidence_recall_at_budget": 1.0,
+          "evidence_precision": 0.11249999999999999,
+          "coverage_ratio": 1.0,
+          "avg_used_tokens": 1539.0,
+          "budget_utilization": 6.156,
+          "over_budget_rate": 1.0,
+          "avg_over_budget_tokens": 1289.0,
+          "avg_total_value": 3.9528090257715114,
+          "value_density": 0.002568426917330417,
+          "redundancy_score": 0.5158722342380941,
+          "latency_seconds": 6.7874989326810464e-06
+        },
+        "top-k": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.19999999999999998,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 808.75,
+          "budget_utilization": 3.2350000000000003,
+          "over_budget_rate": 1.0,
+          "avg_over_budget_tokens": 558.75,
+          "avg_total_value": 2.965571500654628,
+          "value_density": 0.003666858115183466,
+          "redundancy_score": 0.5464627474130487,
+          "latency_seconds": 8.312501449836418e-06
+        },
+        "budget-top-k": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.375,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 217.25,
+          "budget_utilization": 0.8690000000000002,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.362726294333676,
+          "value_density": 0.006272618155736138,
+          "redundancy_score": 0.5434753173454172,
+          "latency_seconds": 5.3125040722079575e-06
+        },
+        "mmr": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.375,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 217.25,
+          "budget_utilization": 0.8690000000000002,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.362726294333676,
+          "value_density": 0.006272618155736138,
+          "redundancy_score": 0.5434753173454172,
+          "latency_seconds": 2.958750155812595e-05
+        },
+        "knapsack": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.375,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 212.625,
+          "budget_utilization": 0.8505,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.362726294333676,
+          "value_density": 0.006409059585343567,
+          "redundancy_score": 0.48188946383879294,
+          "latency_seconds": 0.00011092499698861502
+        },
+        "knapsack-redundancy": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.375,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 212.625,
+          "budget_utilization": 0.8505,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.2814478691166007,
+          "value_density": 0.0060267977383496795,
+          "redundancy_score": 0.48188946383879294,
+          "latency_seconds": 6.986250264162663e-05
+        }
+      },
+      "queries": [
+        {
+          "query": "What is TokenPack's main goal?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 1.0,
+              "coverage_ratio": 1.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.005555555555555556,
+              "redundancy_score": 0.0,
+              "latency_seconds": 1.650000922381878e-05,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 3.1826023109364554,
+              "value_density": 0.002067967713409003,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 9.800001862458885e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 2.64,
+              "over_budget": true,
+              "over_budget_tokens": 410,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 6.50000583846122e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.6352335434643495,
+              "value_density": 0.007535638449144467,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 6.100002792663872e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.6352335434643495,
+              "value_density": 0.007535638449144467,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 2.8399997972883284e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.6352335434643495,
+              "value_density": 0.007535638449144467,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 8.260000322479755e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.4895230313229542,
+              "value_density": 0.006864161434667991,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 0.00010679999832063913,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "How does TokenPack map context selection to the 0/1 Knapsack Problem?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 1.0,
+              "coverage_ratio": 1.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.005555555555555556,
+              "redundancy_score": 0.0,
+              "latency_seconds": 8.399991202168167e-06,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 6.158796363338897,
+              "value_density": 0.004001817000220206,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.800008122809231e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 757,
+              "budget_utilization": 3.028,
+              "over_budget": true,
+              "over_budget_tokens": 507,
+              "total_value": 4.308310531366761,
+              "value_density": 0.005691295285821348,
+              "redundancy_score": 0.6073169593433984,
+              "latency_seconds": 1.1399999493733048e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9061018659635633,
+              "value_density": 0.008783879566652365,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 6.900008884258568e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9061018659635633,
+              "value_density": 0.008783879566652365,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 2.989999484270811e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9061018659635633,
+              "value_density": 0.008783879566652365,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 7.340000593103468e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.698259304278635,
+              "value_density": 0.007826079743219515,
+              "redundancy_score": 0.6553743158854135,
+              "latency_seconds": 6.520000169984996e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can top-k retrieval be unsafe under a token budget?",
+          "evidence_chunk_ids": [
+            "chunk-aafe696ecb9e"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.4388288775658313,
+              "value_density": 0.0024379382086990625,
+              "redundancy_score": 0.0,
+              "latency_seconds": 7.199996616691351e-06,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 4.749223044932894,
+              "value_density": 0.003085914908988235,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.699992809444666e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 901,
+              "budget_utilization": 3.604,
+              "over_budget": true,
+              "over_budget_tokens": 651,
+              "total_value": 3.3767409906163186,
+              "value_density": 0.0037477702448571793,
+              "redundancy_score": 0.5475089011204126,
+              "latency_seconds": 2.510000194888562e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.004608294930875576,
+              "redundancy_score": 0.4926868280529943,
+              "latency_seconds": 6.900008884258568e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.004608294930875576,
+              "redundancy_score": 0.4926868280529943,
+              "latency_seconds": 2.780000795610249e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.005555555555555556,
+              "redundancy_score": 0.0,
+              "latency_seconds": 6.549998943228275e-05,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.0,
+              "value_density": 0.005555555555555556,
+              "redundancy_score": 0.0,
+              "latency_seconds": 5.909999890718609e-05,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does paragraph-group chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.15156786738040193,
+              "value_density": 0.0008420437076688996,
+              "redundancy_score": 0.0,
+              "latency_seconds": 1.170000177808106e-05,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 3.6792529099413964,
+              "value_density": 0.0023906776542829086,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.89999433234334e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 3.516,
+              "over_budget": true,
+              "over_budget_tokens": 629,
+              "total_value": 2.744230690398882,
+              "value_density": 0.0031219916841853036,
+              "redundancy_score": 0.4797908456197223,
+              "latency_seconds": 5.199995939619839e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 195,
+              "budget_utilization": 0.78,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2640058304735942,
+              "value_density": 0.006482081181915868,
+              "redundancy_score": 0.3896751194390536,
+              "latency_seconds": 4.4000043999403715e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 195,
+              "budget_utilization": 0.78,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2640058304735942,
+              "value_density": 0.006482081181915868,
+              "redundancy_score": 0.3896751194390536,
+              "latency_seconds": 3.9699996705166996e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 195,
+              "budget_utilization": 0.78,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2640058304735942,
+              "value_density": 0.006482081181915868,
+              "redundancy_score": 0.3896751194390536,
+              "latency_seconds": 7.029999687802047e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 195,
+              "budget_utilization": 0.78,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2080415229277215,
+              "value_density": 0.006195084732962674,
+              "redundancy_score": 0.3896751194390536,
+              "latency_seconds": 6.370000483002514e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does semantic-threshold chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.2505062855354644,
+              "value_density": 0.0013917015863081355,
+              "redundancy_score": 0.0,
+              "latency_seconds": 6.499991286545992e-06,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 3.1745246859124725,
+              "value_density": 0.002062719094160151,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.000002031214535e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 3.516,
+              "over_budget": true,
+              "over_budget_tokens": 629,
+              "total_value": 2.405157615444924,
+              "value_density": 0.0027362430209839864,
+              "redundancy_score": 0.5240665875452921,
+              "latency_seconds": 4.3000036384910345e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 241,
+              "budget_utilization": 0.964,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2049371047135844,
+              "value_density": 0.004999739023707819,
+              "redundancy_score": 0.4870270201664051,
+              "latency_seconds": 4.4000043999403715e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-bb938302ff2a"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 241,
+              "budget_utilization": 0.964,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2049371047135844,
+              "value_density": 0.004999739023707819,
+              "redundancy_score": 0.4870270201664051,
+              "latency_seconds": 3.8300000596791506e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-bb938302ff2a"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 241,
+              "budget_utilization": 0.964,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2049371047135844,
+              "value_density": 0.004999739023707819,
+              "redundancy_score": 0.4870270201664051,
+              "latency_seconds": 0.000388299988117069,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-bb938302ff2a"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 241,
+              "budget_utilization": 0.964,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.158997429251779,
+              "value_density": 0.004809117963700328,
+              "redundancy_score": 0.4870270201664051,
+              "latency_seconds": 6.690000009257346e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-bb938302ff2a"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which retrieval strategies does TokenPack compare?",
+          "evidence_chunk_ids": [
+            "chunk-15ce9fca2da4",
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.34418876955953853,
+              "value_density": 0.001912159830886325,
+              "redundancy_score": 0.0,
+              "latency_seconds": 6.000002031214535e-06,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 3.930344627433307,
+              "value_density": 0.0025538301672731038,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.299996701069176e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 901,
+              "budget_utilization": 3.604,
+              "over_budget": true,
+              "over_budget_tokens": 651,
+              "total_value": 2.8026718359024225,
+              "value_density": 0.0031106235692590703,
+              "redundancy_score": 0.5779778766117085,
+              "latency_seconds": 4.8000074457377195e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.3323165990947463,
+              "value_density": 0.006139707829929707,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 4.3000036384910345e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.3323165990947463,
+              "value_density": 0.006139707829929707,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 2.3600005079060793e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.3323165990947463,
+              "value_density": 0.006139707829929707,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 6.540000322274864e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.256089481768566,
+              "value_density": 0.005788430791560212,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 6.250001024454832e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which metrics are used in TokenPack evaluation?",
+          "evidence_chunk_ids": [
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.10990897828910491,
+              "value_density": 0.0006106054349394718,
+              "redundancy_score": 0.0,
+              "latency_seconds": 1.2499993317760527e-05,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 3.979565177091242,
+              "value_density": 0.0025858123307935296,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.999995093792677e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 735,
+              "budget_utilization": 2.94,
+              "over_budget": true,
+              "over_budget_tokens": 485,
+              "total_value": 3.1066469978497424,
+              "value_density": 0.004226730609319378,
+              "redundancy_score": 0.49855154210702757,
+              "latency_seconds": 4.899993655271828e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.318353599291643,
+              "value_density": 0.006075362208717249,
+              "redundancy_score": 0.45634304335320836,
+              "latency_seconds": 5.399997462518513e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.318353599291643,
+              "value_density": 0.006075362208717249,
+              "redundancy_score": 0.45634304335320836,
+              "latency_seconds": 2.570000651758164e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.318353599291643,
+              "value_density": 0.006075362208717249,
+              "redundancy_score": 0.45634304335320836,
+              "latency_seconds": 7.159999222494662e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.250868579331544,
+              "value_density": 0.005764371333325087,
+              "redundancy_score": 0.45634304335320836,
+              "latency_seconds": 7.090000144671649e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can TokenPack run without an OpenAI API key?",
+          "evidence_chunk_ids": [
+            "chunk-836fe30d9184"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 180,
+              "budget_utilization": 0.72,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.03988009055051801,
+              "value_density": 0.00022155605861398897,
+              "redundancy_score": 0.0,
+              "latency_seconds": 6.300004315562546e-06,
+              "selected_count": 1,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 6.156,
+              "over_budget": true,
+              "over_budget_tokens": 1289,
+              "total_value": 2.7681630865854228,
+              "value_density": 0.001798676469516194,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.800000508315861e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 758,
+              "budget_utilization": 3.032,
+              "over_budget": true,
+              "over_budget_tokens": 508,
+              "total_value": 2.41070914984381,
+              "value_density": 0.0031803550789496174,
+              "redundancy_score": 0.5487472960732702,
+              "latency_seconds": 4.3000036384910345e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2408618116679269,
+              "value_density": 0.005718257196626391,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 4.1000021155923605e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2408618116679269,
+              "value_density": 0.005718257196626391,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 2.3300002794712782e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2408618116679269,
+              "value_density": 0.005718257196626391,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 7.029999687802047e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 217,
+              "budget_utilization": 0.868,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.1898036040516062,
+              "value_density": 0.005482965917288508,
+              "redundancy_score": 0.6056609479904248,
+              "latency_seconds": 6.380000559147447e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "budget": 500,
+      "reserve_output": 100,
+      "effective_budget": 400,
+      "query_count": 8,
+      "summary": {
+        "document-prefix": {
+          "evidence_recall_at_budget": 0.375,
+          "evidence_precision": 0.1875,
+          "coverage_ratio": 0.375,
+          "avg_used_tokens": 360.0,
+          "budget_utilization": 0.9000000000000001,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 0.7368548406555093,
+          "value_density": 0.002046819001820859,
+          "redundancy_score": 0.6747251968769233,
+          "latency_seconds": 7.987500794115476e-06
+        },
+        "full-document": {
+          "evidence_recall_at_budget": 1.0,
+          "evidence_precision": 0.11249999999999999,
+          "coverage_ratio": 1.0,
+          "avg_used_tokens": 1539.0,
+          "budget_utilization": 3.8475,
+          "over_budget_rate": 1.0,
+          "avg_over_budget_tokens": 1139.0,
+          "avg_total_value": 3.9528090257715114,
+          "value_density": 0.002568426917330417,
+          "redundancy_score": 0.5158722342380941,
+          "latency_seconds": 5.949999831500463e-06
+        },
+        "top-k": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.19999999999999998,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 808.75,
+          "budget_utilization": 2.021875,
+          "over_budget_rate": 1.0,
+          "avg_over_budget_tokens": 408.75,
+          "avg_total_value": 2.965571500654628,
+          "value_density": 0.003666858115183466,
+          "redundancy_score": 0.5464627474130487,
+          "latency_seconds": 5.737501851399429e-06
+        },
+        "budget-top-k": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.24999999999999997,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 389.125,
+          "budget_utilization": 0.9728125000000001,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.99931093788154,
+          "value_density": 0.0051379657896088405,
+          "redundancy_score": 0.5085707755110523,
+          "latency_seconds": 5.562502337852493e-06
+        },
+        "mmr": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.24999999999999997,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 389.125,
+          "budget_utilization": 0.9728125000000001,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.997153107231655,
+          "value_density": 0.005132420449037341,
+          "redundancy_score": 0.5061697376008873,
+          "latency_seconds": 0.00018988749798154458
+        },
+        "knapsack": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.24999999999999997,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 384.5,
+          "budget_utilization": 0.96125,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.99931093788154,
+          "value_density": 0.005199768369002705,
+          "redundancy_score": 0.5184177232795013,
+          "latency_seconds": 0.00014531250235449988
+        },
+        "knapsack-redundancy": {
+          "evidence_recall_at_budget": 0.75,
+          "evidence_precision": 0.24999999999999997,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 384.5,
+          "budget_utilization": 0.96125,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.8005863363723205,
+          "value_density": 0.004682929353374045,
+          "redundancy_score": 0.5184177232795013,
+          "latency_seconds": 0.00014858750000712462
+        }
+      },
+      "queries": [
+        {
+          "query": "What is TokenPack's main goal?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.325286789453244,
+              "value_density": 0.003681352192925678,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 6.999995093792677e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 3.1826023109364554,
+              "value_density": 0.002067967713409003,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.100002792663872e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 1.65,
+              "over_budget": true,
+              "over_budget_tokens": 260,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 4.6000059228390455e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9605203329175935,
+              "value_density": 0.004938338370069505,
+              "redundancy_score": 0.6420497416762404,
+              "latency_seconds": 1.0200004908256233e-05,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.943257687718514,
+              "value_density": 0.004894855636570564,
+              "redundancy_score": 0.62284143839492,
+              "latency_seconds": 0.0003575000009732321,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9605203329175935,
+              "value_density": 0.004938338370069505,
+              "redundancy_score": 0.6420497416762404,
+              "latency_seconds": 0.00016340000729542226,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7379921032068424,
+              "value_density": 0.0043778138619819705,
+              "redundancy_score": 0.6420497416762404,
+              "latency_seconds": 0.00016679998952895403,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "How does TokenPack map context selection to the 0/1 Knapsack Problem?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7620314888168127,
+              "value_density": 0.004894531913380035,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 1.0000003385357559e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 6.158796363338897,
+              "value_density": 0.004001817000220206,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.399990525096655e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 757,
+              "budget_utilization": 1.8925,
+              "over_budget": true,
+              "over_budget_tokens": 357,
+              "total_value": 4.308310531366761,
+              "value_density": 0.005691295285821348,
+              "redundancy_score": 0.6073169593433984,
+              "latency_seconds": 6.400005077011883e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8543374873601683,
+              "value_density": 0.007189766970680525,
+              "redundancy_score": 0.5899916707247671,
+              "latency_seconds": 4.8000074457377195e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8543374873601683,
+              "value_density": 0.007189766970680525,
+              "redundancy_score": 0.5899916707247671,
+              "latency_seconds": 0.00016820000018924475,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8543374873601683,
+              "value_density": 0.007189766970680525,
+              "redundancy_score": 0.5899916707247671,
+              "latency_seconds": 0.00014010000450070947,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.4400926165195997,
+              "value_density": 0.006146329008865491,
+              "redundancy_score": 0.5899916707247671,
+              "latency_seconds": 0.00013889999536331743,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-15ce9fca2da4",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can top-k retrieval be unsafe under a token budget?",
+          "evidence_chunk_ids": [
+            "chunk-aafe696ecb9e"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.5,
+              "coverage_ratio": 1.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.9626390673580205,
+              "value_density": 0.0026739974093278347,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 6.300004315562546e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 4.749223044932894,
+              "value_density": 0.003085914908988235,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.599998985417187e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 901,
+              "budget_utilization": 2.2525,
+              "over_budget": true,
+              "over_budget_tokens": 501,
+              "total_value": 3.3767409906163186,
+              "value_density": 0.0037477702448571793,
+              "redundancy_score": 0.5475089011204126,
+              "latency_seconds": 4.3000036384910345e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.8326381547007657,
+              "value_density": 0.004616217014359611,
+              "redundancy_score": 0.49325026685449935,
+              "latency_seconds": 4.2000028770416975e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 397,
+              "budget_utilization": 0.9925,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.8326381547007657,
+              "value_density": 0.004616217014359611,
+              "redundancy_score": 0.49325026685449935,
+              "latency_seconds": 0.00015779999375808984,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.8326381547007657,
+              "value_density": 0.00509066154083546,
+              "redundancy_score": 0.5720258490020907,
+              "latency_seconds": 0.00012660000356845558,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.6659364631267821,
+              "value_density": 0.004627601286463284,
+              "redundancy_score": 0.5720258490020907,
+              "latency_seconds": 0.00016549999418202788,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does paragraph-group chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.15156786738040193,
+              "value_density": 0.0004210218538344498,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 5.900001269765198e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 3.6792529099413964,
+              "value_density": 0.0023906776542829086,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.299996701069176e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 2.1975,
+              "over_budget": true,
+              "over_budget_tokens": 479,
+              "total_value": 2.744230690398882,
+              "value_density": 0.0031219916841853036,
+              "redundancy_score": 0.4797908456197223,
+              "latency_seconds": 7.399998139590025e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7523176714408382,
+              "value_density": 0.004672847123842235,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 5.89998671784997e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7523176714408382,
+              "value_density": 0.004672847123842235,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.00016960001084953547,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7523176714408382,
+              "value_density": 0.004672847123842235,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.00013980000221636146,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.624994166875505,
+              "value_density": 0.00433331777833468,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.00013470000703819096,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does semantic-threshold chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.2505062855354644,
+              "value_density": 0.0006958507931540677,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 7.299997378140688e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 3.1745246859124725,
+              "value_density": 0.002062719094160151,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.3000112529844046e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 2.1975,
+              "over_budget": true,
+              "over_budget_tokens": 479,
+              "total_value": 2.405157615444924,
+              "value_density": 0.0027362430209839864,
+              "redundancy_score": 0.5240665875452921,
+              "latency_seconds": 4.3000036384910345e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 376,
+              "budget_utilization": 0.94,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7039861043454398,
+              "value_density": 0.004531877937088936,
+              "redundancy_score": 0.446595625933365,
+              "latency_seconds": 4.8000074457377195e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 376,
+              "budget_utilization": 0.94,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7039861043454398,
+              "value_density": 0.004531877937088936,
+              "redundancy_score": 0.446595625933365,
+              "latency_seconds": 0.00016899999172892421,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 376,
+              "budget_utilization": 0.94,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7039861043454398,
+              "value_density": 0.004531877937088936,
+              "redundancy_score": 0.446595625933365,
+              "latency_seconds": 0.00014899999951012433,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 376,
+              "budget_utilization": 0.94,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.5745572237451437,
+              "value_density": 0.004187652190811552,
+              "redundancy_score": 0.446595625933365,
+              "latency_seconds": 0.00013929999840911478,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which retrieval strategies does TokenPack compare?",
+          "evidence_chunk_ids": [
+            "chunk-15ce9fca2da4",
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.7936716765993171,
+              "value_density": 0.0022046435461092143,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 1.2900010915473104e-05,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 3.930344627433307,
+              "value_density": 0.0025538301672731038,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.89999433234334e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 901,
+              "budget_utilization": 2.2525,
+              "over_budget": true,
+              "over_budget_tokens": 501,
+              "total_value": 2.8026718359024225,
+              "value_density": 0.0031106235692590703,
+              "redundancy_score": 0.5779778766117085,
+              "latency_seconds": 4.4000043999403715e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.888506477651433,
+              "value_density": 0.0047449911498779725,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 4.5000051613897085e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.888506477651433,
+              "value_density": 0.0047449911498779725,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.00016899999172892421,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.888506477651433,
+              "value_density": 0.0047449911498779725,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.000155999994603917,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.7120568083964696,
+              "value_density": 0.0043016502723529386,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.00014489999739453197,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which metrics are used in TokenPack evaluation?",
+          "evidence_chunk_ids": [
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.43285666206261464,
+              "value_density": 0.0012023796168405961,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 6.599992047995329e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 3.979565177091242,
+              "value_density": 0.0025858123307935296,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.000002031214535e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 735,
+              "budget_utilization": 1.8375,
+              "over_budget": true,
+              "over_budget_tokens": 335,
+              "total_value": 3.1066469978497424,
+              "value_density": 0.004226730609319378,
+              "redundancy_score": 0.49855154210702757,
+              "latency_seconds": 4.299989086575806e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.0652121842754787,
+              "value_density": 0.005507232491401276,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 4.4000043999403715e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.0652121842754787,
+              "value_density": 0.005507232491401276,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.0001686000032350421,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.0652121842754787,
+              "value_density": 0.005507232491401276,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.00014090001059230417,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 375,
+              "budget_utilization": 0.9375,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.8885853732706035,
+              "value_density": 0.005036227662054943,
+              "redundancy_score": 0.4211817496228498,
+              "latency_seconds": 0.00016570001025684178,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can TokenPack run without an OpenAI API key?",
+          "evidence_chunk_ids": [
+            "chunk-836fe30d9184"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 360,
+              "budget_utilization": 0.9,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.2162788880381995,
+              "value_density": 0.0006007746889949986,
+              "redundancy_score": 0.6747251968769233,
+              "latency_seconds": 7.90000194683671e-06,
+              "selected_count": 2,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 3.8475,
+              "over_budget": true,
+              "over_budget_tokens": 1139,
+              "total_value": 2.7681630865854228,
+              "value_density": 0.001798676469516194,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.000002031214535e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 758,
+              "budget_utilization": 1.895,
+              "over_budget": true,
+              "over_budget_tokens": 358,
+              "total_value": 2.41070914984381,
+              "value_density": 0.0031803550789496174,
+              "redundancy_score": 0.5487472960732702,
+              "latency_seconds": 1.0200004908256233e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9369690903606016,
+              "value_density": 0.004866756508443723,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 5.699999746866524e-06,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9369690903606016,
+              "value_density": 0.004866756508443723,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.000159399991389364,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.9369690903606016,
+              "value_density": 0.004866756508443723,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.0001466999965487048,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.3333333333333333,
+              "coverage_ratio": 1.0,
+              "used_tokens": 398,
+              "budget_utilization": 0.995,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.760475935837619,
+              "value_density": 0.004423306371451304,
+              "redundancy_score": 0.5271576998269237,
+              "latency_seconds": 0.00013290000788401812,
+              "selected_count": 3,
+              "selected_chunk_ids": [
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "budget": 800,
+      "reserve_output": 100,
+      "effective_budget": 700,
+      "query_count": 8,
+      "summary": {
+        "document-prefix": {
+          "evidence_recall_at_budget": 0.6875,
+          "evidence_precision": 0.1875,
+          "coverage_ratio": 0.625,
+          "avg_used_tokens": 698.0,
+          "budget_utilization": 0.9971428571428572,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 1.6924326174546485,
+          "value_density": 0.0024246885636886083,
+          "redundancy_score": 0.5628673440510957,
+          "latency_seconds": 1.0099998689838685e-05
+        },
+        "full-document": {
+          "evidence_recall_at_budget": 1.0,
+          "evidence_precision": 0.11249999999999999,
+          "coverage_ratio": 1.0,
+          "avg_used_tokens": 1539.0,
+          "budget_utilization": 2.1985714285714284,
+          "over_budget_rate": 1.0,
+          "avg_over_budget_tokens": 839.0,
+          "avg_total_value": 3.9528090257715114,
+          "value_density": 0.002568426917330417,
+          "redundancy_score": 0.5158722342380941,
+          "latency_seconds": 6.099999154685065e-06
+        },
+        "top-k": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.19999999999999998,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 808.75,
+          "budget_utilization": 1.155357142857143,
+          "over_budget_rate": 0.875,
+          "avg_over_budget_tokens": 113.75,
+          "avg_total_value": 2.965571500654628,
+          "value_density": 0.003666858115183466,
+          "redundancy_score": 0.5464627474130487,
+          "latency_seconds": 7.5250009103911e-06
+        },
+        "budget-top-k": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.22499999999999998,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 679.5,
+          "budget_utilization": 0.9707142857142856,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 2.7071263080584576,
+          "value_density": 0.0039839975100198054,
+          "redundancy_score": 0.517218813476711,
+          "latency_seconds": 1.0775002010632306e-05
+        },
+        "mmr": {
+          "evidence_recall_at_budget": 0.8125,
+          "evidence_precision": 0.1875,
+          "coverage_ratio": 0.75,
+          "avg_used_tokens": 672.125,
+          "budget_utilization": 0.9601785714285713,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 2.7296400874532094,
+          "value_density": 0.004061208982634494,
+          "redundancy_score": 0.5083881111087688,
+          "latency_seconds": 0.0007471749959222507
+        },
+        "knapsack": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.20625,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 657.0,
+          "budget_utilization": 0.9385714285714284,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 2.747279341941375,
+          "value_density": 0.0041815515098042235,
+          "redundancy_score": 0.5043093100042946,
+          "latency_seconds": 0.00033248750150960404
+        },
+        "knapsack-redundancy": {
+          "evidence_recall_at_budget": 0.9375,
+          "evidence_precision": 0.20625,
+          "coverage_ratio": 0.875,
+          "avg_used_tokens": 657.0,
+          "budget_utilization": 0.9385714285714284,
+          "over_budget_rate": 0.0,
+          "avg_over_budget_tokens": 0.0,
+          "avg_total_value": 2.398188096539856,
+          "value_density": 0.0036502101926025204,
+          "redundancy_score": 0.5043093100042946,
+          "latency_seconds": 0.0003753874989342876
+        }
+      },
+      "queries": [
+        {
+          "query": "What is TokenPack's main goal?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.6772452921863765,
+              "value_density": 0.002402930218032058,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 7.499998901039362e-06,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 3.1826023109364554,
+              "value_density": 0.002067967713409003,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.49999822396785e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 4.0000013541430235e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 5.099995178170502e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 0.000992799992673099,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5701041938141604,
+              "value_density": 0.0038940972633547885,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 0.0003285999991931021,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.2088586070858804,
+              "value_density": 0.003346755465281637,
+              "redundancy_score": 0.587741970883558,
+              "latency_seconds": 0.00030980000155977905,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "How does TokenPack map context selection to the 0/1 Knapsack Problem?",
+          "evidence_chunk_ids": [
+            "chunk-bc5c1d1ea66d"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.9563131858765592,
+              "value_density": 0.00423540571042487,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 1.3700002455152571e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 6.158796363338897,
+              "value_density": 0.004001817000220206,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.800000508315861e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 757,
+              "budget_utilization": 1.0814285714285714,
+              "over_budget": true,
+              "over_budget_tokens": 57,
+              "total_value": 4.308310531366761,
+              "value_density": 0.005691295285821348,
+              "redundancy_score": 0.6073169593433984,
+              "latency_seconds": 4.0000013541430235e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 4.034942287907379,
+              "value_density": 0.0061135489210717864,
+              "redundancy_score": 0.5830400188521081,
+              "latency_seconds": 4.8000074457377195e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 4.034942287907379,
+              "value_density": 0.0061135489210717864,
+              "redundancy_score": 0.5830400188521081,
+              "latency_seconds": 0.0006925999914528802,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 4.034942287907379,
+              "value_density": 0.0061135489210717864,
+              "redundancy_score": 0.5830400188521081,
+              "latency_seconds": 0.0002998000127263367,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 660,
+              "budget_utilization": 0.9428571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 3.3469113878125225,
+              "value_density": 0.005071077860322004,
+              "redundancy_score": 0.5830400188521081,
+              "latency_seconds": 0.0002925000007962808,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can top-k retrieval be unsafe under a token budget?",
+          "evidence_chunk_ids": [
+            "chunk-aafe696ecb9e"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.436722395262665,
+              "value_density": 0.0034910062969379153,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 6.999995093792677e-06,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 4.749223044932894,
+              "value_density": 0.003085914908988235,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.3000112529844046e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 901,
+              "budget_utilization": 1.2871428571428571,
+              "over_budget": true,
+              "over_budget_tokens": 201,
+              "total_value": 3.3767409906163186,
+              "value_density": 0.0037477702448571793,
+              "redundancy_score": 0.5475089011204126,
+              "latency_seconds": 5.299996701069176e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8305316723975995,
+              "value_density": 0.004055202969051003,
+              "redundancy_score": 0.5280788238590018,
+              "latency_seconds": 4.799992893822491e-06,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 699,
+              "budget_utilization": 0.9985714285714286,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8078266231376063,
+              "value_density": 0.004016919346405731,
+              "redundancy_score": 0.4956797772846308,
+              "latency_seconds": 0.0004839999892283231,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.8305316723975995,
+              "value_density": 0.004055202969051003,
+              "redundancy_score": 0.5280788238590018,
+              "latency_seconds": 0.0002908000024035573,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.4714708270467427,
+              "value_density": 0.003540789150496766,
+              "redundancy_score": 0.5280788238590018,
+              "latency_seconds": 0.0002845999988494441,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-318e05232fe2"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does paragraph-group chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.5704023244612362,
+              "value_density": 0.002249860063698046,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 6.799993570894003e-06,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 3.6792529099413964,
+              "value_density": 0.0023906776542829086,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.599998985417187e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 1.2557142857142858,
+              "over_budget": true,
+              "over_budget_tokens": 179,
+              "total_value": 2.744230690398882,
+              "value_density": 0.0031219916841853036,
+              "redundancy_score": 0.4797908456197223,
+              "latency_seconds": 4.2000028770416975e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 699,
+              "budget_utilization": 0.9985714285714286,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.3907639432576127,
+              "value_density": 0.003420263152013752,
+              "redundancy_score": 0.4707651506840502,
+              "latency_seconds": 1.1000010999850929e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 699,
+              "budget_utilization": 0.9985714285714286,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.3907639432576127,
+              "value_density": 0.003420263152013752,
+              "redundancy_score": 0.4707651506840502,
+              "latency_seconds": 0.0006310000026132911,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-9c31c3a87ce3"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 639,
+              "budget_utilization": 0.9128571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.453026128905484,
+              "value_density": 0.0038388515319334646,
+              "redundancy_score": 0.4337042027257552,
+              "latency_seconds": 0.0003040000010514632,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 639,
+              "budget_utilization": 0.9128571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.201108017551609,
+              "value_density": 0.0034446134859962584,
+              "redundancy_score": 0.4337042027257552,
+              "latency_seconds": 0.00029399999766610563,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "What does semantic-threshold chunking do?",
+          "evidence_chunk_ids": [
+            "chunk-8cfe29557457"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.5523812073833576,
+              "value_density": 0.0022240418443887646,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 7.499998901039362e-06,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 3.1745246859124725,
+              "value_density": 0.002062719094160151,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 5.599998985417187e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 879,
+              "budget_utilization": 1.2557142857142858,
+              "over_budget": true,
+              "over_budget_tokens": 179,
+              "total_value": 2.405157615444924,
+              "value_density": 0.0027362430209839864,
+              "redundancy_score": 0.5240665875452921,
+              "latency_seconds": 1.0599993402138352e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 699,
+              "budget_utilization": 0.9985714285714286,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.1546513299094596,
+              "value_density": 0.0030824768668232614,
+              "redundancy_score": 0.4946712021718412,
+              "latency_seconds": 2.8700000257231295e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 699,
+              "budget_utilization": 0.9985714285714286,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.1546513299094596,
+              "value_density": 0.0030824768668232614,
+              "redundancy_score": 0.4946712021718412,
+              "latency_seconds": 0.0010645000002114102,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 639,
+              "budget_utilization": 0.9128571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.2107981309069173,
+              "value_density": 0.003459777982639933,
+              "redundancy_score": 0.46670269471997167,
+              "latency_seconds": 0.00033850000181701034,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 639,
+              "budget_utilization": 0.9128571428571428,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.983699786561621,
+              "value_density": 0.0031043815126159955,
+              "redundancy_score": 0.46670269471997167,
+              "latency_seconds": 0.0006207999977050349,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which retrieval strategies does TokenPack compare?",
+          "evidence_chunk_ids": [
+            "chunk-15ce9fca2da4",
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 0.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.2464819573457357,
+              "value_density": 0.0017857907698362976,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 1.5999990864656866e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 3.930344627433307,
+              "value_density": 0.0025538301672731038,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 7.399998139590025e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 901,
+              "budget_utilization": 1.2871428571428571,
+              "over_budget": true,
+              "over_budget_tokens": 201,
+              "total_value": 2.8026718359024225,
+              "value_density": 0.0031106235692590703,
+              "redundancy_score": 0.5779778766117085,
+              "latency_seconds": 1.6200006939470768e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5578231093439614,
+              "value_density": 0.0038696264891739203,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 1.5600002370774746e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5578231093439614,
+              "value_density": 0.0038696264891739203,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.0008146999898599461,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.5578231093439614,
+              "value_density": 0.0038696264891739203,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.00035429999115876853,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 0.5,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 0.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.2451873753749325,
+              "value_density": 0.0033966526102495198,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.00044070000876672566,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Which metrics are used in TokenPack evaluation?",
+          "evidence_chunk_ids": [
+            "chunk-133877051187"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 1.4689048994533551,
+              "value_density": 0.0021044482800191334,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 1.1500000255182385e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 3.979565177091242,
+              "value_density": 0.0025858123307935296,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.799993570894003e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 735,
+              "budget_utilization": 1.05,
+              "over_budget": true,
+              "over_budget_tokens": 35,
+              "total_value": 3.1066469978497424,
+              "value_density": 0.004226730609319378,
+              "redundancy_score": 0.49855154210702757,
+              "latency_seconds": 1.09999964479357e-05,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.25,
+              "coverage_ratio": 1.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.7882933985580998,
+              "value_density": 0.003994689682747994,
+              "redundancy_score": 0.4896310996702007,
+              "latency_seconds": 1.1099997209385037e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-836fe30d9184"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 638,
+              "budget_utilization": 0.9114285714285715,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.9911086829761064,
+              "value_density": 0.0046882581237870005,
+              "redundancy_score": 0.4513845273010343,
+              "latency_seconds": 0.0007446999952662736,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 638,
+              "budget_utilization": 0.9114285714285715,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.9911086829761064,
+              "value_density": 0.0046882581237870005,
+              "redundancy_score": 0.4513845273010343,
+              "latency_seconds": 0.00038890000723768026,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 638,
+              "budget_utilization": 0.9114285714285715,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.652407362879345,
+              "value_density": 0.0041573783117231115,
+              "redundancy_score": 0.4513845273010343,
+              "latency_seconds": 0.00043069999082945287,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-8cfe29557457",
+                "chunk-133877051187",
+                "chunk-bb938302ff2a",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        },
+        {
+          "query": "Why can TokenPack run without an OpenAI API key?",
+          "evidence_chunk_ids": [
+            "chunk-836fe30d9184"
+          ],
+          "strategies": {
+            "document-prefix": {
+              "evidence_recall_at_budget": 0.0,
+              "evidence_precision": 0.0,
+              "coverage_ratio": 0.0,
+              "used_tokens": 698,
+              "budget_utilization": 0.9971428571428571,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 0.6310096776679021,
+              "value_density": 0.0009040253261717795,
+              "redundancy_score": 0.5628673440510957,
+              "latency_seconds": 1.0800009476952255e-05,
+              "selected_count": 4,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4"
+              ]
+            },
+            "full-document": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.1,
+              "coverage_ratio": 1.0,
+              "used_tokens": 1539,
+              "budget_utilization": 2.1985714285714284,
+              "over_budget": true,
+              "over_budget_tokens": 839,
+              "total_value": 2.7681630865854228,
+              "value_density": 0.001798676469516194,
+              "redundancy_score": 0.5158722342380941,
+              "latency_seconds": 6.799993570894003e-06,
+              "selected_count": 10,
+              "selected_chunk_ids": [
+                "chunk-bc5c1d1ea66d",
+                "chunk-aafe696ecb9e",
+                "chunk-8cfe29557457",
+                "chunk-15ce9fca2da4",
+                "chunk-133877051187",
+                "chunk-318e05232fe2",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 758,
+              "budget_utilization": 1.082857142857143,
+              "over_budget": true,
+              "over_budget_tokens": 58,
+              "total_value": 2.41070914984381,
+              "value_density": 0.0031803550789496174,
+              "redundancy_score": 0.5487472960732702,
+              "latency_seconds": 4.9000082071870565e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-aafe696ecb9e",
+                "chunk-15ce9fca2da4",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "budget-top-k": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.3299005292793877,
+              "value_density": 0.0035248116933122354,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 5.1000097300857306e-06,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "mmr": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.3299005292793877,
+              "value_density": 0.0035248116933122354,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.000553100006072782,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.3299005292793877,
+              "value_density": 0.0035248116933122354,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.0003549999964889139,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            },
+            "knapsack-redundancy": {
+              "evidence_recall_at_budget": 1.0,
+              "evidence_precision": 0.2,
+              "coverage_ratio": 1.0,
+              "used_tokens": 661,
+              "budget_utilization": 0.9442857142857143,
+              "over_budget": false,
+              "over_budget_tokens": 0,
+              "total_value": 2.0758614080061926,
+              "value_density": 0.0031404862450925756,
+              "redundancy_score": 0.4919111208464636,
+              "latency_seconds": 0.0003299999953014776,
+              "selected_count": 5,
+              "selected_chunk_ids": [
+                "chunk-15ce9fca2da4",
+                "chunk-bb938302ff2a",
+                "chunk-9c31c3a87ce3",
+                "chunk-836fe30d9184",
+                "chunk-da77a1e6e287"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

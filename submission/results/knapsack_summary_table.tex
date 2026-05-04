@@ -1,0 +1,29 @@
+\begin{table}[!t]
+\caption{Repeated Synthetic Knapsack Results (100 Runs per Size)}
+\label{tab:repeated-knapsack}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrr}
+\hline
+$N$ & Algorithm & Mean Value & Mean Time (ms) & Mean Gap (\%) & Timeout Rate \\
+\hline
+\rowcolor{tokenpackhighlight}100 & \textbf{DP exact} & 35491.8 & 2.991 & 0.00 & 0.00 \\
+\rowcolor{tokenpackhighlight}100 & \textbf{Greedy density} & 35439.0 & 0.022 & 0.15 & 0.00 \\
+100 & Greedy value & 31962.1 & 0.014 & 9.95 & 0.00 \\
+100 & Random feasible & 20124.2 & 0.026 & 43.35 & 0.00 \\
+100 & Simulated annealing & 35439.8 & 0.781 & 0.15 & 0.00 \\
+\rowcolor{tokenpackhighlight}1000 & \textbf{DP exact} & 111281.2 & 56.644 & 0.00 & 0.00 \\
+\rowcolor{tokenpackhighlight}1000 & \textbf{Greedy density} & 111252.4 & 0.209 & 0.03 & 0.00 \\
+1000 & Greedy value & 40785.1 & 0.147 & 63.30 & 0.00 \\
+1000 & Random feasible & 20897.2 & 0.173 & 81.20 & 0.00 \\
+1000 & Simulated annealing & 111252.4 & 3.784 & 0.03 & 0.00 \\
+\rowcolor{tokenpackhighlight}10000 & \textbf{DP exact} & -- & -- & -- & 1.00 \\
+\rowcolor{tokenpackhighlight}10000 & \textbf{Greedy density} & 342178.6 & 2.001 & -- & 0.00 \\
+10000 & Greedy value & 43537.4 & 1.582 & -- & 0.00 \\
+10000 & Random feasible & 21552.6 & 1.701 & -- & 0.00 \\
+10000 & Simulated annealing & 342178.6 & 10.320 & -- & 0.00 \\
+\hline
+\end{tabular}%
+}
+\end{table}

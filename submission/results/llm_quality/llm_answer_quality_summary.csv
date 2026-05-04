@@ -1,0 +1,13 @@
+model_label,strategy,completed,invalid_over_budget,skipped,avg_context_tokens,avg_evidence_recall,avg_score,correct_rate,score_source
+Large cloud,document-prefix,8,0,0,698.0,0.6875,0.75,0.375,auto-lexical
+Large cloud,full-document,0,8,0,1539.0,1.0,,,pending
+Large cloud,knapsack,8,0,0,657.0,0.9375,1.25,0.625,auto-lexical
+Large cloud,top-k,1,7,0,808.75,0.9375,0.0,0.0,auto-lexical
+Medium local,document-prefix,8,0,0,698.0,0.6875,1.75,0.75,auto-lexical
+Medium local,full-document,0,8,0,1539.0,1.0,,,pending
+Medium local,knapsack,8,0,0,657.0,0.9375,2.0,1.0,auto-lexical
+Medium local,top-k,1,7,0,808.75,0.9375,2.0,1.0,auto-lexical
+Small local,document-prefix,8,0,0,698.0,0.6875,1.125,0.5,auto-lexical
+Small local,full-document,0,8,0,1539.0,1.0,,,pending
+Small local,knapsack,8,0,0,657.0,0.9375,1.0,0.375,auto-lexical
+Small local,top-k,1,7,0,808.75,0.9375,2.0,1.0,auto-lexical

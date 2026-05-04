@@ -1,0 +1,23 @@
+\begin{table}[!t]
+\caption{LLM Answer Quality Pilot (Review-Aware)}
+\label{tab:llm-answer-quality}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrrl}
+\hline
+Model & Strategy & Completed & Invalid & Avg. Tokens & Avg. Score & Source \\
+\hline
+Large cloud & document-prefix & 8 & 0 & 698.0 & 0.75 & auto-lexical \\
+\rowcolor{tokenpackhighlight}Large cloud & \textbf{TokenPack knapsack} & 8 & 0 & 657.0 & 1.25 & auto-lexical \\
+Large cloud & top-k & 1 & 7 & 808.8 & 0.00 & auto-lexical \\
+Medium local & document-prefix & 8 & 0 & 698.0 & 1.75 & auto-lexical \\
+\rowcolor{tokenpackhighlight}Medium local & \textbf{TokenPack knapsack} & 8 & 0 & 657.0 & 2.00 & auto-lexical \\
+Medium local & top-k & 1 & 7 & 808.8 & 2.00 & auto-lexical \\
+Small local & document-prefix & 8 & 0 & 698.0 & 1.12 & auto-lexical \\
+\rowcolor{tokenpackhighlight}Small local & \textbf{TokenPack knapsack} & 8 & 0 & 657.0 & 1.00 & auto-lexical \\
+Small local & top-k & 1 & 7 & 808.8 & 2.00 & auto-lexical \\
+\hline
+\end{tabular}%
+}
+\end{table}

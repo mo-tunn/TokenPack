@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tokenpack"
+version = "0.1.0"
+description = "Query-aware semantic chunk selection under LLM context-window budgets."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "TokenPack Contributors" }]
+dependencies = []
+
+[project.optional-dependencies]
+embeddings = ["sentence-transformers>=3.0.0"]
+pdf = ["PyMuPDF>=1.24.0", "pypdf>=4.0.0"]
+tokens = ["tiktoken>=0.7.0"]
+dev = ["pytest>=8.0.0"]
+
+[project.scripts]
+tokenpack = "tokenpack.cli:main"
+ckrag = "tokenpack.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+

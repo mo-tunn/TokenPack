@@ -1,0 +1,46 @@
+.tokenpack/
+.ckrag/
+.pytest_cache/
+.test-tmp/
+tmp-pytest/
+pytest-cache-files-*/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+!.env.example
+
+# Local research/source PDFs and downloaded paper metadata can be large and/or copyrighted.
+resources/
+
+# Python/tool caches.
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# LaTeX build byproducts. Keep source .tex/.bib, figures, tables, and final PDFs.
+*.aux
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# TokenPack generated indexes/caches.
+*.embeddings.json
+*-index.json
+*-index.embeddings.json
+!submission/gold/simple_corpus/simple-index.json
+!submission/gold/simple_corpus/simple-index.embeddings.json
+
+# Local OS/editor files.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

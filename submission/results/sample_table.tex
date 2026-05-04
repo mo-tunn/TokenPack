@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\caption{Synthetic Knapsack Experiment Results}
+\label{tab:synthetic-results}
+\centering
+\begin{tabular}{rrrrr}
+\hline
+$N$ & Capacity & Algorithm & Value & Time (s) \\
+\hline
+100 & 500 & DP exact & 36780 & 0.002610 \\
+100 & 500 & Greedy density & 36664 & 0.000047 \\
+100 & 500 & Greedy value & 32962 & 0.000021 \\
+1000 & 1000 & DP exact & 108201 & 0.052016 \\
+1000 & 1000 & Greedy density & 108147 & 0.000173 \\
+1000 & 1000 & Greedy value & 39993 & 0.000139 \\
+10000 & 2000 & DP exact & TIMEOUT & 0.000000 \\
+10000 & 2000 & Greedy density & 325872 & 0.001934 \\
+10000 & 2000 & Greedy value & 41892 & 0.001515 \\
+\hline
+\end{tabular}
+\end{table}
