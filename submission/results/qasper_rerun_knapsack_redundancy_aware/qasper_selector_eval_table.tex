@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\caption{QASPER Selector Evaluation With Fixed Scoring}
+\label{tab:qasper-selector}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\hline
+Selector & Budget & Avg Tok. & Evidence Recall & Complete & Answer F1 & Value & Lat. \\
+\hline
+budget-top-k & 5\% & 249.991 & 0.305 & 0.102 & 0.047 & 0.646 & 0.000 \\
+knapsack & 5\% & 249.991 & 0.296 & 0.083 & 0.043 & 0.719 & 0.000 \\
+knapsack-redundancy & 5\% & 249.991 & 0.310 & 0.093 & 0.043 & 0.644 & 0.004 \\
+budget-top-k & 10\% & 500.463 & 0.529 & 0.213 & 0.032 & 1.395 & 0.000 \\
+knapsack & 10\% & 500.463 & 0.535 & 0.204 & 0.032 & 1.537 & 0.000 \\
+knapsack-redundancy & 10\% & 500.463 & 0.533 & 0.194 & 0.032 & 1.384 & 0.004 \\
+budget-top-k & 20\% & 1001.398 & 0.662 & 0.315 & 0.021 & 2.579 & 0.000 \\
+knapsack & 20\% & 1001.398 & 0.685 & 0.352 & 0.021 & 2.771 & 0.001 \\
+knapsack-redundancy & 20\% & 1001.398 & 0.693 & 0.370 & 0.021 & 2.441 & 0.005 \\
+\hline
+\end{tabular}%
+}
+\end{table}

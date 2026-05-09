@@ -114,12 +114,14 @@ K.~Luo, Z.~Liu, S.~Xiao, and K.~Liu, ``Landmark embedding: A chunking-free
   retrieval augmented long-context large language models,'' 2024.
 
 \bibitem{documentchunking2026}
-``A systematic investigation of document chunking strategies and embedding
-  sensitivity,'' 2026.
+M.~A. Shaukat, M.~Adnan, and C.~C.~N. Kuhn, ``A systematic investigation of
+  document chunking strategies and embedding sensitivity,'' arXiv preprint
+  arXiv:2603.06976, 2026.
 
 \bibitem{attentionrag2025}
-``Attentionrag: Attention-guided context pruning in retrieval-augmented
-  generation,'' 2025.
+Y.~Fang, T.~Sun, Y.~Shi, and X.~Gu, ``Attentionrag: Attention-guided context
+  pruning in retrieval-augmented generation,'' arXiv preprint arXiv:2503.10720,
+  2025.
 
 \bibitem{tang2024quest}
 J.~Tang, Y.~Zhao, K.~Zhu, G.~Xiao, B.~Kasikci, and S.~Han, ``Quest: Query-aware
@@ -135,8 +137,24 @@ Y.~Zuo, S.~Wei, C.~Zhang, Z.~Liu, W.~Lu, and D.~Song, ``Windowkv: Task-adaptive
   group-wise kv cache window selection for efficient llm inference,'' 2025.
 
 \bibitem{budgetmem2025}
-``Budgetmem: Learning selective memory policies for cost-efficient long-context
-  processing in language models,'' 2025.
+C.~V.~K. Alla, H.~N. Gaddam, and M.~Kommi, ``Budgetmem: Learning selective
+  memory policies for cost-efficient long-context processing in language
+  models,'' arXiv preprint arXiv:2511.04919, 2025.
+
+\bibitem{jiang2023llmlingua}
+H.~Jiang, Q.~Wu, C.-Y. Lin, Y.~Yang, and L.~Qiu, ``Llmlingua: Compressing
+  prompts for accelerated inference of large language models,'' 2023.
+
+\bibitem{jiang2024longllmlingua}
+H.~Jiang, Q.~Wu, X.~Luo, D.~Li, C.-Y. Lin, Y.~Yang, and L.~Qiu,
+  ``Longllmlingua: Accelerating and enhancing llms in long context scenarios
+  via prompt compression,'' in \emph{Proceedings of the 62nd Annual Meeting of
+  the Association for Computational Linguistics}, 2024.
+
+\bibitem{pan2024llmlingua2}
+Z.~Pan, Q.~Wu, H.~Jiang, M.~Xia, X.~Luo, J.~Zhang, Q.~Lin, V.~R\"uhle, Y.~Yang,
+  C.-Y. Lin, H.~V. Zhao, L.~Qiu, and D.~Zhang, ``Llmlingua-2: Data distillation
+  for efficient and faithful task-agnostic prompt compression,'' 2024.
 
 \bibitem{hirao2013treeknapsack}
 T.~Hirao, Y.~Yoshida, M.~Nishino, N.~Yasuda, and M.~Nagata, ``Single-document
@@ -160,6 +178,16 @@ Z.~Li, C.~Chen, T.~Yang, T.~Ding, R.~Sun, G.~Zhang, W.~Huang, and Z.~Luo,
 \bibitem{cha2026knapspec}
 S.-H. Cha, G.~Kim, D.~Han, T.~Yang, and I.~Han, ``Knapspec: Self-speculative
   decoding via adaptive layer selection as a knapsack problem,'' 2026.
+
+\bibitem{bai2024longbench2}
+Y.~Bai, S.~Tu, J.~Zhang, H.~Peng, X.~Wang, X.~Lv, S.~Cao, J.~Xu, L.~Hou,
+  Y.~Dong, J.~Tang, and J.~Li, ``Longbench v2: Towards deeper understanding and
+  reasoning on realistic long-context multitasks,'' \emph{arXiv preprint
+  arXiv:2412.15204}, 2024.
+
+\bibitem{qwen2024qwen25}
+{Qwen Team}, ``Qwen2.5: A party of foundation models,''
+  \url{https://qwenlm.github.io/blog/qwen2.5/}, 2024.
 
 \bibitem{openaipricing2026}
 {OpenAI}, ``Api pricing,'' \url{https://openai.com/api/pricing/}, 2026,

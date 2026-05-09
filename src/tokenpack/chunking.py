@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from collections.abc import Sequence
+from typing import Any
 
 from tokenpack.embeddings import cosine
 from tokenpack.models import Chunk, TextBlock
 from tokenpack.tokenization import TokenCounter
+
+SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 
 
 class ParagraphGroupChunker:
@@ -59,39 +63,83 @@ class ParagraphGroupChunker:
         return chunks
 
     def _split_large_block(self, block_id: int, block: TextBlock) -> list[Chunk]:
-        words = block.text.split()
+        units = self._split_block_units(block)
         chunks: list[Chunk] = []
-        current_words: list[str] = []
-        token_start = 0
-        paragraph_offset = 0
-        for word in words:
-            current_words.append(word)
-            if self.token_counter.count(" ".join(current_words)) >= self.target_tokens:
-                text = " ".join(current_words)
+        current_units: list[str] = []
+        current_tokens = 0
+        split_offset = 0
+
+        def flush() -> None:
+            nonlocal current_units, current_tokens, split_offset
+            if not current_units:
+                return
+            separator = "\n" if block.metadata.get("content_type") == "code" else " "
+            text = separator.join(current_units).strip()
+            if text:
                 chunks.append(
                     self._make_chunk(
                         [(block_id, block, self.token_counter.count(text))],
                         text_override=text,
-                        suffix=f"split-{paragraph_offset}",
-                        char_start=token_start,
-                        char_end=token_start + len(text),
+                        suffix=f"split-{split_offset}",
+                        char_start=block.char_start,
+                        char_end=block.char_start + len(text),
                     )
                 )
-                token_start += len(text) + 1
-                paragraph_offset += 1
-                current_words = []
-        if current_words:
-            text = " ".join(current_words)
-            chunks.append(
-                self._make_chunk(
-                    [(block_id, block, self.token_counter.count(text))],
-                    text_override=text,
-                    suffix=f"split-{paragraph_offset}",
-                    char_start=token_start,
-                    char_end=token_start + len(text),
-                )
-            )
+            split_offset += 1
+            current_units = []
+            current_tokens = 0
+
+        for unit in units:
+            unit_tokens = max(1, self.token_counter.count(unit))
+            if unit_tokens > self.max_tokens:
+                flush()
+                for piece in self._split_oversized_unit(unit):
+                    chunks.append(
+                        self._make_chunk(
+                            [(block_id, block, self.token_counter.count(piece))],
+                            text_override=piece,
+                            suffix=f"split-{split_offset}",
+                            char_start=block.char_start,
+                            char_end=block.char_start + len(piece),
+                        )
+                    )
+                    split_offset += 1
+                continue
+            if current_units and current_tokens + unit_tokens > self.max_tokens:
+                flush()
+            current_units.append(unit)
+            current_tokens += unit_tokens
+            if current_tokens >= self.target_tokens:
+                flush()
+        flush()
         return chunks
+
+    def _split_block_units(self, block: TextBlock) -> list[str]:
+        text = block.text.strip()
+        if not text:
+            return []
+        if block.metadata.get("content_type") == "code":
+            units = [line.rstrip() for line in text.splitlines() if line.strip()]
+            return units or [text]
+        paragraphs = [item.strip() for item in re.split(r"\n\s*\n+", text) if item.strip()]
+        units: list[str] = []
+        for paragraph in paragraphs or [text]:
+            sentences = [sentence.strip() for sentence in SENTENCE_RE.split(paragraph) if sentence.strip()]
+            units.extend(sentences or [paragraph])
+        return units
+
+    def _split_oversized_unit(self, unit: str) -> list[str]:
+        words = unit.split()
+        pieces: list[str] = []
+        current: list[str] = []
+        for word in words:
+            current.append(word)
+            if self.token_counter.count(" ".join(current)) >= self.target_tokens:
+                pieces.append(" ".join(current))
+                current = []
+        if current:
+            pieces.append(" ".join(current))
+        return pieces or [unit]
 
     def _flush(self, items: list[tuple[int, TextBlock, int]]) -> list[Chunk]:
         if not items:
@@ -111,11 +159,12 @@ class ParagraphGroupChunker:
         token_count = max(1, self.token_counter.count(text))
         start_page = next((block.page for block in blocks if block.page is not None), None)
         end_page = next((block.page for block in reversed(blocks) if block.page is not None), start_page)
-        digest = hashlib.sha1(
-            f"{blocks[0].source_path}:{blocks[0].paragraph_index}:{blocks[-1].paragraph_index}:{suffix}:{text[:80]}".encode(
-                "utf-8"
-            )
-        ).hexdigest()[:12]
+        digest_input = (
+            f"{blocks[0].source_path}:{blocks[0].paragraph_index}:"
+            f"{blocks[-1].paragraph_index}:{suffix}:{text[:80]}"
+        )
+        digest = hashlib.sha1(digest_input.encode("utf-8", errors="replace")).hexdigest()[:12]
+        metadata = self._chunk_metadata(blocks)
         return Chunk(
             id=f"chunk-{digest}",
             text=text,
@@ -129,8 +178,89 @@ class ParagraphGroupChunker:
             char_end=blocks[-1].char_end if char_end is None else char_end,
             token_count=token_count,
             block_ids=[item[0] for item in items],
-            metadata={"bbox": [block.bbox for block in blocks if block.bbox is not None]},
+            metadata=metadata,
         )
+
+    def _chunk_metadata(self, blocks: list[TextBlock]) -> dict[str, Any]:
+        metadata: dict[str, Any] = {"bbox": [block.bbox for block in blocks if block.bbox is not None]}
+        all_keys = {key for block in blocks for key in block.metadata}
+        for key in all_keys:
+            values = [block.metadata.get(key) for block in blocks if key in block.metadata]
+            unique_values = {repr(value): value for value in values}
+            if len(unique_values) == 1:
+                metadata[key] = values[0]
+            elif key == "content_type":
+                metadata[key] = "mixed"
+        start_lines = [block.metadata.get("start_line") for block in blocks if isinstance(block.metadata.get("start_line"), int)]
+        end_lines = [block.metadata.get("end_line") for block in blocks if isinstance(block.metadata.get("end_line"), int)]
+        if start_lines:
+            metadata["start_line"] = min(start_lines)
+        if end_lines:
+            metadata["end_line"] = max(end_lines)
+        return metadata
+
+
+class StructureAwareChunker(ParagraphGroupChunker):
+    """Chunk documents and code using structural metadata produced by loaders."""
+
+    def chunk(self, blocks: Sequence[TextBlock]) -> list[Chunk]:
+        chunks: list[Chunk] = []
+        current: list[tuple[int, TextBlock, int]] = []
+        current_tokens = 0
+
+        def flush() -> None:
+            nonlocal current, current_tokens
+            chunks.extend(self._flush(current))
+            current = []
+            current_tokens = 0
+
+        for block_id, block in enumerate(blocks):
+            block_tokens = max(1, self.token_counter.count(block.text))
+            content_type = block.metadata.get("content_type", "document")
+            is_symbol = bool(block.metadata.get("symbol_name") or block.metadata.get("symbol_kind"))
+
+            if content_type == "code" and is_symbol:
+                flush()
+                if block_tokens > self.max_tokens:
+                    chunks.extend(self._split_large_block(block_id, block))
+                else:
+                    chunks.extend(self._flush([(block_id, block, block_tokens)]))
+                continue
+
+            if block_tokens > self.max_tokens:
+                flush()
+                chunks.extend(self._split_large_block(block_id, block))
+                continue
+
+            if current and self._structural_boundary(current[-1][1], block):
+                flush()
+
+            would_exceed = current_tokens + block_tokens > self.max_tokens
+            good_enough = current_tokens >= self.min_tokens
+            if current and would_exceed and good_enough:
+                flush()
+
+            current.append((block_id, block, block_tokens))
+            current_tokens += block_tokens
+
+            if current_tokens >= self.target_tokens:
+                flush()
+
+        flush()
+        for chunk in chunks:
+            chunk.metadata["chunker"] = "structure-aware"
+        return chunks
+
+    def _structural_boundary(self, previous: TextBlock, current: TextBlock) -> bool:
+        if previous.source_path != current.source_path:
+            return True
+        previous_type = previous.metadata.get("content_type", "document")
+        current_type = current.metadata.get("content_type", "document")
+        if previous_type != current_type:
+            return True
+        if previous.metadata.get("section_hint") != current.metadata.get("section_hint"):
+            return bool(previous.metadata.get("section_hint") or current.metadata.get("section_hint"))
+        return False
 
 
 class SemanticThresholdChunker(ParagraphGroupChunker):

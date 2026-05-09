@@ -1,0 +1,10 @@
+method,runs,completed,judged,avg_context_tokens,avg_answer_tokens,avg_judge_score,correct_rate,grounded_rate,hallucination_rate,insufficient_rate,parse_failure_rate
+full-document,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+budget-top-k-50,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+tokenpack-50,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+tokenpack-score-sorted-50,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+tokenpack-density-sorted-50,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+tokenpack-score-sorted-strong-50,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+tokenpack-score-sorted-grounded-50,50,50,50,2415.06,173.28,1.1333333333333333,0.52,0.44,0.18,0.2,0.0
+tokenpack-score-sorted-extractive-50,50,50,50,2415.06,169.0,0.9,0.38,0.3,0.2,0.28,0.0
+only-llmlingua2-rate050,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

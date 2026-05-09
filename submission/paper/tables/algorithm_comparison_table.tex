@@ -4,17 +4,18 @@
 \centering
 \scriptsize
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrrrrr}
-\hline
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\rowcolor{tablehead}
 Algorithm & Mean Value & Mean Time (ms) & Gap (\%) & 95\% CI Gap & Speedup \\
-\hline
+\midrule
 \rowcolor{tokenpackhighlight}\textbf{DP exact} & 111281.2 & 56.644 & 0.00 & 0.00 & -- \\
 \rowcolor{tokenpackhighlight}\textbf{Greedy density} & 111252.4 & 0.209 & 0.03 & 0.01 & 271.3x \\
 Simulated annealing & 111252.4 & 3.784 & 0.03 & 0.01 & 15.0x \\
 Greedy lightest & 95924.7 & 0.150 & 13.84 & 0.38 & 376.4x \\
 Greedy value & 40785.1 & 0.147 & 63.30 & 0.65 & 386.4x \\
 Random feasible & 20897.2 & 0.173 & 81.20 & 0.43 & 326.8x \\
-\hline
+\bottomrule
 \end{tabular}%
 }
 \end{table}

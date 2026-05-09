@@ -1,0 +1,29 @@
+{
+  "tasks": 4,
+  "cases": 2,
+  "scanned": 22,
+  "skipped_too_short": 0,
+  "skipped_too_long": 20,
+  "source_token_window": [
+    8000,
+    24000
+  ],
+  "methods": [
+    "full-context",
+    "tokenpack-50"
+  ],
+  "per_method": {
+    "full-context": {
+      "tasks": 2,
+      "avg_source_tokens": 19564.5,
+      "avg_context_tokens": 19564.5,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "tokenpack-50": {
+      "tasks": 2,
+      "avg_source_tokens": 19564.5,
+      "avg_context_tokens": 9576.5,
+      "avg_token_saving_vs_full": 0.5092427962052671
+    }
+  }
+}

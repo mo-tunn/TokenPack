@@ -1,0 +1,3 @@
+paper_id,question_id,strategy,budget,source_tokens,selected_tokens,compressed_tokens,selection_saving_vs_full,compression_saving_vs_selected,total_saving_vs_full,selected_evidence_recall,compressed_evidence_recall,selected_answer_token_f1,compressed_answer_token_f1,compression_seconds
+paper-1,q1,budget-top-k,100,108,0,0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0007603999983984977
+paper-1,q1,knapsack-redundancy,100,108,0,0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0001787999935913831

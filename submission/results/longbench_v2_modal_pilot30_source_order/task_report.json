@@ -1,0 +1,51 @@
+{
+  "tasks": 120,
+  "cases": 30,
+  "scanned": 188,
+  "skipped_too_short": 0,
+  "skipped_too_long": 158,
+  "source_token_window": [
+    8000,
+    24000
+  ],
+  "scoring": "evidence-hybrid",
+  "methods": [
+    "full-context",
+    "only-longllmlingua-rate050",
+    "tokenpack-50",
+    "tokenpack-50+longllmlingua-rate050"
+  ],
+  "selection_strategy": "knapsack-redundancy",
+  "context_order": "source",
+  "reranker": "none",
+  "reranker_model": "BAAI/bge-reranker-base",
+  "reranker_candidate_pool": 80,
+  "reranker_weight": 0.35,
+  "cascade_frontier": false,
+  "per_method": {
+    "full-context": {
+      "tasks": 30,
+      "avg_source_tokens": 17622.966666666667,
+      "avg_context_tokens": 17622.966666666667,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "only-longllmlingua-rate050": {
+      "tasks": 30,
+      "avg_source_tokens": 17622.966666666667,
+      "avg_context_tokens": 8563.8,
+      "avg_token_saving_vs_full": 0.5121030169564068
+    },
+    "tokenpack-50": {
+      "tasks": 30,
+      "avg_source_tokens": 17622.966666666667,
+      "avg_context_tokens": 8749.533333333333,
+      "avg_token_saving_vs_full": 0.5036708492607592
+    },
+    "tokenpack-50+longllmlingua-rate050": {
+      "tasks": 30,
+      "avg_source_tokens": 17622.966666666667,
+      "avg_context_tokens": 4454.266666666666,
+      "avg_token_saving_vs_full": 0.7463162719891633
+    }
+  }
+}

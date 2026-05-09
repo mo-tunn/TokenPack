@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\caption{Reviewed QA Selector Evaluation}
+\label{tab:reviewed-qa-selector}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\hline
+Selector & Budget & Recall & Complete & Ans. F1 & Value & Lat. \\
+\hline
+budget-top-k & 1\% & 0.856 & 0.750 & 0.000 & 4.884 & 0.000 \\
+budget-top-k & 3\% & 0.932 & 0.875 & 0.000 & 11.937 & 0.000 \\
+budget-top-k & 5\% & 0.951 & 0.925 & 0.000 & 18.785 & 0.000 \\
+greedy-density & 1\% & 0.697 & 0.450 & 0.000 & 8.187 & 0.000 \\
+greedy-density & 3\% & 0.840 & 0.625 & 0.000 & 21.530 & 0.000 \\
+greedy-density & 5\% & 0.880 & 0.700 & 0.000 & 33.616 & 0.000 \\
+knapsack & 1\% & 0.701 & 0.450 & 0.000 & 8.371 & 0.026 \\
+knapsack & 3\% & 0.827 & 0.600 & 0.000 & 21.706 & 0.067 \\
+knapsack & 5\% & 0.895 & 0.725 & 0.000 & 33.820 & 0.167 \\
+\hline
+\end{tabular}%
+}
+\end{table}

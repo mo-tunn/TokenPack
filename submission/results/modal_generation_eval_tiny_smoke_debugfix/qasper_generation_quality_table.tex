@@ -1,0 +1,19 @@
+\begin{table}[!t]
+\caption{LLM-as-Judge Generation Quality on 200 QASPER Questions}
+\label{tab:qasper-generation-quality}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\hline
+Method & Completed & Tokens & Judge & Correct & Grounded & Halluc. \\
+\hline
+Full document & 1 & 108 & 0.00 & 0.000 & 0.000 & 0.000 \\
+Budget-top-k 50\% & 1 & 0 & 0.00 & 0.000 & 0.000 & 0.000 \\
+TokenPack 50\% & 1 & 0 & 0.00 & 0.000 & 0.000 & 0.000 \\
+Only LLMLingua-2 50\% & 0 & 0 & 0.00 & 0.000 & 0.000 & 0.000 \\
+\hline
+\end{tabular}%
+}
+{\footnotesize Local open-source LLM-as-a-judge scores; not a substitute for human evaluation.}
+\end{table}

@@ -1,0 +1,12 @@
+Use only the provided context to answer the question.
+If relevant evidence appears anywhere in the context, answer directly and concisely.
+Say exactly "The context is insufficient." only when no relevant evidence for the answer appears in the context.
+Do not add unsupported facts. Return only the final answer in 1-3 sentences.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:

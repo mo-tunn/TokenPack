@@ -1,0 +1,4 @@
+baseline,compared,tokenpack_wins,ties,tokenpack_losses,tokenpack_win_rate
+full-document,0,0,0,0,0.0
+budget-top-k-50,0,0,0,0,0.0
+only-llmlingua2-rate050,0,0,0,0,0.0

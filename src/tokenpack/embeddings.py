@@ -24,7 +24,7 @@ class HashingEmbedder:
         self.model_name = model_name
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        return [self._embed_one(text) for text in texts]
+        return [self._embed_one(_clean_text(text)) for text in texts]
 
     def _embed_one(self, text: str) -> list[float]:
         vector = [0.0] * self.dimensions
@@ -56,7 +56,11 @@ class SentenceTransformerEmbedder:
         self._model = SentenceTransformer(model_name, local_files_only=use_local_files)
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        embeddings = self._model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
+        embeddings = self._model.encode(
+            [_clean_text(text) for text in texts],
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        )
         return [list(map(float, row)) for row in embeddings]
 
 
@@ -121,6 +125,12 @@ class EmbeddingCache:
 
     @staticmethod
     def _key(text: str, model_name: str) -> str:
-        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        digest = hashlib.sha256(_clean_text(text).encode("utf-8", errors="replace")).hexdigest()
         return f"{model_name}:{digest}"
+
+
+def _clean_text(text: str) -> str:
+    """Normalize extractor artifacts that are not valid standalone Unicode."""
+
+    return text.encode("utf-8", errors="replace").decode("utf-8")
 

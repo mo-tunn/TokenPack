@@ -4,10 +4,11 @@
 \centering
 \scriptsize
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{llrrrr}
-\hline
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+\rowcolor{tablehead}
 $N$ & Algorithm & Mean Value & Mean Time (ms) & Mean Gap (\%) & Timeout Rate \\
-\hline
+\midrule
 \rowcolor{tokenpackhighlight}100 & \textbf{DP exact} & 35491.8 & 2.991 & 0.00 & 0.00 \\
 \rowcolor{tokenpackhighlight}100 & \textbf{Greedy density} & 35439.0 & 0.022 & 0.15 & 0.00 \\
 100 & Greedy value & 31962.1 & 0.014 & 9.95 & 0.00 \\
@@ -23,7 +24,7 @@ $N$ & Algorithm & Mean Value & Mean Time (ms) & Mean Gap (\%) & Timeout Rate \\
 10000 & Greedy value & 43537.4 & 1.582 & -- & 0.00 \\
 10000 & Random feasible & 21552.6 & 1.701 & -- & 0.00 \\
 10000 & Simulated annealing & 342178.6 & 10.320 & -- & 0.00 \\
-\hline
+\bottomrule
 \end{tabular}%
 }
 \end{table}

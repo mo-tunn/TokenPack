@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from tokenpack.compression import CompressionConfig, CompressionResult, compress_chunks
 from tokenpack.models import Chunk
 
 
@@ -22,9 +23,44 @@ def render_context(chunks: list[Chunk], include_headers: bool = True) -> str:
     return "\n\n".join(parts).strip() + "\n"
 
 
-def export_selection(selection_path: str | Path, output_path: str | Path, include_headers: bool = True) -> None:
+def render_compressed_context(
+    chunks: list[Chunk],
+    config: CompressionConfig,
+    include_headers: bool = True,
+) -> tuple[str, CompressionResult]:
+    ordered = ordered_chunks(chunks)
+    result = compress_chunks(ordered, config)
+    parts: list[str] = []
+    if include_headers:
+        parts.append(
+            "[Compressed context: "
+            f"compressor={result.metadata.get('compressor')}, "
+            f"origin_tokens={result.origin_tokens}, "
+            f"compressed_tokens={result.compressed_tokens}, "
+            f"saving_rate={result.saving_rate:.1%}]"
+        )
+    parts.append(result.compressed_prompt)
+    return "\n\n".join(part for part in parts if part).strip() + "\n", result
+
+
+def export_selection(
+    selection_path: str | Path,
+    output_path: str | Path,
+    include_headers: bool = True,
+    compression_config: CompressionConfig | None = None,
+) -> CompressionResult | None:
     payload = json.loads(Path(selection_path).read_text(encoding="utf-8"))
     chunks = [Chunk.from_dict(item["chunk"]) for item in payload.get("selected", [])]
+    compression_result = None
+    if compression_config and compression_config.compressor != "none":
+        rendered, compression_result = render_compressed_context(
+            chunks,
+            compression_config,
+            include_headers=include_headers,
+        )
+    else:
+        rendered = render_context(chunks, include_headers=include_headers)
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    Path(output_path).write_text(render_context(chunks, include_headers=include_headers), encoding="utf-8")
+    Path(output_path).write_text(rendered, encoding="utf-8")
+    return compression_result
 

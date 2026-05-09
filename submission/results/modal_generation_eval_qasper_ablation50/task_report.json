@@ -1,0 +1,52 @@
+{
+  "tasks": 350,
+  "questions": 50,
+  "methods": [
+    "budget-top-k-50",
+    "full-document",
+    "only-llmlingua2-rate050",
+    "tokenpack-50",
+    "tokenpack-density-sorted-50",
+    "tokenpack-score-sorted-50",
+    "tokenpack-score-sorted-strong-50"
+  ],
+  "avg_answer_prompt_tokens_est": 2127.022857142857,
+  "max_answer_prompt_tokens_est": 5481,
+  "per_method": {
+    "budget-top-k-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2385.96,
+      "avg_token_saving_vs_full": 0.5117690004097091
+    },
+    "full-document": {
+      "tasks": 50,
+      "avg_context_tokens": 4872.0,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "only-llmlingua2-rate050": {
+      "tasks": 50,
+      "avg_context_tokens": 2432.7,
+      "avg_token_saving_vs_full": 0.5042857595435881
+    },
+    "tokenpack-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    },
+    "tokenpack-density-sorted-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    },
+    "tokenpack-score-sorted-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    },
+    "tokenpack-score-sorted-strong-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    }
+  }
+}

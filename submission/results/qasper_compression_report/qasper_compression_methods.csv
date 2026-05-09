@@ -1,0 +1,6 @@
+method,pipeline,sample_questions,selection_strategy,compression_rate,token_saving,evidence_recall,complete_evidence_rate,answer_token_f1,avg_seconds,source_tag
+Only LLMLingua-2 rate=0.50,only-llmlingua2,200,full-document,0.5,0.5056752257378578,0.7141487685293174,0.11,0.010204986416408775,6.282763969500957,current-200q
+Only TokenPack,only-tokenpack,200,knapsack-redundancy,,0.5093690322811457,0.9004422703395089,0.785,0.012541271364616337,0.01245528300089063,current-200q
+TokenPack + LLMLingua-2 rate=0.85,tokenpack+llmlingua2,200,knapsack-redundancy,0.85,0.5825787828782367,0.8227471195233528,0.72,0.013528671736245067,3.516657094499824,current-200q
+TokenPack + LLMLingua-2 rate=0.75,tokenpack+llmlingua2,200,knapsack-redundancy,0.75,0.6336225804068591,0.765130713790985,0.56,0.014332182553390162,3.5320711435009433,current-200q
+TokenPack + LLMLingua-2 rate=0.50,tokenpack+llmlingua2,200,knapsack-redundancy,0.5,0.7583388681240586,0.6130615859174199,0.045,0.017289638216010535,3.371733646001958,current-200q

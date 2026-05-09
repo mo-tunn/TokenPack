@@ -1,0 +1,46 @@
+{
+  "tasks": 6,
+  "questions": 1,
+  "methods": [
+    "budget-top-k-50",
+    "full-document",
+    "tokenpack-50",
+    "tokenpack-density-sorted-50",
+    "tokenpack-score-sorted-50",
+    "tokenpack-score-sorted-strong-50"
+  ],
+  "avg_answer_prompt_tokens_est": 62.833333333333336,
+  "max_answer_prompt_tokens_est": 136,
+  "per_method": {
+    "budget-top-k-50": {
+      "tasks": 1,
+      "avg_context_tokens": 0.0,
+      "avg_token_saving_vs_full": 1.0
+    },
+    "full-document": {
+      "tasks": 1,
+      "avg_context_tokens": 108.0,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "tokenpack-50": {
+      "tasks": 1,
+      "avg_context_tokens": 0.0,
+      "avg_token_saving_vs_full": 1.0
+    },
+    "tokenpack-density-sorted-50": {
+      "tasks": 1,
+      "avg_context_tokens": 0.0,
+      "avg_token_saving_vs_full": 1.0
+    },
+    "tokenpack-score-sorted-50": {
+      "tasks": 1,
+      "avg_context_tokens": 0.0,
+      "avg_token_saving_vs_full": 1.0
+    },
+    "tokenpack-score-sorted-strong-50": {
+      "tasks": 1,
+      "avg_context_tokens": 0.0,
+      "avg_token_saving_vs_full": 1.0
+    }
+  }
+}

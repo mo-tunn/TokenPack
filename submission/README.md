@@ -1,18 +1,22 @@
 # TokenPack Submission Package
 
-This folder is organized according to the Algorithm Analysis and Design course project requirements.
+This folder contains the paper, experiments, and artifact files for the TokenPack submission package.
 
 ## Project Topic
 
 **TokenPack: Modeling LLM Context Window Selection as a 0/1 Knapsack Problem**
 
-In this project, semantic chunks produced from long documents are modeled as knapsack items:
+In this study, semantic chunks produced from long documents are modeled as knapsack items:
 
 - `value`: semantic similarity between the chunk and the query
 - `weight`: chunk token count
 - `capacity`: available LLM context budget
 
-The selection task is formulated as a 0/1 Knapsack Problem. The exact dynamic programming solution is compared with heuristic or retrieval-oriented approaches such as top-k, budget-aware greedy selection, and MMR.
+The selection task is formulated as a 0/1 Knapsack Problem. The exact dynamic programming solution is compared with heuristic or retrieval-oriented approaches such as top-k, budget-aware greedy selection, MMR, and prompt-compression baselines such as LLMLingua-2 in the QASPER experiments.
+
+The current scoring taxonomy is intentionally separated into baseline profiles (`cosine`, `hybrid`), the default evidence-selection profile (`evidence-hybrid`), a budget-stressed profile (`knapsack-aware`), a related-work proxy profile (`budgetmem-style`), and experimental profiles (`query-support`, `decision-aware`, `instruction-ami`). The `budgetmem-style` profile is an approximate feature-family baseline, not a reproduction of BudgetMem's learned policy. The `query-support` profile is general query/instruction-aware scoring and does not use LongBench-specific answer-option features. The `decision-aware` profile is for tasks with explicit candidate answers or decisions, and scores whether a chunk helps discriminate among candidates.
+
+The selector taxonomy is similarly conservative: `knapsack-redundancy` remains the main TokenPack selector used in the paper, while `knapsack-coverage` is an experimental grounded-generation ablation that favors complementary query coverage after redundancy adjustment.
 
 ## Folder Structure
 
@@ -21,6 +25,11 @@ The selection task is formulated as a 0/1 Knapsack Problem. The exact dynamic pr
 - `paper/tables/*.tex`: Local table assets used by `paper/main.tex`.
 - `paper/figures/*.png`: Local figure assets used by `paper/main.tex`.
 - `experiments/knapsack_performance.py`: Repeated synthetic knapsack experiment script.
+- `experiments/qasper_selector_eval.py`: QASPER evidence-recall selector ablation with fixed chunking and scoring.
+- `experiments/qasper_cost_quality_curve.py`: QASPER answerability-retention versus token-cost proxy experiment.
+- `experiments/qasper_compression_eval.py`: QASPER selection-versus-compression benchmark for Only TokenPack, Only LLMLingua, and selection-first pipelines.
+- `experiments/qasper_compression_report.py`: Builds paper-ready comparison tables and error-analysis notes from compression runs.
+- `longbench_eval/`: Modal LongBench v2 generation and groundedness harness. The groundedness summary separates unsupported claims from strict quote/support failures so the reported hallucination diagnostic is less conflated.
 - `results/knapsack_runs.csv`: Raw results for all repeated experiment runs.
 - `results/knapsack_summary.csv`: Aggregated mean runtime, value, gap, and timeout metrics.
 - `results/algorithm_comparison_table.tex`: Paired statistical comparison table for the compared algorithms section.
@@ -47,6 +56,20 @@ TokenPack smoke test:
 $env:PYTHONPATH="src"
 python -m tokenpack.cli doctor
 python -m pytest -p no:cacheprovider
+```
+
+QASPER selector ablation, using a locally downloaded converted parquet file:
+
+```powershell
+python submission\experiments\qasper_selector_eval.py --data-file C:\tmp\qasper-validation.parquet --backend hash --max-papers 40 --max-questions 200 --budget-ratios 0.05,0.10,0.20 --output-dir submission\results\qasper
+```
+
+If `--data-file` is omitted, the script tries to read the converted QASPER parquet URL from Hugging Face. A local parquet file is more reliable on restricted networks.
+
+QASPER cost-quality proxy:
+
+```powershell
+python submission\experiments\qasper_cost_quality_curve.py --data-file C:\tmp\qasper-validation.parquet --backend hash --chunkers semantic-threshold --scorings hybrid --strategies budget-top-k,greedy-density,knapsack --budget-ratios 0.20,0.40,0.60,0.80,1.00 --candidate-pool 10000 --output-dir submission\results\qasper_cost_quality_widepool
 ```
 
 ## Building the LaTeX PDF

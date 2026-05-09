@@ -1,0 +1,34 @@
+{
+  "tasks": 20,
+  "questions": 5,
+  "methods": [
+    "budget-top-k-50",
+    "full-document",
+    "only-llmlingua2-rate050",
+    "tokenpack-50"
+  ],
+  "avg_answer_prompt_tokens_est": 2425.1,
+  "max_answer_prompt_tokens_est": 3958,
+  "per_method": {
+    "budget-top-k-50": {
+      "tasks": 5,
+      "avg_context_tokens": 2602.2,
+      "avg_token_saving_vs_full": 0.5064141636760164
+    },
+    "full-document": {
+      "tasks": 5,
+      "avg_context_tokens": 5271.6,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "only-llmlingua2-rate050": {
+      "tasks": 5,
+      "avg_context_tokens": 2664.2,
+      "avg_token_saving_vs_full": 0.49538307187758013
+    },
+    "tokenpack-50": {
+      "tasks": 5,
+      "avg_context_tokens": 2598.6,
+      "avg_token_saving_vs_full": 0.5070710979825857
+    }
+  }
+}

@@ -1,0 +1,14 @@
+Use only the provided context to answer the question.
+Answer only facts that are directly supported by the context.
+If the context contains relevant evidence, give the most cautious supported answer.
+If the evidence is partial, say only what is supported and do not fill gaps.
+Say exactly "The context is insufficient." only when the context has no relevant evidence.
+Return only the final answer in 1-2 sentences.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:

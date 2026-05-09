@@ -1,0 +1,4 @@
+strategy,chunker,scoring,budget,avg_budget_tokens,processed_papers,processed_questions,runs,evidence_recall,complete_evidence_rate,answer_token_f1,avg_used_tokens,budget_utilization,over_budget_rate,avg_total_value,latency_seconds
+budget-top-k,structure-aware,instruction-ami,10%,547.0,1,2,2,0.6936585365853658,0.5,0.01347985347985348,506.5,0.9259597806215722,0.0,1.7240478163760509,3.300000025774352e-05
+greedy-density,structure-aware,instruction-ami,10%,547.0,1,2,2,0.4269918699186992,0.0,0.013040293040293041,514.0,0.9396709323583181,0.0,1.691130559967912,3.185000241501257e-05
+knapsack,structure-aware,instruction-ami,10%,547.0,1,2,2,0.732520325203252,0.5,0.011868131868131869,539.5,0.9862888482632541,0.0,1.742060703827899,0.0005236999968474265

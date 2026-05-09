@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\caption{Value Function Ablation With Fixed Chunking and Knapsack Solver}
+\label{tab:value-ablation}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\hline
+Scoring & Budget & Chunks & Avg. Tok. & Term Recall & Complete & Avg. Used & Redund. \\
+\hline
+cosine & 1\% & 711 & 233.551 & 0.679 & 0.417 & 1655.958 & 0.028 \\
+cosine & 3\% & 711 & 233.551 & 0.826 & 0.583 & 4977.417 & 0.026 \\
+cosine & 5\% & 711 & 233.551 & 0.875 & 0.750 & 8298.458 & 0.024 \\
+hybrid & 1\% & 711 & 233.551 & 0.729 & 0.458 & 1656.583 & 0.027 \\
+hybrid & 3\% & 711 & 233.551 & 0.852 & 0.583 & 4977.875 & 0.025 \\
+hybrid & 5\% & 711 & 233.551 & 0.885 & 0.708 & 8298.542 & 0.024 \\
+\hline
+\end{tabular}%
+}
+\end{table}

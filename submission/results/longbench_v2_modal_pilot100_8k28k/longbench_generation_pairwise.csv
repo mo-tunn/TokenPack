@@ -1,0 +1,4 @@
+method,baseline,compared,wins,ties,losses,win_rate
+full-context,only-longllmlingua-rate050,99,10,78,11,0.10101010101010101
+tokenpack-50,only-longllmlingua-rate050,99,11,75,13,0.1111111111111111
+tokenpack-50+longllmlingua-rate050,only-longllmlingua-rate050,98,6,85,7,0.061224489795918366

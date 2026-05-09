@@ -20,7 +20,7 @@ class TokenCounter:
         if not text:
             return 0
         if self._encoding is not None:
-            return len(self._encoding.encode(text))
+            return len(self._encoding.encode(text, disallowed_special=()))
         # A conservative-ish fallback: split words and punctuation separately.
         return len(re.findall(r"\w+|[^\w\s]", text, flags=re.UNICODE))
 

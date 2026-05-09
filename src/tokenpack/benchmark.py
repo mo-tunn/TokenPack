@@ -17,9 +17,12 @@ STRATEGIES = [
     "full-document",
     "top-k",
     "budget-top-k",
+    "greedy-value",
+    "greedy-density",
     "mmr",
     "knapsack",
     "knapsack-redundancy",
+    "knapsack-coverage",
 ]
 
 
@@ -41,6 +44,7 @@ def run_benchmark(
     reserve_output: int,
     sample_size: int = 12,
     candidate_pool: int = 250,
+    scoring: str = "cosine",
 ) -> dict:
     """Developer smoke benchmark using auto-proposed single-evidence queries."""
 
@@ -52,10 +56,11 @@ def run_benchmark(
         budgets=[budget],
         reserve_output=reserve_output,
         candidate_pool=candidate_pool,
-        mode="smoke",
+        scoring=scoring,
     )
     return payload["budgets"][0] | {
         "mode": "smoke",
+        "scoring": scoring,
         "query_count": len(records),
         "queries": payload["budgets"][0]["queries"],
     }
@@ -70,6 +75,7 @@ def run_gold_benchmark(
     candidate_pool: int = 250,
     strategies: list[str] | None = None,
     redundancy_penalty: float = 0.35,
+    scoring: str = "cosine",
 ) -> dict:
     strategy_names = strategies or STRATEGIES
     budget_runs = [
@@ -82,11 +88,13 @@ def run_gold_benchmark(
             candidate_pool=candidate_pool,
             strategies=strategy_names,
             redundancy_penalty=redundancy_penalty,
+            scoring=scoring,
         )
         for budget in budgets
     ]
     return {
         "mode": "gold",
+        "scoring": scoring,
         "query_count": len(records),
         "reserve_output": reserve_output,
         "strategies": strategy_names,
@@ -109,6 +117,7 @@ def _run_gold_for_budget(
     candidate_pool: int,
     strategies: list[str],
     redundancy_penalty: float,
+    scoring: str,
 ) -> dict:
     effective_budget = max(0, budget - reserve_output)
     totals = {
@@ -128,12 +137,20 @@ def _run_gold_for_budget(
     per_query = []
     for record in records:
         query_embedding = embedder.embed([record.query])[0]
-        scored = score_chunks(query_embedding, index.chunks, index.embeddings)
+        scored = score_chunks(
+            query_embedding,
+            index.chunks,
+            index.embeddings,
+            scoring=scoring,
+            query_text=record.query,
+        )
         scored_redundant = score_chunks(
             query_embedding,
             index.chunks,
             index.embeddings,
             redundancy_penalty=redundancy_penalty,
+            scoring=scoring,
+            query_text=record.query,
         )
         query_result = {
             "query": record.query,
@@ -149,6 +166,7 @@ def _run_gold_for_budget(
                 budget=effective_budget,
                 candidate_pool=candidate_pool,
                 embeddings=index.embeddings,
+                coverage_query=record.query,
             )
             elapsed = time.perf_counter() - started
             metrics = _selection_metrics(result, record.evidence_chunk_ids, effective_budget)

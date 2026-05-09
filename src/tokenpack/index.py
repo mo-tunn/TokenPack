@@ -33,7 +33,11 @@ class ChunkIndex:
 def save_index(index: ChunkIndex, path: str | Path) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(index.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
+    target.write_text(
+        json.dumps(index.to_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+        errors="replace",
+    )
 
 
 def load_index(path: str | Path) -> ChunkIndex:

@@ -1,0 +1,22 @@
+{
+  "tasks": 100,
+  "questions": 50,
+  "methods": [
+    "tokenpack-score-sorted-extractive-50",
+    "tokenpack-score-sorted-grounded-50"
+  ],
+  "avg_answer_prompt_tokens_est": 1927.68,
+  "max_answer_prompt_tokens_est": 2964,
+  "per_method": {
+    "tokenpack-score-sorted-extractive-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    },
+    "tokenpack-score-sorted-grounded-50": {
+      "tasks": 50,
+      "avg_context_tokens": 2415.06,
+      "avg_token_saving_vs_full": 0.5057993232559942
+    }
+  }
+}

@@ -7,10 +7,16 @@
 \usepackage{cite}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{microtype}
 \usepackage[table]{xcolor}
 \usepackage[section]{placeins}
 \usepackage{url}
-\definecolor{tokenpackhighlight}{RGB}{226,241,255}
+\definecolor{tokenpackhighlight}{RGB}{232,244,255}
+\definecolor{tablehead}{RGB}{243,247,251}
+\setlength{\textfloatsep}{8pt plus 1pt minus 2pt}
+\setlength{\floatsep}{7pt plus 1pt minus 2pt}
+\setlength{\intextsep}{7pt plus 1pt minus 2pt}
 
 \title{TokenPack: Modeling LLM Context Window Selection as a 0/1 Knapsack Problem}
 
@@ -26,7 +32,7 @@ Email: 232803055@ogr.cbu.edu.tr}
 \maketitle
 
 \begin{abstract}
-Large language models cannot always process full long documents because their context windows are limited. This project models context selection as a 0/1 Knapsack Problem. Each semantic text chunk is treated as an item, its token count is treated as weight, and its semantic similarity to the query is treated as value. The implemented prototype, TokenPack, compares naive top-k retrieval, budget-aware top-k retrieval, MMR, value-based greedy selection, density-based greedy selection, simulated annealing, random feasible selection, and dynamic-programming-based knapsack selection. To fit the Algorithm Analysis and Design course objective, the experiments are repeated 100 times for each problem size and report average value, runtime, accuracy gap, confidence interval, and timeout rate. Results show that exact dynamic programming gives the optimum for manageable instances, but becomes impractical as the $nC$ state space grows. Greedy density is much faster and usually close to optimum, while value-only greedy can have a large accuracy gap. The retrieval experiment also shows why plain top-k is unsafe for LLM systems: it can exceed the context budget even when the retrieved chunks are relevant.
+Large language models cannot always consume full long documents because context windows are limited and expensive. This paper models retrieval-time context selection as a 0/1 Knapsack Problem in which each semantic chunk is an item, token count is weight, and query-conditioned salience is value. TokenPack compares naive ranking, budget-aware retrieval heuristics, and knapsack selection under the same token budget across synthetic optimization tests, QASPER evidence benchmarks, LLMLingua-style compression comparisons, and a LongBench v2 generation pilot. Exact dynamic programming gives the optimum for manageable instances but becomes impractical as the $nC$ state space grows, while density-aware and redundancy-aware selection remain efficient. On QASPER, the strongest result is not universal selector dominance, but a systems finding: at approximately matched 50\% token savings, structure-aware TokenPack selection preserves substantially more evidence than token-level LLMLingua-2 compression alone. On LongBench v2, TokenPack remains close to full-context Qwen2.5-14B accuracy at roughly 50\% savings, while the clearest positive signal is a TokenPack-then-LongLLMLingua cascade that reaches 74.5\% average context reduction with near-full-context accuracy.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -34,25 +40,33 @@ Knapsack, 0/1 Knapsack, Greedy Algorithm, Dynamic Programming, LLM, RAG, Context
 \end{IEEEkeywords}
 
 \section{Introduction}
-NP-Hard problems such as the Traveling Salesman Problem, Warehouse Location Problem, and Knapsack Problem are commonly used in algorithm analysis courses to compare exact and heuristic algorithms. This project applies the 0/1 Knapsack Problem to a modern setting: context window selection for large language models (LLMs).
+NP-Hard problems such as the Traveling Salesman Problem, Warehouse Location Problem, and Knapsack Problem are commonly used in algorithm analysis to compare exact and heuristic algorithms. This study applies the 0/1 Knapsack Problem to a modern setting: context window selection for large language models (LLMs).
 
 When a long document is divided into candidate chunks, only a subset can be placed into the limited token budget of an LLM. This selection task naturally follows a knapsack structure. TokenPack models the context window as a capacity, text chunks as items, token counts as weights, and query relevance scores as values.
 
 The central research question is: can a classical NP-Hard optimization model improve LLM context selection compared with retrieval heuristics that only rank chunks independently? This question is important because LLM context windows are expensive and finite resources. A chunk with high semantic relevance but very large token cost may not be the best choice if several shorter chunks collectively provide more useful evidence. Therefore, the problem is not only a retrieval problem; it is a constrained optimization problem.
 
-The contribution of this project is threefold. First, it presents a direct mapping between LLM context selection and the 0/1 Knapsack Problem. Second, it implements exact and heuristic algorithms in a reusable Python package and command-line tool. Third, it evaluates these algorithms using repeated synthetic experiments, a small retrieval feasibility benchmark, and a pilot LLM answer-quality/cost analysis.
+The contribution of this work is fourfold. First, it presents a direct mapping between LLM context selection and the 0/1 Knapsack Problem. Second, it implements exact and heuristic algorithms in a reusable Python package and command-line tool. Third, it evaluates chunking, scoring, and selection decisions on both controlled synthetic instances and QASPER evidence annotations. Fourth, it adds direct comparisons between retrieval-time selection, prompt-compression baselines, and long-context generation accuracy, showing where selection-first and compression-first pipelines differ.
 
 \section{Literature Review}
 The Knapsack Problem is one of the fundamental NP-Hard problems in combinatorial optimization \cite{karp1972reducibility,martello1990knapsack}. Many extensions and solution strategies have been studied, including multidimensional, multiobjective, and multiple-choice variants \cite{cacchiani2022recent,lust2010multiobjective,szkaliczki2025mckp}. Metaheuristic optimization methods such as NSGA-II are also frequently used for combinatorial optimization when exact methods are too expensive \cite{verma2021nsga}.
 
 Retrieval-Augmented Generation (RAG) provides external knowledge to LLMs by retrieving relevant document chunks \cite{lewis2020rag}. However, simple top-k retrieval does not directly optimize token budget usage. Long-context methods such as MemGPT, Parallel Context Windows, LongRoPE, PoSE, and positional interpolation show that context length is a major practical limitation in LLM systems \cite{packer2023memgpt,ratner2023pcw,ding2024longrope,zhu2023pose,chen2023positional}. Recent evaluations also compare long-context models and RAG, and show that effective context length and computational cost still matter even when nominal context windows grow \cite{xu2023retrieval,li2024longcontextrag,paulsen2025effective,ahmed2025optimization}.
 
-Chunking and embedding quality are also central to retrieval. Late Chunking, S2 Chunking, Landmark Embedding, and document chunking studies demonstrate that segmentation and representation choices affect downstream retrieval quality \cite{gunther2024latechunking,verma2025s2chunking,luo2024landmark,luo2024bge,documentchunking2026}. Context pruning and query-aware sparsity methods such as AttentionRAG, Quest, SnapKV, WindowKV, and BudgetMem further support the idea that not every token should be placed into the model context \cite{attentionrag2025,tang2024quest,li2024snapkv,zuo2025windowkv,budgetmem2025}.
+Chunking and embedding quality are also central to retrieval. Late Chunking, S2 Chunking, Landmark Embedding, and document chunking studies demonstrate that segmentation and representation choices affect downstream retrieval quality \cite{gunther2024latechunking,verma2025s2chunking,luo2024landmark,luo2024bge,documentchunking2026}. Context pruning and query-aware sparsity methods such as AttentionRAG, Quest, SnapKV, WindowKV, and BudgetMem further support the idea that not every token should be placed into the model context \cite{attentionrag2025,tang2024quest,li2024snapkv,zuo2025windowkv,budgetmem2025}. Prompt-compression methods such as LLMLingua, LongLLMLingua, and LLMLingua-2 attack the same budget problem from a different angle: instead of selecting chunks before prompting, they compress the prompt tokens after context construction \cite{jiang2023llmlingua,jiang2024longllmlingua,pan2024llmlingua2}. BudgetMem is especially relevant because it keeps selection at the chunk level, uses BM25 retrieval after ingestion-time filtering, and scores chunks with interpretable signals such as TF-IDF, position bias, entity density, numerical density, and discourse markers. These neighboring lines of work motivate a broader TokenPack question: the optimizer should be tested not only with different solvers, but also against compression-first alternatives that operate at a different stage of the pipeline.
 
 Knapsack-style formulations have also appeared in summarization and recent LLM optimization work. Tree knapsack summarization and budget-aware summarization explicitly connect content selection with budget constraints \cite{hirao2013treeknapsack,pilault2022factorizing}. Recent LLM-oriented work uses knapsack-like ideas for NP-Hard problem evaluation, exploration budget allocation, and speculative decoding \cite{duchnowski2025knapsack,li2025knapsackrl,cha2026knapspec}. TokenPack follows this direction but focuses specifically on retrieval-time context packing.
 
 \section{Problem Formulation}
-Given a query $q$, a document is split into $n$ chunks. Each chunk $i$ has a value $v_i$ and a weight $w_i$. In TokenPack, $v_i$ is computed from cosine similarity between the query embedding and chunk embedding, while $w_i$ is the chunk token count. The effective LLM context budget is denoted by $C$.
+Given a query $q$, a document is split into $n$ chunks. Each chunk $i$ has a value $v_i$ and a weight $w_i$. In the default TokenPack setting, $v_i$ is computed from cosine similarity between the query embedding and chunk embedding, while $w_i$ is the chunk token count. TokenPack also includes a hybrid scoring profile inspired by practical RAG and selective-memory systems:
+
+\begin{equation}
+v_i = 0.55c_i + 0.25b_i + 0.15p_i + 0.05h_i
+\end{equation}
+
+where $c_i$ is normalized embedding cosine similarity, $b_i$ is normalized BM25 lexical relevance, $p_i$ is a U-shaped position prior that favors beginning and ending chunks, and $h_i$ is adjacent-chunk coherence. These coefficients are hand-set rather than learned: they intentionally keep semantic similarity dominant, give lexical matching the second-largest role, and treat position and coherence as smaller stabilizing priors. They should therefore be read as a transparent heuristic baseline, not as a tuned optimum. The effective LLM context budget is denoted by $C$.
+
+Later ablations test two richer hand-designed profiles. The \textit{evidence-hybrid} profile reallocates weight away from position and toward explicit query-term coverage and structural priors such as titles, headers, and list/table cues, using weights $0.35/0.25/0.20/0.15/0.05$ over cosine, BM25, query coverage, structural prior, and neighbor coherence. The \textit{knapsack-aware} profile then treats evidence-hybrid as a base score and blends it with value-density, length-utility, and term-specificity priors using weights $0.70/0.15/0.10/0.05$. These profiles are included to test score alignment, not to claim that the coefficients themselves are theoretically optimal; no hyperparameter sensitivity sweep is claimed in this version. For reproducibility, the reported QASPER and LongBench runs use the deterministic \texttt{hashing-384} embedding backend unless otherwise stated; the package also supports \texttt{sentence-transformers/all-MiniLM-L6-v2} as the default neural embedding model when the sentence-transformers backend is selected.
 
 The optimization problem is:
 
@@ -72,14 +86,14 @@ The TokenPack pipeline has four main stages:
 \begin{enumerate}
   \item The long document is split into chunks using paragraph-group or semantic-threshold chunking.
   \item Each chunk and query is embedded into a vector space.
-  \item Chunk value is computed using cosine similarity, and chunk weight is computed using token count.
+  \item Chunk value is computed using either cosine similarity or the hybrid salience score, and chunk weight is computed using token count.
   \item Selection is performed with top-k, budget-top-k, MMR, greedy heuristics, or 0/1 knapsack dynamic programming.
 \end{enumerate}
 
 \subsection{Semantic Chunking}
 Chunking is the stage that converts an unstructured long document into knapsack items. This is important because the optimization algorithm can only choose among the chunks that the preprocessing stage creates. If chunk boundaries are poor, even an optimal knapsack solver may select incomplete or semantically broken evidence.
 
-TokenPack supports two chunking modes. The first mode is \textbf{paragraph-group chunking}. The document is first split into structural blocks such as paragraphs or PDF text blocks. Consecutive blocks are then grouped until the chunk reaches a target token range. In this project, the intended range is approximately 400--900 tokens. This keeps chunks large enough to preserve local context, but small enough for the optimizer to combine several pieces under a limited context budget. Each chunk keeps metadata such as source path, page number when available, block order, and character offsets. This metadata is important because selected chunks are later restored to their original document order before being sent to the LLM.
+TokenPack supports two chunking modes. The first mode is \textbf{paragraph-group chunking}. The document is first split into structural blocks such as paragraphs or PDF text blocks. Consecutive blocks are then grouped until the chunk reaches a target token range. In this study, the default target is 650 tokens with 120--900 token bounds, chosen as an engineering compromise between preserving local context and giving the optimizer enough items to pack under tight budgets. The chunking ablation varies the boundary construction method, but it does not independently sweep chunk-size ranges. Each chunk keeps metadata such as source path, page number when available, block order, and character offsets. This metadata is important because selected chunks are later restored to their original document order before being sent to the LLM.
 
 The second mode is \textbf{semantic-threshold chunking}. Instead of grouping only by length, this mode compares neighboring text blocks in embedding space. For two adjacent blocks $b_i$ and $b_{i+1}$, TokenPack computes:
 
@@ -102,11 +116,11 @@ The purpose of semantic chunking is not to solve the optimization problem by its
 
 \textbf{Random Feasible.} This baseline shuffles chunks and inserts feasible items. It gives a lower-bound style comparison for non-optimized selection.
 
-\textbf{Simulated Annealing (SA).} SA starts from a density-greedy feasible solution and then explores neighboring subsets by adding or removing one item at a time. Worse moves can be accepted with a probability controlled by a decreasing temperature. This gives a metaheuristic baseline that is closer to the course project examples than simple greedy selection.
+\textbf{Simulated Annealing (SA).} SA starts from a density-greedy feasible solution and then explores neighboring subsets by adding or removing one item at a time. It uses temperature $\max(1,n/2)$, $\min(25000,\max(2000,12n))$ iterations, multiplicative cooling by 0.9995, and a 1.02 deterministic reheating every 250 steps. This provides a metaheuristic baseline that is more exploratory than simple greedy selection.
 
 \textbf{Document-prefix and Full-document Baselines.} These two baselines represent the system without TokenPack-style optimization. Document-prefix inserts chunks in the original PDF order until the budget is full. Full-document tries to insert the entire source document. These baselines are useful because they show what happens when semantic value and token cost are not optimized jointly.
 
-\textbf{Top-k, Budget-top-k, and MMR.} Top-k selects a fixed number of chunks only by similarity. Budget-top-k adds a feasibility check. MMR additionally penalizes redundancy between selected chunks.
+\textbf{Top-k, Budget-top-k, and MMR.} Top-k selects a fixed number of chunks only by similarity. Budget-top-k adds a feasibility check. MMR additionally penalizes redundancy between selected chunks. The \texttt{knapsack-redundancy} strategy keeps MMR as a separate algorithm, but applies a redundancy penalty to chunk values before the knapsack solver runs. This is a practical linear approximation rather than a full quadratic knapsack formulation.
 
 These algorithms were not only described theoretically; they were executed on the same generated instances so that their differences can be measured statistically. Table \ref{tab:algorithm-comparison} reports a paired comparison for $N=1000$ over 100 runs. The word ``paired'' means that every algorithm receives the same item values, weights, and capacity for each repetition. Therefore, the measured gap is caused by the algorithmic strategy rather than by different random inputs. In the tables, shaded rows mark the TokenPack-relevant exact knapsack baseline and its practical density-based heuristic.
 
@@ -124,16 +138,37 @@ For $n$ candidate chunks and effective token budget $C$, the DP algorithm has $O
 This theoretical expectation leads to a practical hybrid design. Embedding similarity first prunes the candidate pool, then a knapsack optimizer is applied only to the strongest candidates. This keeps DP feasible while preserving the main advantage of exact budget-aware optimization.
 
 \section{Experimental Design}
-Three experiments are used.
+Nine experiments are used.
 
 \textbf{Repeated synthetic knapsack benchmark.} Random instances are generated for $N \in \{100,500,1000,5000,10000\}$. Each setting is repeated 100 times with different random seeds. DP is treated as the exact baseline when $nC \leq 5{,}000{,}000$ states. For larger instances, DP is marked as timeout to represent the practical point where the exact method becomes too expensive. The reported metrics are mean objective value, mean runtime, standard deviation of runtime, mean accuracy gap from DP optimum, maximum gap, and timeout rate.
 
 \textbf{Retrieval feasibility benchmark.} A small human-reviewed gold-evidence benchmark checks whether retrieval strategies obey the token budget. This benchmark compares no-optimization baselines, top-k, budget-top-k, MMR, and knapsack on selected document chunks. Its purpose is not to prove final QA quality, but to verify the main engineering constraint: a context selection algorithm must not exceed the budget.
 
-\textbf{LLM answer-quality and cost pilot.} The reviewed gold questions are also sent to local Ollama models and a cloud LLM after context selection. The small model is Qwen3 0.6B, the medium model is Qwen3 4B, and the large cloud model is OpenAI GPT-4o. Cloud credentials are read from a local \texttt{OPENAI\_API\_KEY} environment variable, and no key is stored in the repository. The answer scores are automatic lexical pilot scores, not final human judgments. Cost is estimated by scaling average selected input tokens to a 1M baseline-token scenario using public API pricing assumptions \cite{openaipricing2026}.
+\textbf{Chunking ablation benchmark.} A sample of PDFs from the \texttt{resources} directory is converted into sentence-level source blocks and indexed three ways: paragraph-group, semantic-threshold, and structure-aware chunking. The evidence targets are defined before chunking as source text spans represented by content terms, so the evaluation does not favor either chunker by using chunk IDs from one index. The solver is fixed to knapsack, scoring is fixed to the evidence-hybrid profile, and budgets are set as 1\%, 3\%, and 5\% of source tokens. This isolates the effect of chunk boundaries from the effect of the selection algorithm and the value function.
+
+\textbf{Value-function ablation benchmark.} The same PDF sample and evidence-term targets are also used to compare several scoring profiles, from cosine-only similarity to richer hybrid and evidence-aware variants. In this experiment, chunking is fixed to structure-aware and selection is fixed to knapsack. Therefore, the only changed variable is the value function used by the optimizer.
+
+\textbf{QASPER selector ablation.} To avoid relying only on the small manually reviewed PDF benchmark, TokenPack is also evaluated on QASPER validation examples with evidence annotations. The compared selectors are budget-top-k, greedy-density, knapsack, and knapsack-redundancy. Chunking is fixed to structure-aware and scoring is fixed to the evidence-hybrid value function, so the experiment asks whether the selector itself changes evidence coverage under the same chunk values. Budgets are defined as 20\%, 30\%, 40\%, and 50\% of each paper's source tokens.
+
+\textbf{QASPER cost-quality proxy.} The main practical goal is to reduce input-token cost while preserving answer quality. Because no local or cloud LLM is assumed to be available for every run, this experiment measures answerability proxies on QASPER. For each selector and budget, it records selected-token cost, retained gold-answer token coverage, retained evidence coverage, and the rate at which both answer and evidence are preserved. The answer-token-overlap F1 metric is computed between the selected context text and the gold answer string after lowercasing and token matching. It is therefore a retention proxy rather than a model-output quality score, and its absolute values are expected to be low because the retained context is much longer than the short gold answer and some QASPER answers are mildly abstractive. Scores are reported relative to a 100\% high-budget RAG setting using the same chunker, scoring function, and selector.
+
+\textbf{QASPER compression comparison.} Selection and compression solve related but distinct problems, so they are compared directly on the same QASPER questions. The 200-question subset is not sampled randomly: the script streams QASPER validation papers in dataset order and stops after the first 200 questions from papers with parseable blocks and questions. Three pipelines are evaluated: Only TokenPack, Only LLMLingua-2, and TokenPack followed by LLMLingua-2. The metrics are final token saving, evidence recall, complete-evidence rate, answer-token-overlap F1, latency, and per-question win rates.
+
+\textbf{LongBench v2 generation pilot.} To test whether the evidence-retention signal transfers to downstream long-context answering, a separate Modal-based experiment evaluates the eligible LongBench v2 multiple-choice cases \cite{bai2024longbench2}. The generator is Qwen2.5-14B-Instruct \cite{qwen2024qwen25}. Source contexts are filtered to the 8k--24k token range so that full-context prompting remains feasible within the configured 32k model length. The released split used for this pilot contains 503 examples; the script streams examples in dataset order and yields 83 eligible cases after skipping 420 examples above 24k source tokens and none below 8k. Four methods are compared: full context, TokenPack at a 50\% source-token budget with score-then-source context ordering, LongLLMLingua at rate 0.50, and TokenPack followed by LongLLMLingua at rate 0.50. The LongLLMLingua baseline is run in context-level filtering mode, with token-level filtering disabled, so it should be interpreted as a practical LongLLMLingua-style context-pruning baseline rather than a full token-level compression study. Accuracy is exact multiple-choice correctness after parsing the model's A/B/C/D answer.
+
+\textbf{Illustrative input-cost estimate.} A final accounting table scales the LongBench v2 context-reduction ratios to a 1M baseline-token scenario using public API pricing assumptions \cite{openaipricing2026}. This estimate is included only to show the economic implication of token reduction; it is not used as evidence for answer quality.
+
+\textbf{Reproducibility.} The implementation is included in the accompanying artifact as the \texttt{tokenpack} Python package, with a source manifest listing modules, tests, Modal commands, and QASPER reproduction scripts. Until a public repository URL is attached, the package claim should be interpreted as artifact-based rather than independently archival.
 
 \section{Experimental Results}
-Figure \ref{fig:runtime-scaling} visualizes the runtime behavior of the compared algorithms. The y-axis is logarithmic because DP and greedy methods operate at very different time scales. DP grows much faster as $N$ increases, while greedy methods remain almost flat in comparison. This matches the theoretical difference between $O(nC)$ dynamic programming and $O(n\log n)$ greedy sorting.
+Figure \ref{fig:visual-summary} summarizes the selection-first pipeline and compression frontier, while Figure \ref{fig:runtime-scaling} visualizes runtime behavior. The y-axis is logarithmic because DP grows much faster than greedy methods, matching the theoretical difference between $O(nC)$ dynamic programming and $O(n\log n)$ greedy sorting.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.70\textwidth]{figures/tokenpack_visual_summary.png}
+\caption{Visual summary of the selection-first pipeline and QASPER compression frontier from Tables \ref{tab:qasper-compression-comparison} and \ref{tab:qasper-compression-frontier}.}
+\label{fig:visual-summary}
+\end{figure*}
 
 \begin{figure}[!t]
 \centering
@@ -174,9 +209,10 @@ Table \ref{tab:dp-scalability} gives the exact state counts behind Figure \ref{f
 \centering
 \scriptsize
 \begin{tabular}{rlrrr}
-\hline
+\toprule
+\rowcolor{tablehead}
 Eff. Budget & Method & Recall & Avg. Tokens & Over Budget \\
-\hline
+\midrule
 250 & document-prefix & 0.25 & 180 & 0.00 \\
 250 & full-document & 1.00 & 1539 & 1.00 \\
 250 & top-k & 0.94 & 809 & 1.00 \\
@@ -185,16 +221,40 @@ Eff. Budget & Method & Recall & Avg. Tokens & Over Budget \\
 700 & full-document & 1.00 & 1539 & 1.00 \\
 700 & top-k & 0.94 & 809 & 0.88 \\
 \rowcolor{tokenpackhighlight}700 & \textbf{TokenPack knapsack} & \textbf{0.94} & \textbf{657} & \textbf{0.00} \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 \FloatBarrier
 
 Table \ref{tab:retrieval-feasibility} shows why TokenPack improves the process rather than only adding implementation complexity. Without TokenPack, the document-prefix baseline is budget-valid but misses much of the evidence. The full-document baseline reaches perfect recall only by violating the budget. Plain top-k is semantically strong but also frequently over budget. Knapsack selection gives the desired middle point: high evidence recall while keeping the selected context inside the effective token capacity.
 
-\input{tables/llm_answer_quality_table.tex}
+\input{tables/chunking_ablation_table.tex}
 
-Table \ref{tab:llm-answer-quality} adds a model-output perspective. The small local model is weak and should be interpreted carefully, but the medium model shows the intended pattern: TokenPack knapsack completes all valid prompts and reaches the strongest pilot score, while top-k completes only one prompt because most top-k selections exceed the token budget.
+Table \ref{tab:chunking-ablation} adds the missing chunking ablation. Because the solver and scoring profile are fixed, differences come from the item set created before optimization. On this PDF sample, paragraph-group and structure-aware chunking behave almost identically and both dominate semantic-threshold chunking at every tested budget. At the tight 1\% budget, paragraph-group and structure-aware reach 0.979 evidence-term recall, while semantic-threshold reaches 0.798. By 3\%, the paragraph-group and structure-aware variants already recover all evidence terms, whereas semantic-threshold remains below that level even at 5\%. In this dataset, over-segmentation appears to fragment supporting evidence rather than help the optimizer use budget more effectively.
+
+\input{tables/value_ablation_table.tex}
+
+Table \ref{tab:value-ablation} isolates the value function. With the same structure-aware chunks and the same knapsack solver, score design matters much more than the choice between exact and heuristic selection. Cosine alone reaches only 0.410 evidence-term recall and 0.083 complete-evidence rate at the tight 1\% budget. Richer profiles improve sharply: the plain hybrid score reaches 0.588 recall, knapsack-aware reaches 0.826, and evidence-hybrid reaches 0.979 with a 0.958 complete-evidence rate. The \textit{instruction-ami} row is an experimental AMI hook; because no local AMI model is configured in this run, it falls back to evidence-hybrid and therefore matches it exactly. By 3\%, several richer profiles already recover all evidence terms.
+
+\input{tables/qasper_selector_eval_table.tex}
+
+Table \ref{tab:qasper-selector} evaluates the central selector question on 861 QASPER validation questions from 276 papers. The scoring function and chunker are fixed to the strongest tested configuration, so differences come from the selection rule rather than from chunk boundaries. The results are important precisely because they are not a clean win for knapsack: budget-top-k gives the highest evidence recall at every tested budget, while knapsack and knapsack-redundancy are close but slightly lower. At the same time, the knapsack variants remain competitive and are usually above or near density-greedy. This suggests that the main bottleneck is not the solver itself but the utility model being optimized. In other words, exact or near-exact budgeted optimization is only as good as the scoring function it receives.
+
+\input{tables/qasper_cost_quality_table.tex}
+
+Table \ref{tab:qasper-cost-quality} evaluates the practical cost-quality trade-off more directly. The 100\% budget row is treated as the high-budget RAG reference. Under the stronger structure-aware and evidence-hybrid configuration, both budget-top-k and TokenPack preserve most of the answerability proxy at moderate budgets, and their frontier is tighter than the earlier semantic-threshold runs suggested. At 80\% budget, both retain about 97.5--97.8\% of evidence recall while saving roughly 21--22\% of tokens. At 70\% budget, both remain around 96.0\% evidence retention with roughly 31\% token saving. At 50\% budget, evidence retention falls to about 0.90 for budget-top-k and 0.896 for knapsack-redundancy. The practical lesson is again conservative: selector optimization helps, but under the current scoring function the best retrieval-time baseline is still budget-top-k, and more aggressive savings require either stronger value estimation or a second-stage compressor.
+
+\input{tables/qasper_compression_comparison_table.tex}
+
+Table \ref{tab:qasper-compression-comparison} compares retrieval-time selection with token-level prompt compression on the same 200 QASPER validation questions at approximately matched 50\% token savings. Only TokenPack saves 50.9\% of input tokens while preserving 0.900 evidence recall. Only LLMLingua-2 reaches a nearly identical 50.6\% saving, but its evidence recall drops to 0.714. The complete-evidence rate gap is even larger: 0.785 for TokenPack versus 0.110 for LLMLingua-2. A per-question analysis shows that TokenPack achieves higher evidence recall than LLMLingua-2 on 84.0\% of the evaluated questions. The answer-token-overlap F1 values stay numerically small because they measure answer-string retention inside the selected context, not generated answer correctness. This is the clearest empirical result of the paper: when the final budget is matched, structure-aware evidence selection preserves answer-bearing spans better than token-level compression alone.
+
+\input{tables/qasper_compression_frontier_table.tex}
+
+Table \ref{tab:qasper-compression-frontier} extends the comparison to stronger second-stage compression. All rows are refreshed on the same 200-question QASPER validation split with structure-aware chunks, evidence-hybrid scoring, knapsack-redundancy selection, and LLMLingua-2 as the second-stage compressor. TokenPack followed by LLMLingua-2 at rate 0.85 preserves 0.823 evidence recall while reaching 58.3\% total token saving, which is better than Only LLMLingua-2 at 50.6\% saving and 0.714 evidence recall. More aggressive second-stage compression continues to increase savings, but the frontier shows a consistent pattern: the first quality-preserving step is retrieval-time evidence selection, while prompt compression is best interpreted as an optional second-stage cost reducer with a visible recall trade-off.
+
+\input{tables/longbench_generation_table.tex}
+
+Table \ref{tab:longbench-generation} adds an end-to-end long-context generation view. Unlike the QASPER compression tables, this experiment measures final multiple-choice correctness rather than evidence-retention proxies. On 83 eligible LongBench v2 cases, full-context prompting reaches 0.398 accuracy, TokenPack reaches 0.386 at roughly half the input size, and the context-level LongLLMLingua baseline is slightly higher at 0.402. These 0.386--0.410 differences are small relative to the roughly $\pm$0.11 binomial uncertainty of an 83-case pilot, so the table should not be read as a statistically significant win for any single method. The clearer systems signal is the cascade: TokenPack followed by LongLLMLingua reaches 74.5\% saving while retaining 0.410 accuracy.
 
 \input{tables/cost_savings_table.tex}
 
@@ -205,21 +265,18 @@ Table \ref{tab:llm-answer-quality} adds a model-output perspective. The small lo
 \label{fig:cost-savings}
 \end{figure}
 
-Table \ref{tab:cost-savings} and Figure \ref{fig:cost-savings} show the economic implication of budget-aware context packing. In this scenario, TokenPack knapsack reduces paid input tokens from 1,000,000 to 426,901, corresponding to an estimated 57.3\% input-cost reduction versus full-document prompting. The exact dollar value changes with provider pricing, but the token reduction ratio is determined by the selection strategy.
+Table \ref{tab:cost-savings} and Figure \ref{fig:cost-savings} show the economic implication of the LongBench v2 context-reduction ratios. TokenPack alone reduces the scaled input from 1,000,000 to roughly 496,000 paid tokens, while the TokenPack-then-LongLLMLingua cascade reduces it to roughly 255,000 paid tokens, corresponding to the 74.5\% average saving reported in Table \ref{tab:longbench-generation}. The exact dollar value changes with provider pricing, but the token reduction ratio is determined by the selection and compression strategy.
 
 \section{Discussion}
-The experiments support four observations. First, exact DP is the most reliable method when the instance size is manageable because it gives the optimum. Second, the $O(nC)$ cost becomes a real limitation as the state space grows. Third, greedy density is a strong practical heuristic because it is fast and close to optimum on the tested random instances. Fourth, value-only greedy can fail badly, even though it sounds intuitive, because it ignores weight.
+The experiments support six observations. First, exact DP is the most reliable method when the instance size is manageable because it gives the optimum. Second, the $O(nC)$ cost becomes a real limitation as the state space grows. Third, density-aware and redundancy-aware heuristics are strong practical approximations because they retain most of the value at much lower cost. Fourth, value-only greedy can fail badly, even though it sounds intuitive, because it ignores weight. Fifth, selection and compression should not be conflated: TokenPack's strongest empirical evidence comes from solving the retrieval-time budget allocation problem before any prompt-level token pruning happens. Sixth, the LongBench v2 pilot suggests that this selection-first framing can transfer from evidence-retention proxies to downstream answering, but with an important qualification: TokenPack alone preserves near-full-context accuracy at 50\% savings, whereas LongLLMLingua is slightly higher in aggregate accuracy at a similar budget. The clearer positive result is the cascade, where TokenPack-compression reaches much larger savings while keeping accuracy close to the full-context reference.
 
-For LLM context selection, these observations imply that TokenPack should not run DP over every chunk in a huge corpus. Instead, the retrieval system should first create a candidate pool using embeddings, then apply DP or density-greedy selection inside that smaller pool. This hybrid design aligns with both algorithm analysis and real LLM engineering constraints. The LLM pilot reinforces the same point: TokenPack does not make the language model itself smarter; it makes the input selection process safer and more cost-efficient.
+For LLM context selection, these observations imply that TokenPack should not run DP over every chunk in a huge corpus. Instead, the retrieval system should first create a candidate pool using embeddings, then apply DP or a strong approximation inside that smaller pool. The QASPER selector results also clarify what TokenPack is and is not proving at this stage. The current paper does not show that knapsack is the universally best retrieval rule under evidence recall. Rather, it shows that budgeted selection is the right abstraction, that solver quality and score quality are separable, and that a stronger score model is now the main limiting factor. The compression and LongBench comparisons refine the claim further: TokenPack does not make the language model itself smarter, but it selects a better evidence substrate and can improve the operating point of a downstream compressor. Prompt compression can still be valuable after selection, especially when a system must push to higher savings, yet the QASPER frontier and the LongBench cascade both suggest that selection-first pipelines are a better framing than treating compression as the only budget-control step.
 
 \section{Limitations and Future Work}
-The current results are strongest on synthetic knapsack instances and feasibility-oriented retrieval tests. A larger manually reviewed gold-evidence dataset would be needed to prove end-to-end question answering quality. The LLM answer-quality table is a pilot and should be treated as weaker than the algorithmic benchmark unless all answer rows are manually reviewed. Future work can add genetic algorithms, branch-and-bound, and FPTAS baselines. Another useful extension is to run the retrieval benchmark on manually labeled PDF questions and compare evidence recall across multiple token budgets.
+The current results are strongest on synthetic knapsack instances, evidence-oriented retrieval tests, the LLMLingua-2 comparison, and an 83-case LongBench v2 pilot. QASPER measures retention proxies rather than final human-judged answer quality, and the LongBench accuracy differences are descriptive rather than statistically significant at this sample size. The compression comparison focuses on one family of methods, uses LongLLMLingua context-level filtering rather than the full token-level compressor, and reports realized savings but not full per-document rate variance. BudgetMem is discussed as related work, but no direct numerical BudgetMem baseline is included because the study did not have an official implementation or exact reproduction artifact; the artifact includes only a BudgetMem-style feature proxy, which trails evidence-hybrid on QASPER. A larger study should add full LongLLMLingua token-level compression, a true BudgetMem reproduction if code becomes available, KV-compression baselines, more generator models, human review of disagreement cases, and learned or tuned scoring and chunk-size policies.
 
 \section{Conclusion}
-This project models LLM context selection as a 0/1 Knapsack Problem and evaluates exact and heuristic algorithms. The results show that simple retrieval approaches such as top-k do not guarantee token-budget feasibility, while knapsack-based selection strictly preserves the budget constraint. Repeated synthetic experiments confirm that DP gives optimal results for manageable instances but becomes costly as $nC$ grows. Greedy density is fast and often close to optimal, while value-only greedy may produce large accuracy gaps. Overall, the methodology is suitable because LLM context selection has the same structure as knapsack: maximize total utility under a strict capacity constraint.
-
-\section*{Acknowledgment}
-This work was prepared for the Algorithm Analysis and Design course.
+This paper models LLM context selection as a 0/1 Knapsack Problem and evaluates exact and heuristic algorithms under realistic token budgets. Exact DP is optimal but expensive, while density-aware approximations are fast and competitive. The retrieval results are intentionally nuanced: budget-top-k remains the strongest QASPER evidence-recall baseline under the current scoring function, so the paper does not claim universal knapsack dominance. Instead, the main systems finding is that retrieval-time selection and prompt compression are not interchangeable. TokenPack preserves substantially more QASPER evidence than LLMLingua-2 at matched 50\% token savings, and the TokenPack-then-LongLLMLingua cascade reaches 74.5\% LongBench context saving with only a small accuracy difference from full context. Future gains will depend on utility models better aligned with downstream answer quality.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

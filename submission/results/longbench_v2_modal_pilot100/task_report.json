@@ -1,0 +1,43 @@
+{
+  "tasks": 332,
+  "cases": 83,
+  "scanned": 503,
+  "skipped_too_short": 0,
+  "skipped_too_long": 420,
+  "source_token_window": [
+    8000,
+    24000
+  ],
+  "methods": [
+    "full-context",
+    "only-longllmlingua-rate050",
+    "tokenpack-50",
+    "tokenpack-50+longllmlingua-rate050"
+  ],
+  "per_method": {
+    "full-context": {
+      "tasks": 83,
+      "avg_source_tokens": 17645.951807228917,
+      "avg_context_tokens": 17645.951807228917,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "only-longllmlingua-rate050": {
+      "tasks": 83,
+      "avg_source_tokens": 17645.951807228917,
+      "avg_context_tokens": 8559.602409638554,
+      "avg_token_saving_vs_full": 0.5121917068872286
+    },
+    "tokenpack-50": {
+      "tasks": 83,
+      "avg_source_tokens": 17645.951807228917,
+      "avg_context_tokens": 8757.506024096385,
+      "avg_token_saving_vs_full": 0.5042754953036983
+    },
+    "tokenpack-50+longllmlingua-rate050": {
+      "tasks": 83,
+      "avg_source_tokens": 17645.951807228917,
+      "avg_context_tokens": 4485.55421686747,
+      "avg_token_saving_vs_full": 0.7447815986574947
+    }
+  }
+}

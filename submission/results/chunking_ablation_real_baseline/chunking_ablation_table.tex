@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\caption{Chunking Ablation With the Same Knapsack Solver}
+\label{tab:chunking-ablation}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\hline
+Chunker & Budget & Chunks & Avg. Tok. & Term Recall & Complete & Avg. Used & Util. \\
+\hline
+paragraph & 1\% & 146 & 665.610 & 0.365 & 0.167 & 891.000 & 0.918 \\
+paragraph & 3\% & 146 & 665.610 & 0.809 & 0.667 & 2844.417 & 0.976 \\
+paragraph & 5\% & 146 & 665.610 & 0.940 & 0.833 & 4829.000 & 0.995 \\
+semantic-threshold & 1\% & 264 & 368.061 & 0.451 & 0.250 & 965.083 & 0.994 \\
+semantic-threshold & 3\% & 264 & 368.061 & 0.699 & 0.417 & 2911.167 & 0.999 \\
+semantic-threshold & 5\% & 264 & 368.061 & 0.738 & 0.500 & 4853.000 & 1.000 \\
+structure-aware & 1\% & 146 & 665.610 & 0.365 & 0.167 & 891.000 & 0.918 \\
+structure-aware & 3\% & 146 & 665.610 & 0.809 & 0.667 & 2844.417 & 0.976 \\
+structure-aware & 5\% & 146 & 665.610 & 0.940 & 0.833 & 4829.000 & 0.995 \\
+\hline
+\end{tabular}%
+}
+\end{table}

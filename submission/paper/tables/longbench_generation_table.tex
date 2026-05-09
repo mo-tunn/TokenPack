@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\caption{LongBench v2 End-to-End Multiple-Choice Accuracy. TP denotes TokenPack; LLL denotes LongLLMLingua context-level filtering.}
+\label{tab:longbench-generation}
+\centering
+\tiny
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Method & Runs & Acc. & Avg. Ctx. & Saving \\
+\midrule
+Full context & 83 & 0.398 & 17646 & 0.000 \\
+\rowcolor{tokenpackhighlight}\textbf{TP-50} & \textbf{83} & \textbf{0.386} & \textbf{8758} & \textbf{0.504} \\
+LLL-0.50 & 83 & 0.402 & 8560 & 0.512 \\
+\rowcolor{tokenpackhighlight}\textbf{TP-50 + LLL-0.50} & \textbf{83} & \textbf{0.410} & \textbf{4486} & \textbf{0.745} \\
+\bottomrule
+\end{tabular}
+\end{table}

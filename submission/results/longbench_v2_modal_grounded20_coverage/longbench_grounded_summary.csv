@@ -1,0 +1,5 @@
+method,runs,completed,answered,accuracy,grounded_accuracy,grounding_rate,hallucination_rate,unsupported_claim_rate,strict_grounding_failure_rate,answer_supported_rate,rationale_supported_rate,quote_supports_answer_rate,quote_found_rate,quote_missing_rate,correct_but_unsupported_rate,judge_parse_failure_rate,avg_source_tokens,avg_context_tokens,avg_token_saving_vs_full,parse_failure_rate
+full-context,20,20,20,0.45,0.3,0.55,0.05,0.05,0.45,0.95,0.95,0.9,0.55,0.45,0.3333333333333333,0.0,18256.25,18256.25,0.0,0.0
+tokenpack-50,20,20,20,0.35,0.15,0.5,0.0,0.0,0.5,1.0,1.0,1.0,0.5,0.5,0.5714285714285714,0.0,18256.25,8954.2,0.5102926397314529,0.0
+only-longllmlingua-rate050,20,20,20,0.35,0.25,0.5,0.1,0.1,0.5,0.9,0.95,0.9,0.5,0.5,0.2857142857142857,0.0,18256.25,8835.05,0.5150084167378708,0.0
+tokenpack-50+longllmlingua-rate050,20,20,20,0.35,0.25,0.6,0.1,0.1,0.4,0.9,0.95,0.9,0.65,0.35,0.2857142857142857,0.0,18256.25,4576.2,0.7487885227606843,0.0

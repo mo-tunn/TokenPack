@@ -71,6 +71,7 @@ class ScoredChunk:
     weight: int
     redundancy_penalty: float = 0.0
     embedding: list[float] | None = None
+    score_components: dict[str, float] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -79,6 +80,7 @@ class ScoredChunk:
             "raw_similarity": self.raw_similarity,
             "weight": self.weight,
             "redundancy_penalty": self.redundancy_penalty,
+            "score_components": self.score_components,
         }
 
 

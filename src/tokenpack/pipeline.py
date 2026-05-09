@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tokenpack.chunking import ParagraphGroupChunker, SemanticThresholdChunker
+from tokenpack.chunking import ParagraphGroupChunker, SemanticThresholdChunker, StructureAwareChunker
 from tokenpack.embeddings import EmbeddingCache, Embedder
 from tokenpack.index import ChunkIndex, save_index
 from tokenpack.loaders import load_blocks
@@ -17,12 +17,19 @@ def ingest_path(
     max_tokens: int = 900,
     chunker_name: str = "paragraph",
     semantic_threshold: float = 0.35,
+    source_type: str = "auto",
     cache_path: str | Path | None = None,
 ) -> ChunkIndex:
-    blocks = load_blocks(source)
+    blocks = load_blocks(source, source_type=source_type)
     cache = EmbeddingCache(cache_path or Path(index_path).with_suffix(".embeddings.json"))
     if chunker_name == "paragraph":
         chunker = ParagraphGroupChunker(
+            target_tokens=target_tokens,
+            min_tokens=min_tokens,
+            max_tokens=max_tokens,
+        )
+    elif chunker_name == "structure-aware":
+        chunker = StructureAwareChunker(
             target_tokens=target_tokens,
             min_tokens=min_tokens,
             max_tokens=max_tokens,

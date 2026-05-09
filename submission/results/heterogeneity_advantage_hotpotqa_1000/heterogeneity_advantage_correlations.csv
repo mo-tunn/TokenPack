@@ -1,0 +1,13 @@
+budget,x_metric,y_metric,pearson_r,runs
+30%,chunk_token_cv,delta_supporting_fact_recall,-0.0149959706146671,1000
+30%,chunk_token_gini,delta_supporting_fact_recall,-0.0130196993789622,1000
+30%,source_tokens,delta_supporting_fact_recall,-0.000819928775637087,1000
+30%,chunk_count,delta_supporting_fact_recall,-0.0004478826458618561,1000
+40%,chunk_token_cv,delta_supporting_fact_recall,0.024056269331673846,1000
+40%,chunk_token_gini,delta_supporting_fact_recall,0.031182118260498763,1000
+40%,source_tokens,delta_supporting_fact_recall,0.07428065539887074,1000
+40%,chunk_count,delta_supporting_fact_recall,0.07947417733540083,1000
+50%,chunk_token_cv,delta_supporting_fact_recall,0.00966513259605374,1000
+50%,chunk_token_gini,delta_supporting_fact_recall,0.015568009532290362,1000
+50%,source_tokens,delta_supporting_fact_recall,0.03340173510988729,1000
+50%,chunk_count,delta_supporting_fact_recall,0.031392462952017,1000

@@ -1,0 +1,12 @@
+Use only the provided context to answer the question.
+If the context does not contain enough information, say exactly: The context is insufficient.
+Return only the final answer in 1-3 sentences.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+

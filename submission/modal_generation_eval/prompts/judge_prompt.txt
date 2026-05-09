@@ -1,0 +1,33 @@
+You are judging whether a model answer is correct and grounded for a scientific-paper QA task.
+Use the gold answer and evidence snippets as the reference.
+Do not reward unsupported claims. Do not penalize harmless wording differences.
+
+Question:
+{question}
+
+Gold answer:
+{gold_answer}
+
+Gold evidence snippets:
+{evidence}
+
+Model answer:
+{model_answer}
+
+Return only valid JSON with exactly these keys:
+{{
+  "correctness_0_2": 0, 
+  "groundedness_0_2": 0,
+  "completeness_0_2": 0,
+  "hallucination": false,
+  "insufficient_when_answerable": false,
+  "short_rationale": "one short sentence"
+}}
+
+Scoring:
+- correctness_0_2: 2 correct, 1 partially correct, 0 wrong or irrelevant.
+- groundedness_0_2: 2 fully supported by evidence, 1 partly supported, 0 unsupported.
+- completeness_0_2: 2 covers the important answer, 1 incomplete but useful, 0 missing.
+- hallucination: true if the answer adds unsupported factual content.
+- insufficient_when_answerable: true if it refuses or says insufficient despite the evidence supporting an answer.
+

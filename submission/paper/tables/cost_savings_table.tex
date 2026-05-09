@@ -1,16 +1,17 @@
 \begin{table}[!t]
-\caption{Estimated Input Cost Savings per 1M Baseline Tokens}
+\caption{Estimated Input Cost Savings From LongBench v2 Context Reduction}
 \label{tab:cost-savings}
 \centering
 \scriptsize
-\begin{tabular}{lrrr}
-\hline
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\rowcolor{tablehead}
 Method & Paid Tokens & Cost (\$) & Saving vs Full Doc \\
-\hline
-document-prefix & 453541 & 1.134 & 54.6\% \\
-full-document & 1000000 & 2.500 & 0.0\% \\
-top-k & 525504 & 1.314 & 47.4\% \\
-\rowcolor{tokenpackhighlight}\textbf{TokenPack knapsack} & 426901 & 1.067 & 57.3\% \\
-\hline
+\midrule
+Full context & 1000000 & 2.500 & 0.0\% \\
+\rowcolor{tokenpackhighlight}\textbf{TP-50} & \textbf{495725} & \textbf{1.239} & \textbf{50.4\%} \\
+LLL-0.50 & 487808 & 1.220 & 51.2\% \\
+\rowcolor{tokenpackhighlight}\textbf{TP-50 + LLL-0.50} & \textbf{255218} & \textbf{0.638} & \textbf{74.5\%} \\
+\bottomrule
 \end{tabular}
 \end{table}

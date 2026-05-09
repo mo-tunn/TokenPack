@@ -1,0 +1,18 @@
+\begin{table}[!t]
+\caption{QASPER Compression Comparison at Approximately Matched 50\% Token Saving}
+\label{tab:qasper-compression-comparison}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Method & Saving & Evidence Recall & Complete & Answer Overlap F1 & Sec. \\
+\midrule
+Only LLMLingua-2 rate=0.50 & 50.6\% & 0.714 & 0.110 & 0.010 & 6.28 \\
+\rowcolor{tokenpackhighlight}Only TokenPack & 50.9\% & 0.900 & 0.785 & 0.013 & 0.01 \\
+\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.50 & 75.8\% & 0.613 & 0.045 & 0.017 & 3.37 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

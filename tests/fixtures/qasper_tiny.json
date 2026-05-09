@@ -1,0 +1,37 @@
+[
+  {
+    "id": "paper-1",
+    "title": "Tiny QASPER Paper",
+    "full_text": {
+      "section_name": ["Introduction", "Method"],
+      "paragraphs": [
+        [
+          "The paper studies budget aware context selection for retrieval augmented generation. It compares greedy ranking with exact knapsack selection under the same value function.",
+          "The motivation is that long documents cannot always fit in a language model prompt, so selectors must respect a token budget."
+        ],
+        [
+          "The method chunks the paper, assigns every chunk a relevance value, and then selects a subset whose total token count fits the context budget.",
+          "Knapsack selection can choose several medium value chunks when one large high value chunk would consume too much budget."
+        ]
+      ]
+    },
+    "qas": {
+      "question": ["What optimization method does the paper compare with greedy ranking?"],
+      "question_id": ["q1"],
+      "answers": [
+        {
+          "answer": [
+            {
+              "unanswerable": false,
+              "extractive_spans": ["exact knapsack selection"],
+              "yes_no": null,
+              "free_form_answer": "",
+              "evidence": ["The paper studies budget aware context selection for retrieval augmented generation. It compares greedy ranking with exact knapsack selection under the same value function."],
+              "highlighted_evidence": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

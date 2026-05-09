@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\caption{QASPER Selector Evaluation With Fixed Scoring}
+\label{tab:qasper-selector}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\hline
+Selector & Budget & Avg Tok. & Evidence Recall & Complete & Answer F1 & Value & Lat. \\
+\hline
+budget-top-k & 5\% & 245.268 & 0.223 & 0.060 & 0.037 & 0.522 & 0.000 \\
+greedy-density & 5\% & 245.268 & 0.210 & 0.051 & 0.038 & 0.531 & 0.000 \\
+knapsack & 5\% & 245.268 & 0.222 & 0.058 & 0.037 & 0.553 & 0.000 \\
+budget-top-k & 10\% & 491.030 & 0.388 & 0.109 & 0.035 & 0.953 & 0.000 \\
+greedy-density & 10\% & 491.030 & 0.373 & 0.101 & 0.035 & 1.050 & 0.000 \\
+knapsack & 10\% & 491.030 & 0.388 & 0.110 & 0.036 & 1.078 & 0.000 \\
+budget-top-k & 20\% & 982.549 & 0.624 & 0.309 & 0.025 & 1.613 & 0.000 \\
+greedy-density & 20\% & 982.549 & 0.573 & 0.228 & 0.025 & 1.862 & 0.000 \\
+knapsack & 20\% & 982.549 & 0.597 & 0.259 & 0.024 & 1.906 & 0.000 \\
+\hline
+\end{tabular}%
+}
+\end{table}

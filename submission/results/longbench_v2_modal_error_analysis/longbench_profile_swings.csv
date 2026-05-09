@@ -1,0 +1,91 @@
+profile,case_id,swing,gold,evidence_hybrid_prediction,query-support_prediction,question,decision-aware_prediction,coverage_prediction
+query-support,66eae4de5a08c7b9b35dd12d,fixed_by_ablation,C,B,C,Which kind of ability is not mentioned in the essay?,,
+query-support,66ebc4af5a08c7b9b35dede0,unchanged,A,B,B,"Based on the passage, which of the following statements about the DigiRL framework's interaction with the emulator is correct?",,
+query-support,66ebd5125a08c7b9b35e0616,unchanged,C,C,C,What is the core argument of this article?,,
+query-support,66ebed525a08c7b9b35e1cb4,unchanged,B,D,D,"When Miller tried to answer the question ""should we read Heart of Darkness?"", he put forward a new concept for read ""but perform a reading in the strong sense, an active respons...",,
+query-support,66ec1e3f821e116aacb1ae7d,unchanged,D,D,D,Which of the following statements is incorrect?,,
+query-support,66ec2e2a821e116aacb1bb9f,unchanged,D,C,C,Why can VR Headset be used to help understand haptic slant adaptation in this article?,,
+query-support,66ec356a821e116aacb1c22b,unchanged,C,C,C,What do these two cases have in common?,,
+query-support,66ec3d1d821e116aacb1c622,unchanged,B,D,D,Which of the following is correct？,,
+query-support,66ec41d3821e116aacb1c874,unchanged,D,D,D,Which of the following suggestions for the new year's initiatives is correct?,,
+query-support,66ed1556821e116aacb1ea14,unchanged,A,A,A,"In terms of data classification, which types of data are introduced in the article and the method FEDHSSL mentioned in the text uses which parts of the data during the pre-train...",,
+query-support,66ed2c87821e116aacb1f149,unchanged,A,D,D,"From the table 1, with the increase of current annual income, people who is LGBT can suffer less from bullying?",,
+query-support,66ed910a821e116aacb2033b,broken_by_ablation,A,A,C,"Which following option is wrong, according to the topic ""disaster "" in the text?",,
+query-support,66f14c70821e116aacb271ee,unchanged,C,A,A,What is the difference between the datasets of the two papers?,,
+query-support,66f3918f821e116aacb2d8b7,unchanged,D,A,A,"In Calyx & Corolla's customer base, which demographic is underestimated and could lead to greater success for the company in the future?",,
+query-support,66f39aa7821e116aacb2da76,unchanged,B,D,D,"In analyzing the performance of Juan Valdez Cafés in the U.S. and Colombian markets, how did variations in consumer behavior influence Procafecol's strategic responses, and what...",,
+query-support,66f55d66821e116aacb33734,unchanged,D,D,D,"Regarding the experimental methods in this article, the following statement is correct:",,
+query-support,66f618f1bb02136c067c16f9,unchanged,D,B,B,"According to this document, which choice is true?",,
+query-support,66f78ecfbb02136c067c2f12,unchanged,B,C,C,How has the United States’ attitude toward Israel-Hezbollah conflict changed after the pager bombing attack？,,
+query-support,66f91f2cbb02136c067c4b1e,unchanged,B,D,D,Why does the mistake happen?,,
+query-support,66f958b3bb02136c067c5219,unchanged,C,C,C,"In light of the empirical data reflecting a decline in urban renewal projects involving condemnations in New York City after the Kelo decision, what can be inferred about the sh...",,
+query-support,66f9625fbb02136c067c5456,broken_by_ablation,B,B,A,"If the original audio has low clarity, after completing the audio cutting,what should I do?",,
+query-support,66fa6867bb02136c067c6b3b,unchanged,D,C,C,"Based on the press release about Sanofi's product Dupixent, how do you know about its indication treatment?",,
+query-support,66fa7f1dbb02136c067c6e6b,unchanged,D,D,D,"Based on these press releases from Sanofi regarding their pharmaceutical products, which of the following products cannot usually be used to treat blood diseases? ①ALTUVIIIO ②Du...",,
+query-support,66fbab85bb02136c067c81dc,unchanged,C,C,C,Which one is noted in all the five passages?,,
+query-support,66fcf2f2bb02136c067c9169,unchanged,B,C,C,"Based on the information provided in these news articles, which of the following conclusions regarding African clean cooking is the most reliable?",,
+query-support,66fe8eb3bb02136c067ca35f,unchanged,D,C,C,"According to the paper, what is the fundamental difference in jurisprudence between a permanently neutral state and a non-aligned state?",,
+query-support,6701cda0bb02136c067cb6eb,unchanged,A,C,C,"Why did Kamala Harris push for a second debate with Donald Trump, and what reasons did Trump give for rejecting the invitation?",,
+query-support,67040276bb02136c067cd8ae,unchanged,B,D,D,"In the context of Islamic inheritance law, where the shares of male and female heirs are predetermined, what multifaceted approaches could be adopted to reconcile the inherent g...",,
+query-support,6704a83dbb02136c067cde1b,unchanged,B,D,D,"In examining the sociocultural perspectives on literacy—specifically literacy as social practice, multiliteracies, and critical literacy—consider how each framework addresses th...",,
+query-support,6719bc01bb02136c067d43fa,unchanged,D,D,D,Which player wins the most golds in the game?,,
+decision-aware,66eae4de5a08c7b9b35dd12d,fixed_by_ablation,C,B,,Which kind of ability is not mentioned in the essay?,C,
+decision-aware,66ebc4af5a08c7b9b35dede0,unchanged,A,B,,"Based on the passage, which of the following statements about the DigiRL framework's interaction with the emulator is correct?",B,
+decision-aware,66ebd5125a08c7b9b35e0616,unchanged,C,C,,What is the core argument of this article?,C,
+decision-aware,66ebed525a08c7b9b35e1cb4,unchanged,B,D,,"When Miller tried to answer the question ""should we read Heart of Darkness?"", he put forward a new concept for read ""but perform a reading in the strong sense, an active respons...",D,
+decision-aware,66ec1e3f821e116aacb1ae7d,unchanged,D,D,,Which of the following statements is incorrect?,D,
+decision-aware,66ec2e2a821e116aacb1bb9f,unchanged,D,C,,Why can VR Headset be used to help understand haptic slant adaptation in this article?,C,
+decision-aware,66ec356a821e116aacb1c22b,unchanged,C,C,,What do these two cases have in common?,C,
+decision-aware,66ec3d1d821e116aacb1c622,unchanged,B,D,,Which of the following is correct？,D,
+decision-aware,66ec41d3821e116aacb1c874,unchanged,D,D,,Which of the following suggestions for the new year's initiatives is correct?,D,
+decision-aware,66ed1556821e116aacb1ea14,unchanged,A,A,,"In terms of data classification, which types of data are introduced in the article and the method FEDHSSL mentioned in the text uses which parts of the data during the pre-train...",A,
+decision-aware,66ed2c87821e116aacb1f149,unchanged,A,D,,"From the table 1, with the increase of current annual income, people who is LGBT can suffer less from bullying?",D,
+decision-aware,66ed910a821e116aacb2033b,broken_by_ablation,A,A,,"Which following option is wrong, according to the topic ""disaster "" in the text?",C,
+decision-aware,66f14c70821e116aacb271ee,unchanged,C,A,,What is the difference between the datasets of the two papers?,A,
+decision-aware,66f3918f821e116aacb2d8b7,unchanged,D,A,,"In Calyx & Corolla's customer base, which demographic is underestimated and could lead to greater success for the company in the future?",A,
+decision-aware,66f39aa7821e116aacb2da76,unchanged,B,D,,"In analyzing the performance of Juan Valdez Cafés in the U.S. and Colombian markets, how did variations in consumer behavior influence Procafecol's strategic responses, and what...",D,
+decision-aware,66f55d66821e116aacb33734,unchanged,D,D,,"Regarding the experimental methods in this article, the following statement is correct:",D,
+decision-aware,66f618f1bb02136c067c16f9,unchanged,D,B,,"According to this document, which choice is true?",B,
+decision-aware,66f78ecfbb02136c067c2f12,unchanged,B,C,,How has the United States’ attitude toward Israel-Hezbollah conflict changed after the pager bombing attack？,C,
+decision-aware,66f91f2cbb02136c067c4b1e,unchanged,B,D,,Why does the mistake happen?,D,
+decision-aware,66f958b3bb02136c067c5219,unchanged,C,C,,"In light of the empirical data reflecting a decline in urban renewal projects involving condemnations in New York City after the Kelo decision, what can be inferred about the sh...",C,
+decision-aware,66f9625fbb02136c067c5456,broken_by_ablation,B,B,,"If the original audio has low clarity, after completing the audio cutting,what should I do?",A,
+decision-aware,66fa6867bb02136c067c6b3b,unchanged,D,C,,"Based on the press release about Sanofi's product Dupixent, how do you know about its indication treatment?",C,
+decision-aware,66fa7f1dbb02136c067c6e6b,unchanged,D,D,,"Based on these press releases from Sanofi regarding their pharmaceutical products, which of the following products cannot usually be used to treat blood diseases? ①ALTUVIIIO ②Du...",D,
+decision-aware,66fbab85bb02136c067c81dc,unchanged,C,C,,Which one is noted in all the five passages?,C,
+decision-aware,66fcf2f2bb02136c067c9169,unchanged,B,C,,"Based on the information provided in these news articles, which of the following conclusions regarding African clean cooking is the most reliable?",C,
+decision-aware,66fe8eb3bb02136c067ca35f,unchanged,D,C,,"According to the paper, what is the fundamental difference in jurisprudence between a permanently neutral state and a non-aligned state?",C,
+decision-aware,6701cda0bb02136c067cb6eb,unchanged,A,C,,"Why did Kamala Harris push for a second debate with Donald Trump, and what reasons did Trump give for rejecting the invitation?",C,
+decision-aware,67040276bb02136c067cd8ae,unchanged,B,D,,"In the context of Islamic inheritance law, where the shares of male and female heirs are predetermined, what multifaceted approaches could be adopted to reconcile the inherent g...",D,
+decision-aware,6704a83dbb02136c067cde1b,unchanged,B,D,,"In examining the sociocultural perspectives on literacy—specifically literacy as social practice, multiliteracies, and critical literacy—consider how each framework addresses th...",D,
+decision-aware,6719bc01bb02136c067d43fa,unchanged,D,D,,Which player wins the most golds in the game?,D,
+coverage,66eae4de5a08c7b9b35dd12d,fixed_by_ablation,C,B,,Which kind of ability is not mentioned in the essay?,,C
+coverage,66ebc4af5a08c7b9b35dede0,unchanged,A,B,,"Based on the passage, which of the following statements about the DigiRL framework's interaction with the emulator is correct?",,B
+coverage,66ebd5125a08c7b9b35e0616,unchanged,C,C,,What is the core argument of this article?,,C
+coverage,66ebed525a08c7b9b35e1cb4,unchanged,B,D,,"When Miller tried to answer the question ""should we read Heart of Darkness?"", he put forward a new concept for read ""but perform a reading in the strong sense, an active respons...",,D
+coverage,66ec1e3f821e116aacb1ae7d,unchanged,D,D,,Which of the following statements is incorrect?,,D
+coverage,66ec2e2a821e116aacb1bb9f,unchanged,D,C,,Why can VR Headset be used to help understand haptic slant adaptation in this article?,,C
+coverage,66ec356a821e116aacb1c22b,broken_by_ablation,C,C,,What do these two cases have in common?,,A
+coverage,66ec3d1d821e116aacb1c622,unchanged,B,D,,Which of the following is correct？,,D
+coverage,66ec41d3821e116aacb1c874,unchanged,D,D,,Which of the following suggestions for the new year's initiatives is correct?,,D
+coverage,66ed1556821e116aacb1ea14,unchanged,A,A,,"In terms of data classification, which types of data are introduced in the article and the method FEDHSSL mentioned in the text uses which parts of the data during the pre-train...",,A
+coverage,66ed2c87821e116aacb1f149,unchanged,A,D,,"From the table 1, with the increase of current annual income, people who is LGBT can suffer less from bullying?",,D
+coverage,66ed910a821e116aacb2033b,unchanged,A,A,,"Which following option is wrong, according to the topic ""disaster "" in the text?",,A
+coverage,66f14c70821e116aacb271ee,unchanged,C,A,,What is the difference between the datasets of the two papers?,,A
+coverage,66f3918f821e116aacb2d8b7,unchanged,D,A,,"In Calyx & Corolla's customer base, which demographic is underestimated and could lead to greater success for the company in the future?",,A
+coverage,66f39aa7821e116aacb2da76,unchanged,B,D,,"In analyzing the performance of Juan Valdez Cafés in the U.S. and Colombian markets, how did variations in consumer behavior influence Procafecol's strategic responses, and what...",,D
+coverage,66f55d66821e116aacb33734,unchanged,D,D,,"Regarding the experimental methods in this article, the following statement is correct:",,D
+coverage,66f618f1bb02136c067c16f9,unchanged,D,B,,"According to this document, which choice is true?",,B
+coverage,66f78ecfbb02136c067c2f12,unchanged,B,C,,How has the United States’ attitude toward Israel-Hezbollah conflict changed after the pager bombing attack？,,C
+coverage,66f91f2cbb02136c067c4b1e,unchanged,B,D,,Why does the mistake happen?,,D
+coverage,66f958b3bb02136c067c5219,unchanged,C,C,,"In light of the empirical data reflecting a decline in urban renewal projects involving condemnations in New York City after the Kelo decision, what can be inferred about the sh...",,C
+coverage,66f9625fbb02136c067c5456,broken_by_ablation,B,B,,"If the original audio has low clarity, after completing the audio cutting,what should I do?",,A
+coverage,66fa6867bb02136c067c6b3b,unchanged,D,C,,"Based on the press release about Sanofi's product Dupixent, how do you know about its indication treatment?",,C
+coverage,66fa7f1dbb02136c067c6e6b,unchanged,D,D,,"Based on these press releases from Sanofi regarding their pharmaceutical products, which of the following products cannot usually be used to treat blood diseases? ①ALTUVIIIO ②Du...",,D
+coverage,66fbab85bb02136c067c81dc,unchanged,C,C,,Which one is noted in all the five passages?,,C
+coverage,66fcf2f2bb02136c067c9169,unchanged,B,C,,"Based on the information provided in these news articles, which of the following conclusions regarding African clean cooking is the most reliable?",,C
+coverage,66fe8eb3bb02136c067ca35f,unchanged,D,C,,"According to the paper, what is the fundamental difference in jurisprudence between a permanently neutral state and a non-aligned state?",,C
+coverage,6701cda0bb02136c067cb6eb,unchanged,A,C,,"Why did Kamala Harris push for a second debate with Donald Trump, and what reasons did Trump give for rejecting the invitation?",,C
+coverage,67040276bb02136c067cd8ae,unchanged,B,D,,"In the context of Islamic inheritance law, where the shares of male and female heirs are predetermined, what multifaceted approaches could be adopted to reconcile the inherent g...",,D
+coverage,6704a83dbb02136c067cde1b,unchanged,B,D,,"In examining the sociocultural perspectives on literacy—specifically literacy as social practice, multiliteracies, and critical literacy—consider how each framework addresses th...",,D
+coverage,6719bc01bb02136c067d43fa,unchanged,D,D,,Which player wins the most golds in the game?,,D

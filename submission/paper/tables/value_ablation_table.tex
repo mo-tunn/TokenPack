@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\caption{Value Function Ablation With Fixed Chunking and Knapsack Solver}
+\label{tab:value-ablation}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Scoring & Budget & Chunks & Avg. Tok. & Term Recall & Complete & Avg. Used & Redund. \\
+\midrule
+cosine & 1\% & 639 & 259.800 & 0.410 & 0.083 & 1652.750 & 0.021 \\
+cosine & 3\% & 639 & 259.800 & 0.811 & 0.625 & 4975.583 & 0.020 \\
+cosine & 5\% & 639 & 259.800 & 0.923 & 0.833 & 8296.958 & 0.021 \\
+hybrid & 1\% & 639 & 259.800 & 0.588 & 0.333 & 1654.792 & 0.022 \\
+hybrid & 3\% & 639 & 259.800 & 1.000 & 1.000 & 4975.500 & 0.020 \\
+hybrid & 5\% & 639 & 259.800 & 1.000 & 1.000 & 8295.833 & 0.021 \\
+evidence-hybrid & 1\% & 639 & 259.800 & 0.979 & 0.958 & 1653.833 & 0.025 \\
+evidence-hybrid & 3\% & 639 & 259.800 & 1.000 & 1.000 & 4976.417 & 0.026 \\
+evidence-hybrid & 5\% & 639 & 259.800 & 1.000 & 1.000 & 8296.583 & 0.028 \\
+knapsack-aware & 1\% & 639 & 259.800 & 0.826 & 0.708 & 1654.833 & 0.023 \\
+knapsack-aware & 3\% & 639 & 259.800 & 1.000 & 1.000 & 4975.458 & 0.021 \\
+knapsack-aware & 5\% & 639 & 259.800 & 1.000 & 1.000 & 8296.125 & 0.023 \\
+instruction-ami & 1\% & 639 & 259.800 & 0.979 & 0.958 & 1653.833 & 0.025 \\
+instruction-ami & 3\% & 639 & 259.800 & 1.000 & 1.000 & 4976.417 & 0.026 \\
+instruction-ami & 5\% & 639 & 259.800 & 1.000 & 1.000 & 8296.583 & 0.028 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

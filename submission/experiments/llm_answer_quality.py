@@ -503,7 +503,7 @@ def write_quality_table(rows: list[dict[str, Any]], path: Path) -> None:
     selected = [row for row in rows if row["strategy"] in {"document-prefix", "top-k", "knapsack"}]
     lines = [
         r"\begin{table}[!t]",
-        r"\caption{LLM Answer Quality Pilot (Review-Aware)}",
+        r"\caption{Preliminary LLM Answer Quality Pilot on 8 Human-Reviewed Questions}",
         r"\label{tab:llm-answer-quality}",
         r"\centering",
         r"\scriptsize",
@@ -515,15 +515,24 @@ def write_quality_table(rows: list[dict[str, Any]], path: Path) -> None:
     ]
     for row in selected:
         strategy = str(row["strategy"])
-        prefix = r"\rowcolor{tokenpackhighlight}" if strategy == "knapsack" else ""
-        strategy_text = r"\textbf{TokenPack knapsack}" if strategy == "knapsack" else strategy
+        prefix = ""
+        strategy_text = "TokenPack knapsack" if strategy == "knapsack" else strategy
         score = "--" if row["avg_score"] is None else f"{float(row['avg_score']):.2f}"
         lines.append(
             f"{prefix}{row['model_label']} & {strategy_text} & {row['completed']} & "
             f"{row['invalid_over_budget']} & {float(row['avg_context_tokens']):.1f} & "
             f"{score} & {row['score_source']} \\\\"
         )
-    lines.extend([r"\hline", r"\end{tabular}%", r"}", r"\end{table}", ""])
+    lines.extend(
+        [
+            r"\hline",
+            r"\end{tabular}%",
+            r"}",
+            r"{\footnotesize Descriptive only: this pilot covers eight reviewed questions and uses automatic lexical scoring, so it is not used for the paper's main claims.}",
+            r"\end{table}",
+            "",
+        ]
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
 

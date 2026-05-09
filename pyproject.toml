@@ -13,8 +13,12 @@ dependencies = []
 
 [project.optional-dependencies]
 embeddings = ["sentence-transformers>=3.0.0"]
+reranking = ["sentence-transformers>=3.0.0"]
 pdf = ["PyMuPDF>=1.24.0", "pypdf>=4.0.0"]
 tokens = ["tiktoken>=0.7.0"]
+ami = ["torch>=2.2.0", "transformers>=4.40.0"]
+compression = ["llmlingua>=0.2.2"]
+modal = ["modal>=0.64.0", "pandas>=2.0.0"]
 dev = ["pytest>=8.0.0"]
 
 [project.scripts]

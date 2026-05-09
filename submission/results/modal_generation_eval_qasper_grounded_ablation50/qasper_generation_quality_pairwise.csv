@@ -1,0 +1,9 @@
+baseline,compared,tokenpack_wins,ties,tokenpack_losses,tokenpack_win_rate
+full-document,0,0,0,0,0.0
+budget-top-k-50,0,0,0,0,0.0
+tokenpack-score-sorted-50,0,0,0,0,0.0
+tokenpack-density-sorted-50,0,0,0,0,0.0
+tokenpack-score-sorted-strong-50,0,0,0,0,0.0
+tokenpack-score-sorted-grounded-50,0,0,0,0,0.0
+tokenpack-score-sorted-extractive-50,0,0,0,0,0.0
+only-llmlingua2-rate050,0,0,0,0,0.0

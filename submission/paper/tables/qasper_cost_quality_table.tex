@@ -1,0 +1,21 @@
+\begin{table}[!t]
+\caption{QASPER Cost-Quality Proxy Under Reduced Context Budgets}
+\label{tab:qasper-cost-quality}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Selector & Budget & Used Tok. & Saving & Ans. vs 100 & Ev. vs 100 & Preserved \\
+\midrule
+\textit{budget-top-k} & 50\% & 2405 & 51.4\% & 0.921 & 0.902 & 0.759 \\
+\rowcolor{tokenpackhighlight}TokenPack knapsack-redundancy & 50\% & 2429 & 50.9\% & 0.914 & 0.896 & 0.735 \\
+\textit{budget-top-k} & 70\% & 3382 & 31.5\% & 0.967 & 0.960 & 0.878 \\
+\rowcolor{tokenpackhighlight}TokenPack knapsack-redundancy & 70\% & 3403 & 31.1\% & 0.971 & 0.960 & 0.892 \\
+\textit{budget-top-k} & 80\% & 3864 & 21.8\% & 0.978 & 0.975 & 0.926 \\
+\rowcolor{tokenpackhighlight}TokenPack knapsack-redundancy & 80\% & 3883 & 21.4\% & 0.981 & 0.978 & 0.925 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

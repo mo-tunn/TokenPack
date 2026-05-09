@@ -1,0 +1,5 @@
+method,runs,completed,judged,avg_context_tokens,avg_answer_tokens,avg_judge_score,correct_rate,grounded_rate,hallucination_rate,insufficient_rate,parse_failure_rate
+full-document,5,5,2,5271.6,96.4,0.0,0.0,0.0,0.0,0.0,0.6
+budget-top-k-50,5,5,4,2602.2,104.8,1.3333333333333335,0.75,0.75,0.0,0.0,0.19999999999999996
+tokenpack-50,5,5,2,2598.6,112.8,1.0,0.5,0.5,0.0,0.0,0.6
+only-llmlingua2-rate050,5,5,1,2664.2,92.2,2.0,1.0,1.0,0.0,0.0,0.8

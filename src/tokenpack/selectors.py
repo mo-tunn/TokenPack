@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import math
+import re
 import time
+from dataclasses import replace
 
 from tokenpack.embeddings import cosine
 from tokenpack.models import ScoredChunk, SelectionResult
@@ -16,22 +18,59 @@ def select_chunks(
     mmr_lambda: float = 0.75,
     token_granularity: int = 1,
     embeddings: list[list[float]] | None = None,
+    coverage_query: str | None = None,
 ) -> SelectionResult:
     started = time.perf_counter()
     filtered = _filtered_candidates(scored, relevance_threshold)
-    candidates = _candidate_pool(filtered, candidate_pool)
     if strategy == "document-prefix":
+        candidates = _candidate_pool(filtered, candidate_pool)
         selected = _document_prefix(filtered, budget)
     elif strategy == "full-document":
+        candidates = _candidate_pool(filtered, candidate_pool)
         selected = _full_document(filtered)
     elif strategy == "top-k":
+        candidates = _candidate_pool(filtered, candidate_pool)
         selected = _top_k(candidates)
     elif strategy == "budget-top-k":
+        candidates = _candidate_pool(filtered, candidate_pool)
         selected = _budget_top_k(candidates, budget)
+    elif strategy == "greedy-value":
+        candidates = _candidate_pool(filtered, candidate_pool)
+        selected = _greedy_value(candidates, budget)
+    elif strategy == "greedy-density":
+        candidates = _candidate_pool(filtered, candidate_pool)
+        selected = _greedy_density(candidates, budget)
     elif strategy == "mmr":
+        candidates = _candidate_pool(filtered, candidate_pool)
         selected = _mmr(candidates, budget, embeddings=embeddings, mmr_lambda=mmr_lambda)
-    elif strategy in {"knapsack", "knapsack-redundancy"}:
+    elif strategy == "knapsack":
+        candidates = _knapsack_candidate_pool(filtered, candidate_pool)
         selected = _knapsack(candidates, budget, token_granularity=token_granularity)
+    elif strategy == "knapsack-redundancy":
+        candidates = _knapsack_candidate_pool(filtered, candidate_pool)
+        selected = _knapsack(
+            _redundancy_adjusted_candidates(candidates, penalty_strength=1.0 - mmr_lambda),
+            budget,
+            token_granularity=token_granularity,
+        )
+    elif strategy == "knapsack-coverage":
+        candidates = _knapsack_candidate_pool(filtered, candidate_pool)
+        selected = _coverage_greedy(
+            _redundancy_adjusted_candidates(candidates, penalty_strength=1.0 - mmr_lambda),
+            budget,
+            coverage_query=coverage_query,
+        )
+    elif strategy == "knapsack-augment":
+        value_candidates = _candidate_pool(filtered, candidate_pool)
+        seed = _budget_top_k(value_candidates, budget)
+        used = sum(item.weight for item in seed)
+        seed_ids = {item.chunk.id for item in seed}
+        remaining = [
+            item
+            for item in _knapsack_candidate_pool(filtered, candidate_pool)
+            if item.chunk.id not in seed_ids
+        ]
+        selected = [*seed, *_knapsack(remaining, budget - used, token_granularity=token_granularity)]
     else:
         raise ValueError(f"Unknown selection strategy: {strategy}")
     selected = sorted(selected, key=lambda item: item.chunk.order_key)
@@ -54,6 +93,51 @@ def _candidate_pool(scored: list[ScoredChunk], candidate_pool: int) -> list[Scor
     return sorted(scored, key=lambda item: item.value, reverse=True)[:candidate_pool]
 
 
+def _knapsack_candidate_pool(scored: list[ScoredChunk], candidate_pool: int) -> list[ScoredChunk]:
+    value_pool = _candidate_pool(scored, candidate_pool)
+    density_pool = sorted(
+        scored,
+        key=lambda item: item.value / math.sqrt(max(1, item.weight)),
+        reverse=True,
+    )[:candidate_pool]
+    by_id: dict[str, ScoredChunk] = {}
+    for item in [*value_pool, *density_pool]:
+        by_id.setdefault(item.chunk.id, item)
+    return sorted(by_id.values(), key=lambda item: item.value, reverse=True)
+
+
+def _redundancy_adjusted_candidates(
+    candidates: list[ScoredChunk],
+    penalty_strength: float,
+) -> list[ScoredChunk]:
+    ranked = sorted(candidates, key=lambda item: item.value, reverse=True)
+    adjusted: list[ScoredChunk] = []
+    stronger: list[ScoredChunk] = []
+    strength = min(1.0, max(0.0, penalty_strength))
+    for item in ranked:
+        overlap = 0.0
+        if item.embedding is not None and stronger:
+            overlap = max(
+                max(0.0, cosine(item.embedding, previous.embedding or []))
+                for previous in stronger
+            )
+        penalty = strength * overlap
+        clone = replace(
+            item,
+            value=max(0.0, item.value * (1.0 - penalty)),
+            redundancy_penalty=penalty,
+            score_components={
+                **item.score_components,
+                "selector_redundancy_overlap": overlap,
+                "selector_redundancy_penalty": penalty,
+                "selector_novelty": 1.0 - overlap,
+            },
+        )
+        adjusted.append(clone)
+        stronger.append(item)
+    return sorted(adjusted, key=lambda item: item.value, reverse=True)
+
+
 def _document_prefix(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:
     selected: list[ScoredChunk] = []
     used = 0
@@ -74,9 +158,21 @@ def _top_k(candidates: list[ScoredChunk], k: int = 5) -> list[ScoredChunk]:
 
 
 def _budget_top_k(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:
+    return _greedy_by(candidates, budget, key=lambda item: item.value)
+
+
+def _greedy_value(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:
+    return _greedy_by(candidates, budget, key=lambda item: item.value)
+
+
+def _greedy_density(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:
+    return _greedy_by(candidates, budget, key=lambda item: item.value / max(1, item.weight))
+
+
+def _greedy_by(candidates: list[ScoredChunk], budget: int, key) -> list[ScoredChunk]:
     selected: list[ScoredChunk] = []
     used = 0
-    for item in candidates:
+    for item in sorted(candidates, key=key, reverse=True):
         if used + item.weight <= budget:
             selected.append(item)
             used += item.weight
@@ -151,4 +247,103 @@ def _knapsack(
             selected.append(candidates[item_index])
             token_budget -= weights[item_index]
     return list(reversed(selected))
+
+
+_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}")
+_STOPWORDS = {
+    "about",
+    "after",
+    "also",
+    "and",
+    "are",
+    "because",
+    "been",
+    "between",
+    "both",
+    "can",
+    "does",
+    "from",
+    "have",
+    "how",
+    "into",
+    "its",
+    "may",
+    "more",
+    "not",
+    "only",
+    "our",
+    "that",
+    "the",
+    "their",
+    "these",
+    "this",
+    "through",
+    "using",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "while",
+    "with",
+}
+
+
+def _coverage_greedy(
+    candidates: list[ScoredChunk],
+    budget: int,
+    *,
+    coverage_query: str | None,
+) -> list[ScoredChunk]:
+    if budget <= 0 or not candidates:
+        return []
+    query_terms = _content_terms(coverage_query or "")
+    selected: list[ScoredChunk] = []
+    selected_ids: set[str] = set()
+    covered_terms: set[str] = set()
+    used = 0
+
+    while True:
+        best_item: ScoredChunk | None = None
+        best_score = -math.inf
+        for item in candidates:
+            if item.chunk.id in selected_ids or used + item.weight > budget:
+                continue
+            item_terms = _content_terms(item.chunk.text)
+            new_terms = item_terms & query_terms - covered_terms
+            query_bonus = len(new_terms) / max(1, len(query_terms)) if query_terms else 0.0
+            support_bonus = max(
+                float(item.score_components.get("query_coverage", 0.0)),
+                float(item.score_components.get("support_likelihood", 0.0)),
+            )
+            novelty = float(item.score_components.get("selector_novelty", 1.0))
+            adjusted_value = item.value * (0.80 + 0.20 * novelty) + 0.20 * query_bonus + 0.05 * support_bonus
+            score = adjusted_value / math.sqrt(max(1, item.weight))
+            if score > best_score:
+                best_score = score
+                best_item = replace(
+                    item,
+                    value=max(0.0, adjusted_value),
+                    score_components={
+                        **item.score_components,
+                        "selector_query_coverage_bonus": query_bonus,
+                        "selector_support_bonus": support_bonus,
+                    },
+                )
+        if best_item is None:
+            break
+        selected.append(best_item)
+        selected_ids.add(best_item.chunk.id)
+        covered_terms.update(_content_terms(best_item.chunk.text) & query_terms)
+        used += best_item.weight
+    return selected
+
+
+def _content_terms(text: str) -> set[str]:
+    return {
+        match.group(0).lower()
+        for match in _TOKEN_RE.finditer(text)
+        if match.group(0).lower() not in _STOPWORDS
+    }
 

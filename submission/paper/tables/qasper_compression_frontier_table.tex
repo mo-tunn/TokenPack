@@ -1,0 +1,21 @@
+\begin{table}[!t]
+\caption{Compression Frontier on QASPER (All Rows Use 200 Questions)}
+\label{tab:qasper-compression-frontier}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Method & Saving & Evidence Recall & Answer Overlap F1 & Run \\
+\midrule
+Only LLMLingua-2 rate=0.50 & 50.6\% & 0.714 & 0.010 & current-200q \\
+\rowcolor{tokenpackhighlight}Only TokenPack & 50.9\% & 0.900 & 0.013 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.85 & 58.3\% & 0.823 & 0.014 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.75 & 63.4\% & 0.765 & 0.014 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.50 & 75.8\% & 0.613 & 0.017 & current-200q \\
+\bottomrule
+\end{tabular}%
+}
+{\footnotesize Run notes: all rows are refreshed \textit{current-200q} runs on the same 200-question split.}
+\end{table}

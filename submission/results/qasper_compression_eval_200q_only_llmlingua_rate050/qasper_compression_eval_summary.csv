@@ -1,0 +1,2 @@
+strategy,budget,runs,avg_selected_tokens,avg_compressed_tokens,selection_saving_vs_full,compression_saving_vs_selected,total_saving_vs_full,selected_evidence_recall,compressed_evidence_recall,evidence_recall_delta_after_compression,selected_answer_token_f1,compressed_answer_token_f1,answer_token_f1_delta_after_compression,avg_compression_seconds
+full-document,100%,200,4706.3,2333.97,-0.0005367403954469497,0.5056752257378578,0.5054132134981411,1.0,0.7141487685293174,-0.2858512314706826,0.007175945555989476,0.010204986416408775,0.0030290408604192985,6.349692708500515

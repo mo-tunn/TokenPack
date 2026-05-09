@@ -1,0 +1,15 @@
+Use only the provided context to answer the question.
+Prefer the shortest directly supported phrase or sentence from the context.
+Paraphrase only when necessary to make the answer grammatical.
+Do not add explanations, background facts, or details not stated in the context.
+If the context supports only a partial answer, return that partial answer.
+Say exactly "The context is insufficient." only when no relevant answer span appears in the context.
+Return only the final answer in 1 sentence when possible.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
