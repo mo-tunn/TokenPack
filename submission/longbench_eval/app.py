@@ -112,6 +112,7 @@ def run_eval_shard(
     model_id: str = DEFAULT_MODEL_ID,
     max_answer_tokens: int = 8,
     batch_size: int = 2,
+    latency_mode: bool = False,
 ) -> dict[str, Any]:
     llm = _get_llm(model_id)
 
@@ -119,14 +120,19 @@ def run_eval_shard(
 
     params = SamplingParams(temperature=0.0, max_tokens=max_answer_tokens)
     prompts = [render_mc_prompt(task) for task in tasks]
-    started = time.perf_counter()
-    outputs = _generate_texts(llm, prompts, params, batch_size=batch_size)
-    elapsed = time.perf_counter() - started
+    if latency_mode:
+        outputs, answer_latencies = _generate_texts_with_latencies(llm, prompts, params)
+    else:
+        started = time.perf_counter()
+        outputs = _generate_texts(llm, prompts, params, batch_size=batch_size)
+        elapsed = time.perf_counter() - started
+        answer_latencies = [elapsed / max(1, len(tasks)) for _ in tasks]
 
     rows: list[dict[str, Any]] = []
-    for task, raw in zip(tasks, outputs):
+    for task, raw, answer_latency in zip(tasks, outputs, answer_latencies):
         prediction = parse_choice(raw)
         gold = str(task.get("answer") or "").strip().upper()
+        preprocessing_seconds = float(task.get("selection_seconds") or 0.0) + float(task.get("compression_seconds") or 0.0)
         rows.append(
             {
                 **{key: value for key, value in task.items() if key != "context"},
@@ -135,7 +141,10 @@ def run_eval_shard(
                 "raw_answer": raw,
                 "prediction": prediction,
                 "correct": bool(prediction and prediction == gold),
-                "answer_latency_seconds": elapsed / max(1, len(tasks)),
+                "answer_latency_seconds": answer_latency,
+                "preprocessing_seconds": preprocessing_seconds,
+                "total_latency_seconds": preprocessing_seconds + answer_latency,
+                "latency_mode": latency_mode,
             }
         )
 
@@ -237,6 +246,7 @@ def run(
     shard_size: int = 80,
     max_answer_tokens: int = 8,
     batch_size: int = 2,
+    latency_mode: bool = False,
 ) -> None:
     tasks = read_jsonl(Path(tasks_jsonl))
     shards = [tasks[index : index + shard_size] for index in range(0, len(tasks), shard_size)]
@@ -249,6 +259,7 @@ def run(
             "model_id": model_id,
             "max_answer_tokens": max_answer_tokens,
             "batch_size": batch_size,
+            "latency_mode": latency_mode,
         },
         order_outputs=True,
     ):
@@ -334,6 +345,7 @@ def build_and_run(
     cascade_frontier: bool = False,
     shard_size: int = 80,
     batch_size: int = 2,
+    latency_mode: bool = False,
     model_id: str = DEFAULT_MODEL_ID,
 ) -> None:
     output_path = Path(output_dir)
@@ -388,6 +400,7 @@ def build_and_run(
             "model_id": model_id,
             "max_answer_tokens": 8,
             "batch_size": batch_size,
+            "latency_mode": latency_mode,
         },
         order_outputs=True,
     ):
@@ -438,6 +451,17 @@ def _generate_texts(llm: Any, prompts: list[str], params: Any, *, batch_size: in
     return texts
 
 
+def _generate_texts_with_latencies(llm: Any, prompts: list[str], params: Any) -> tuple[list[str], list[float]]:
+    texts: list[str] = []
+    latencies: list[float] = []
+    for prompt in prompts:
+        started = time.perf_counter()
+        outputs = llm.generate([prompt], params)
+        latencies.append(time.perf_counter() - started)
+        texts.extend(_first_output(output) for output in outputs)
+    return texts, latencies
+
+
 def _first_output(output: Any) -> str:
     generations = getattr(output, "outputs", None) or []
     if not generations:
@@ -449,13 +473,18 @@ def _write_readout(summary: list[dict[str, Any]], pairwise: list[dict[str, Any]]
     lines = [
         "# LongBench v2 Modal Pilot Readout",
         "",
-        "| Method | Runs | Accuracy | Avg context toks | Saving | Parse fail |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Method | Runs | Accuracy | Avg context toks | Saving | Prep s | LLM s | Total s | P90 s | Speedup | Parse fail |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in summary:
         lines.append(
             f"| {row['method']} | {int(row['runs'])} | {float(row['accuracy']):.3f} | "
             f"{float(row['avg_context_tokens']):.0f} | {float(row['avg_token_saving_vs_full']):.3f} | "
+            f"{float(row.get('avg_preprocessing_seconds', 0.0)):.3f} | "
+            f"{float(row.get('avg_answer_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('avg_total_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('p90_total_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('speedup_vs_full', 0.0)):.2f}x | "
             f"{float(row['parse_failure_rate']):.3f} |"
         )
     lines.extend(["", "## Pairwise vs LongLLMLingua", "", "| Method | Compared | Win | Tie | Loss |", "|---|---:|---:|---:|---:|"])

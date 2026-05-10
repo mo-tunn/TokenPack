@@ -256,6 +256,10 @@ Table \ref{tab:qasper-compression-frontier} extends the comparison to stronger s
 
 Table \ref{tab:longbench-generation} adds an end-to-end long-context generation view. Unlike the QASPER compression tables, this experiment measures final multiple-choice correctness rather than evidence-retention proxies. On 83 eligible LongBench v2 cases, full-context prompting reaches 0.398 accuracy, TokenPack reaches 0.386 at roughly half the input size, and the context-level LongLLMLingua baseline is slightly higher at 0.402. These 0.386--0.410 differences are small relative to the roughly $\pm$0.11 binomial uncertainty of an 83-case pilot, so the table should not be read as a statistically significant win for any single method. The clearer systems signal is the cascade: TokenPack followed by LongLLMLingua reaches 74.5\% saving while retaining 0.410 accuracy.
 
+\input{tables/longbench_latency_table.tex}
+
+Table \ref{tab:longbench-latency} reruns the same 83-case LongBench v2 setting with batch size one to measure hot-model wall-clock latency per request. The measurement excludes Modal cold start and model loading, but includes the TokenPack selection and LongLLMLingua preprocessing time that occurs before the answer request. TokenPack alone reduces mean total latency from 4.106s to 2.184s, a 1.88$\times$ speedup. The TokenPack-then-LongLLMLingua cascade reduces the final context to 4,486 tokens on average and reaches 1.124s mean total latency, a 3.65$\times$ speedup over full-context prompting.
+
 \input{tables/cost_savings_table.tex}
 
 \begin{figure}[!t]

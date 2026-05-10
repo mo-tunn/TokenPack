@@ -93,6 +93,11 @@ def main() -> int:
     parser.add_argument("--run-modal", action="store_true")
     parser.add_argument("--shard-size", type=int, default=80)
     parser.add_argument("--batch-size", type=int, default=2)
+    parser.add_argument(
+        "--latency-mode",
+        action="store_true",
+        help="Run Modal generation one prompt at a time and record per-request wall-clock latency.",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -125,6 +130,8 @@ def main() -> int:
         "--batch-size",
         str(args.batch_size),
     ]
+    if args.latency_mode:
+        modal_command.append("--latency-mode")
     if args.run_modal:
         env = dict(**{key: value for key, value in __import__("os").environ.items()}, PYTHONIOENCODING="utf-8")
         subprocess.run(modal_command, check=True, env=env)
@@ -641,13 +648,18 @@ def _write_readout(summary: list[dict[str, Any]], pairwise: list[dict[str, Any]]
     lines = [
         "# LongBench v2 Pilot Readout",
         "",
-        "| Method | Runs | Accuracy | Avg context toks | Saving | Parse fail |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Method | Runs | Accuracy | Avg context toks | Saving | Prep s | LLM s | Total s | P90 s | Speedup | Parse fail |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in summary:
         lines.append(
             f"| {row['method']} | {int(row['runs'])} | {float(row['accuracy']):.3f} | "
             f"{float(row['avg_context_tokens']):.0f} | {float(row['avg_token_saving_vs_full']):.3f} | "
+            f"{float(row.get('avg_preprocessing_seconds', 0.0)):.3f} | "
+            f"{float(row.get('avg_answer_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('avg_total_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('p90_total_latency_seconds', 0.0)):.3f} | "
+            f"{float(row.get('speedup_vs_full', 0.0)):.2f}x | "
             f"{float(row['parse_failure_rate']):.3f} |"
         )
     lines.extend(["", "## Pairwise vs LongLLMLingua", "", "| Method | Compared | Win | Tie | Loss |", "|---|---:|---:|---:|---:|"])

@@ -219,6 +219,10 @@ submission/modal_generation_eval/  Modal QASPER generation/judge harness
 - BudgetMem is discussed as related work; this repo includes a `budgetmem-style` feature proxy, not a direct BudgetMem reproduction.
 - The default CLI mode is optimized for the current paper setting. Use explicit flags for ablations.
 
+## License
+
+TokenPack is licensed under the Business Source License 1.1. See [`LICENSE`](LICENSE).
+
 ## Citation
 
 If you use TokenPack in research, cite the paper PDF in [`submission/TokenPack-paper.pdf`](submission/TokenPack-paper.pdf). A BibTeX entry will be added when the public preprint is available.

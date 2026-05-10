@@ -172,11 +172,14 @@ def summarize_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
         grouped.setdefault(str(row.get("method")), []).append(row)
+    full_total_latency = _mean(_row_total_latency(row) for row in grouped.get("full-context", []))
     summary: list[dict[str, Any]] = []
     for method in METHODS:
         group = grouped.get(method, [])
         completed = [row for row in group if row.get("status") == "completed"]
         answered = [row for row in completed if row.get("prediction")]
+        total_latencies = [_row_total_latency(row) for row in completed]
+        avg_total_latency = _mean(total_latencies)
         summary.append(
             {
                 "method": method,
@@ -187,6 +190,12 @@ def summarize_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "avg_source_tokens": _mean(row.get("source_tokens") for row in group),
                 "avg_context_tokens": _mean(row.get("context_tokens") for row in group),
                 "avg_token_saving_vs_full": _mean(row.get("token_saving_vs_full") for row in group),
+                "avg_preprocessing_seconds": _mean(_row_preprocessing_latency(row) for row in completed),
+                "avg_answer_latency_seconds": _mean(row.get("answer_latency_seconds") for row in completed),
+                "avg_total_latency_seconds": avg_total_latency,
+                "p50_total_latency_seconds": _percentile(total_latencies, 0.50),
+                "p90_total_latency_seconds": _percentile(total_latencies, 0.90),
+                "speedup_vs_full": full_total_latency / avg_total_latency if avg_total_latency > 0 else 0.0,
                 "parse_failure_rate": 1.0 - (len(answered) / len(completed)) if completed else 0.0,
             }
         )
@@ -329,6 +338,41 @@ def _mean(values: Iterable[Any]) -> float:
         except (TypeError, ValueError):
             continue
     return sum(numeric) / len(numeric) if numeric else 0.0
+
+
+def _percentile(values: Iterable[Any], q: float) -> float:
+    numeric: list[float] = []
+    for value in values:
+        if value in ("", None):
+            continue
+        try:
+            numeric.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    numeric.sort()
+    if not numeric:
+        return 0.0
+    if len(numeric) == 1:
+        return numeric[0]
+    position = (len(numeric) - 1) * q
+    lower = int(position)
+    upper = min(lower + 1, len(numeric) - 1)
+    fraction = position - lower
+    return numeric[lower] * (1.0 - fraction) + numeric[upper] * fraction
+
+
+def _row_preprocessing_latency(row: dict[str, Any]) -> float:
+    explicit = row.get("preprocessing_seconds")
+    if explicit not in ("", None):
+        return float(explicit)
+    return float(row.get("selection_seconds") or 0.0) + float(row.get("compression_seconds") or 0.0)
+
+
+def _row_total_latency(row: dict[str, Any]) -> float:
+    explicit = row.get("total_latency_seconds")
+    if explicit not in ("", None):
+        return float(explicit)
+    return _row_preprocessing_latency(row) + float(row.get("answer_latency_seconds") or 0.0)
 
 
 def _is_hallucinated(row: dict[str, Any]) -> bool:
