@@ -32,7 +32,7 @@ structure-aware semantic chunks + evidence-hybrid scoring + hybrid-greedy packin
 ```
 
 <p align="center">
-  <img src="assets/tokenpack-headline-result.png" alt="TokenPack + LongLLMLingua saves 74.6% context tokens with a +15.6% relative pilot accuracy lift over full context">
+  <img src="assets/tokenpack-headline-result.png" alt="TokenPack + LongLLMLingua saves 74.6% context tokens, keeps a +15.6% relative pilot lift, gives a 3.90x latency speedup, and saves about $1.86 per 1M input tokens">
 </p>
 
 ## Why Use It
@@ -115,7 +115,7 @@ tokenpack-rag pack paper.pdf \
   --overwrite
 ```
 
-This is the setup behind the headline result: about **74.6% context-token saving** in the LongBench v2 pilot while retaining TokenPack's **+15.6% relative pilot lift** over full-context prompting. It requires the `compression` extra and a local/cached compression model unless you intentionally add `--allow-download`.
+This is the setup behind the headline result: about **74.6% context-token saving**, **3.90x mean-latency speedup**, and roughly **$1.86 saved per 1M input tokens** at the paper's illustrative `$2.50 / 1M input tokens` price, while retaining TokenPack's **+15.6% relative pilot lift** over full-context prompting. It requires the `compression` extra and a local/cached compression model unless you intentionally add `--allow-download`.
 
 **Folder pack**
 
@@ -160,6 +160,8 @@ The output is a packed Markdown context file, not a modified PDF. You can paste 
 | Selection + compression | TokenPack + LLMLingua-2 reaches 58.4% context saving while keeping 85.1% of required evidence. |
 | Pilot answer accuracy | On an 83-case LongBench v2 pilot, TokenPack improves relative accuracy by 15.6% over full-context prompting while saving 50.6% context. |
 | Aggressive cascade | TokenPack + LongLLMLingua reaches 74.6% context saving while retaining TokenPack's +15.6% relative pilot lift over full context. |
+| Latency impact | The same cascade reduces mean total latency from 4.140s to 1.060s, a 3.90x speedup in the pilot. |
+| Cost-scale example | At the paper's illustrative $2.50 per 1M input-token price, the cascade reduces 1M paid input tokens to about 254k, saving about $1.86. |
 
 </details>
 
