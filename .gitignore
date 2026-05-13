@@ -44,3 +44,6 @@ htmlcov/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local source copy for README asset generation; committed copy lives in assets/.
+/tokenpack-logo.png

@@ -1,0 +1,17 @@
+TokenPack-RAG is a context packing tool for long-document question answering.
+It chunks a source document, scores each chunk against a user query, and selects
+the highest-utility evidence that fits inside a token budget.
+
+The default workflow is local and selection-first. It does not call an LLM API
+when creating the packed context file. The output is a Markdown file that can be
+given to a downstream chat model or retrieval system.
+
+Auto budget mode estimates the source token count, keeps about half of the
+source by default, clamps the total budget between 1,200 and 64,000 tokens, and
+reserves a small portion for the downstream answer.
+
+The main selector is hybrid-greedy. It keeps the production behavior fast while
+still respecting a strict token budget.
+
+LLMLingua compression is optional. When enabled, TokenPack-RAG first selects the
+most useful evidence and then compresses only that selected context.
