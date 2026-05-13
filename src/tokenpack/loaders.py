@@ -1,14 +1,74 @@
 from __future__ import annotations
 
 import ast
+import csv
+import json
 import re
+from html.parser import HTMLParser
 from pathlib import Path
 
 from tokenpack.models import TextBlock
 
-SUPPORTED_TEXT_EXTENSIONS = {".txt", ".md", ".markdown"}
-SUPPORTED_CODE_EXTENSIONS = {".py", ".js", ".jsx", ".ts", ".tsx", ".java", ".go", ".rs", ".cpp", ".c", ".h"}
-SUPPORTED_EXTENSIONS = SUPPORTED_TEXT_EXTENSIONS | SUPPORTED_CODE_EXTENSIONS | {".pdf"}
+SUPPORTED_TEXT_EXTENSIONS = {
+    ".txt",
+    ".text",
+    ".md",
+    ".markdown",
+    ".rst",
+    ".adoc",
+    ".tex",
+    ".log",
+}
+SUPPORTED_HTML_EXTENSIONS = {".html", ".htm"}
+SUPPORTED_STRUCTURED_EXTENSIONS = {".json", ".jsonl", ".csv", ".tsv", ".yaml", ".yml", ".toml"}
+SUPPORTED_OFFICE_EXTENSIONS = {".docx", ".pptx", ".xlsx"}
+SUPPORTED_CODE_EXTENSIONS = {
+    ".py",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".mjs",
+    ".cjs",
+    ".vue",
+    ".svelte",
+    ".java",
+    ".go",
+    ".rs",
+    ".cpp",
+    ".cc",
+    ".cxx",
+    ".c",
+    ".h",
+    ".hpp",
+    ".cs",
+    ".php",
+    ".rb",
+    ".swift",
+    ".kt",
+    ".kts",
+    ".scala",
+    ".sh",
+    ".bash",
+    ".zsh",
+    ".ps1",
+    ".r",
+    ".lua",
+    ".dart",
+    ".sql",
+    ".css",
+    ".scss",
+    ".less",
+    ".xml",
+}
+SUPPORTED_EXTENSIONS = (
+    SUPPORTED_TEXT_EXTENSIONS
+    | SUPPORTED_HTML_EXTENSIONS
+    | SUPPORTED_STRUCTURED_EXTENSIONS
+    | SUPPORTED_OFFICE_EXTENSIONS
+    | SUPPORTED_CODE_EXTENSIONS
+    | {".pdf"}
+)
 SOURCE_TYPES = {"auto", "document", "code", "mixed"}
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 CODE_HINT_RE = re.compile(
@@ -33,18 +93,223 @@ def load_blocks(path: str | Path, source_type: str = "auto") -> list[TextBlock]:
     files = iter_supported_files(path, source_type=source_type)
     blocks: list[TextBlock] = []
     for document_index, file_path in enumerate(files):
-        if file_path.suffix.lower() == ".pdf":
+        suffix = file_path.suffix.lower()
+        if suffix == ".pdf":
             blocks.extend(load_pdf_blocks(file_path, document_index))
-        elif file_path.suffix.lower() in SUPPORTED_CODE_EXTENSIONS:
+        elif suffix in SUPPORTED_HTML_EXTENSIONS:
+            blocks.extend(load_html_blocks(file_path, document_index))
+        elif suffix in {".json", ".jsonl"}:
+            blocks.extend(load_json_blocks(file_path, document_index))
+        elif suffix in {".csv", ".tsv"}:
+            blocks.extend(load_csv_blocks(file_path, document_index))
+        elif suffix in SUPPORTED_OFFICE_EXTENSIONS:
+            blocks.extend(load_office_blocks(file_path, document_index))
+        elif suffix in SUPPORTED_CODE_EXTENSIONS:
             blocks.extend(load_code_blocks(file_path, document_index))
+        elif suffix in {".yaml", ".yml", ".toml"}:
+            blocks.extend(
+                load_text_blocks(
+                    file_path,
+                    document_index,
+                    source_format=suffix.lstrip(".") or "structured",
+                    content_type="structured",
+                )
+            )
         else:
-            blocks.extend(load_text_blocks(file_path, document_index))
+            blocks.extend(load_text_blocks(file_path, document_index, source_format=suffix.lstrip(".") or "text"))
     return blocks
 
 
-def load_text_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+def load_text_blocks(
+    path: str | Path,
+    document_index: int = 0,
+    source_format: str | None = None,
+    content_type: str = "document",
+) -> list[TextBlock]:
     file_path = Path(path)
     text = file_path.read_text(encoding="utf-8", errors="replace")
+    metadata = {"content_type": content_type}
+    if source_format:
+        metadata["source_format"] = source_format
+    return _text_to_paragraph_blocks(file_path, text, document_index, metadata)
+
+
+def load_html_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    html = file_path.read_text(encoding="utf-8", errors="replace")
+    parser = _HTMLTextExtractor()
+    parser.feed(html)
+    text = parser.text()
+    return _text_to_paragraph_blocks(
+        file_path,
+        text,
+        document_index,
+        {"content_type": "document", "source_format": file_path.suffix.lower().lstrip(".")},
+    )
+
+
+def load_json_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    text = file_path.read_text(encoding="utf-8", errors="replace")
+    if file_path.suffix.lower() == ".jsonl":
+        return _load_jsonl_blocks(file_path, text, document_index)
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return _text_to_paragraph_blocks(
+            file_path,
+            text,
+            document_index,
+            {"content_type": "structured", "source_format": "json", "parse_error": "json_decode_error"},
+        )
+    items = payload if isinstance(payload, list) else list(payload.items()) if isinstance(payload, dict) else [payload]
+    blocks: list[TextBlock] = []
+    for index, item in enumerate(items):
+        if isinstance(item, tuple):
+            key, value = item
+            block_text = f"{key}:\n{_json_to_text(value)}"
+            json_path = str(key)
+        else:
+            block_text = _json_to_text(item)
+            json_path = f"[{index}]"
+        clean = block_text.strip()
+        if not clean:
+            continue
+        blocks.append(
+            TextBlock(
+                text=clean,
+                source_path=str(file_path),
+                document_index=document_index,
+                paragraph_index=len(blocks),
+                char_start=0,
+                char_end=len(clean),
+                metadata={"content_type": "structured", "source_format": "json", "json_path": json_path},
+            )
+        )
+    return blocks or _text_to_paragraph_blocks(file_path, text, document_index, {"content_type": "structured", "source_format": "json"})
+
+
+def load_csv_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    text = file_path.read_text(encoding="utf-8", errors="replace")
+    delimiter = "\t" if file_path.suffix.lower() == ".tsv" else ","
+    rows = list(csv.reader(text.splitlines(), delimiter=delimiter))
+    if not rows:
+        return []
+    header = [cell.strip() or f"column_{index + 1}" for index, cell in enumerate(rows[0])]
+    blocks: list[TextBlock] = []
+    for row_index, row in enumerate(rows[1:] or rows, start=2 if len(rows) > 1 else 1):
+        labels = header if len(rows) > 1 else [f"column_{index + 1}" for index in range(len(row))]
+        pairs = [
+            f"{label}: {value.strip()}"
+            for label, value in zip(labels, row, strict=False)
+            if value.strip()
+        ]
+        if not pairs:
+            continue
+        block_text = "\n".join(pairs)
+        blocks.append(
+            TextBlock(
+                text=block_text,
+                source_path=str(file_path),
+                document_index=document_index,
+                paragraph_index=len(blocks),
+                char_start=0,
+                char_end=len(block_text),
+                metadata={
+                    "content_type": "structured",
+                    "source_format": file_path.suffix.lower().lstrip("."),
+                    "row_index": row_index,
+                },
+            )
+        )
+    return blocks
+
+
+def load_office_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    suffix = Path(path).suffix.lower()
+    if suffix == ".docx":
+        return load_docx_blocks(path, document_index)
+    if suffix == ".pptx":
+        return load_pptx_blocks(path, document_index)
+    if suffix == ".xlsx":
+        return load_xlsx_blocks(path, document_index)
+    raise ValueError(f"Unknown office file type: {path}")
+
+
+def load_docx_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    try:
+        from docx import Document  # type: ignore
+    except ImportError as exc:
+        raise RuntimeError("DOCX support requires `pip install tokenpack-rag[office]`.") from exc
+    document = Document(str(file_path))
+    blocks: list[TextBlock] = []
+    for paragraph in document.paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            blocks.append(_make_office_block(file_path, document_index, len(blocks), text, "docx"))
+    for table_index, table in enumerate(document.tables):
+        for row_index, row in enumerate(table.rows):
+            cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if cells:
+                metadata = {"content_type": "document", "source_format": "docx", "table_index": table_index, "row_index": row_index}
+                blocks.append(_make_office_block(file_path, document_index, len(blocks), " | ".join(cells), "docx", metadata))
+    return blocks
+
+
+def load_pptx_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    try:
+        from pptx import Presentation  # type: ignore
+    except ImportError as exc:
+        raise RuntimeError("PPTX support requires `pip install tokenpack-rag[office]`.") from exc
+    presentation = Presentation(str(file_path))
+    blocks: list[TextBlock] = []
+    for slide_index, slide in enumerate(presentation.slides, start=1):
+        for shape_index, shape in enumerate(slide.shapes):
+            text = getattr(shape, "text", "").strip()
+            if text:
+                metadata = {
+                    "content_type": "document",
+                    "source_format": "pptx",
+                    "slide": slide_index,
+                    "shape_index": shape_index,
+                }
+                blocks.append(_make_office_block(file_path, document_index, len(blocks), text, "pptx", metadata))
+    return blocks
+
+
+def load_xlsx_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
+    file_path = Path(path)
+    try:
+        from openpyxl import load_workbook  # type: ignore
+    except ImportError as exc:
+        raise RuntimeError("XLSX support requires `pip install tokenpack-rag[office]`.") from exc
+    workbook = load_workbook(str(file_path), read_only=True, data_only=True)
+    blocks: list[TextBlock] = []
+    for sheet in workbook.worksheets:
+        for row_index, row in enumerate(sheet.iter_rows(values_only=True), start=1):
+            values = [str(value).strip() for value in row if value is not None and str(value).strip()]
+            if not values:
+                continue
+            text = f"Sheet: {sheet.title}\nRow {row_index}: " + " | ".join(values)
+            metadata = {
+                "content_type": "structured",
+                "source_format": "xlsx",
+                "sheet": sheet.title,
+                "row_index": row_index,
+            }
+            blocks.append(_make_office_block(file_path, document_index, len(blocks), text, "xlsx", metadata))
+    return blocks
+
+
+def _text_to_paragraph_blocks(
+    file_path: Path,
+    text: str,
+    document_index: int,
+    metadata: dict[str, object],
+) -> list[TextBlock]:
     blocks: list[TextBlock] = []
     paragraph_index = 0
     for match in re.finditer(r"\S(?:.*?)(?=\n\s*\n|\Z)", text, flags=re.DOTALL):
@@ -60,11 +325,91 @@ def load_text_blocks(path: str | Path, document_index: int = 0) -> list[TextBloc
                 paragraph_index=paragraph_index,
                 char_start=match.start(),
                 char_end=match.end(),
-                metadata={"content_type": "document"},
+                metadata=dict(metadata),
             )
         )
         paragraph_index += 1
     return blocks
+
+
+def _load_jsonl_blocks(file_path: Path, text: str, document_index: int) -> list[TextBlock]:
+    blocks: list[TextBlock] = []
+    offset = 0
+    for line_index, line in enumerate(text.splitlines(), start=1):
+        raw = line.strip()
+        line_start = offset
+        offset += len(line) + 1
+        if not raw:
+            continue
+        try:
+            payload = json.loads(raw)
+            block_text = _json_to_text(payload)
+            parse_error = None
+        except json.JSONDecodeError:
+            block_text = raw
+            parse_error = "json_decode_error"
+        metadata = {
+            "content_type": "structured",
+            "source_format": "jsonl",
+            "line": line_index,
+        }
+        if parse_error:
+            metadata["parse_error"] = parse_error
+        blocks.append(
+            TextBlock(
+                text=block_text,
+                source_path=str(file_path),
+                document_index=document_index,
+                paragraph_index=len(blocks),
+                char_start=line_start,
+                char_end=line_start + len(line),
+                metadata=metadata,
+            )
+        )
+    return blocks
+
+
+def _json_to_text(value: object, prefix: str = "") -> str:
+    if isinstance(value, dict):
+        lines: list[str] = []
+        for key, item in value.items():
+            child_prefix = f"{prefix}.{key}" if prefix else str(key)
+            if isinstance(item, (dict, list)):
+                nested = _json_to_text(item, child_prefix)
+                if nested:
+                    lines.append(nested)
+            elif item is not None:
+                lines.append(f"{child_prefix}: {item}")
+        return "\n".join(lines)
+    if isinstance(value, list):
+        lines = []
+        for index, item in enumerate(value):
+            child_prefix = f"{prefix}[{index}]" if prefix else f"[{index}]"
+            nested = _json_to_text(item, child_prefix)
+            if nested:
+                lines.append(nested)
+        return "\n".join(lines)
+    return f"{prefix}: {value}" if prefix else str(value)
+
+
+def _make_office_block(
+    path: Path,
+    document_index: int,
+    paragraph_index: int,
+    text: str,
+    source_format: str,
+    metadata: dict[str, object] | None = None,
+) -> TextBlock:
+    payload = metadata or {"content_type": "document", "source_format": source_format}
+    return TextBlock(
+        text=text,
+        source_path=str(path),
+        document_index=document_index,
+        paragraph_index=paragraph_index,
+        char_start=0,
+        char_end=len(text),
+        metadata=payload,
+    )
 
 
 def load_code_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
@@ -147,7 +492,13 @@ def _validate_source_type(source_type: str) -> None:
 def _supports_file(path: Path, source_type: str) -> bool:
     suffix = path.suffix.lower()
     if source_type == "document":
-        return suffix in SUPPORTED_TEXT_EXTENSIONS or suffix == ".pdf"
+        return suffix in (
+            SUPPORTED_TEXT_EXTENSIONS
+            | SUPPORTED_HTML_EXTENSIONS
+            | SUPPORTED_STRUCTURED_EXTENSIONS
+            | SUPPORTED_OFFICE_EXTENSIONS
+            | {".pdf"}
+        )
     if source_type == "code":
         return suffix in SUPPORTED_CODE_EXTENSIONS
     return suffix in SUPPORTED_EXTENSIONS
@@ -196,6 +547,68 @@ def _split_pdf_text(text: str) -> list[dict[str, object]]:
     return [{"text": unit, "metadata": {"content_type": "document", "source_format": "pdf"}} for unit in _split_prose_unit(compact)]
 
 
+class _HTMLTextExtractor(HTMLParser):
+    BLOCK_TAGS = {
+        "address",
+        "article",
+        "aside",
+        "blockquote",
+        "br",
+        "div",
+        "figcaption",
+        "footer",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "header",
+        "hr",
+        "li",
+        "main",
+        "nav",
+        "ol",
+        "p",
+        "pre",
+        "section",
+        "table",
+        "tr",
+        "ul",
+    }
+    IGNORED_TAGS = {"script", "style", "noscript"}
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.ignored_depth = 0
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        if tag in self.IGNORED_TAGS:
+            self.ignored_depth += 1
+            return
+        if self.ignored_depth:
+            return
+        if tag in self.BLOCK_TAGS:
+            self.parts.append("\n\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in self.IGNORED_TAGS:
+            self.ignored_depth = max(0, self.ignored_depth - 1)
+            return
+        if self.ignored_depth:
+            return
+        if tag in self.BLOCK_TAGS:
+            self.parts.append("\n\n")
+
+    def handle_data(self, data: str) -> None:
+        if not self.ignored_depth:
+            self.parts.append(data)
+
+    def text(self) -> str:
+        return re.sub(r"\n{3,}", "\n\n", "".join(self.parts))
+
+
 def _split_prose_unit(text: str, max_sentences: int = 3) -> list[str]:
     clean = re.sub(r"[ \t]+", " ", text).strip()
     if not clean:
@@ -227,12 +640,38 @@ def _language_for_suffix(suffix: str) -> str:
         ".jsx": "javascript",
         ".ts": "typescript",
         ".tsx": "typescript",
+        ".mjs": "javascript",
+        ".cjs": "javascript",
+        ".vue": "javascript",
+        ".svelte": "javascript",
         ".java": "java",
         ".go": "go",
         ".rs": "rust",
         ".cpp": "cpp",
+        ".cc": "cpp",
+        ".cxx": "cpp",
         ".c": "c",
         ".h": "c",
+        ".hpp": "cpp",
+        ".cs": "csharp",
+        ".php": "php",
+        ".rb": "ruby",
+        ".swift": "swift",
+        ".kt": "kotlin",
+        ".kts": "kotlin",
+        ".scala": "scala",
+        ".sh": "shell",
+        ".bash": "shell",
+        ".zsh": "shell",
+        ".ps1": "powershell",
+        ".r": "r",
+        ".lua": "lua",
+        ".dart": "dart",
+        ".sql": "sql",
+        ".css": "css",
+        ".scss": "scss",
+        ".less": "less",
+        ".xml": "xml",
     }.get(suffix.lower(), "text")
 
 

@@ -13,9 +13,12 @@ def collect_diagnostics(ollama_url: str = "http://localhost:11434") -> dict:
             "tiktoken": _has_package("tiktoken"),
             "pymupdf_fitz": _has_package("fitz"),
             "pypdf": _has_package("pypdf"),
+            "python_docx": _has_package("docx"),
+            "python_pptx": _has_package("pptx"),
+            "openpyxl": _has_package("openpyxl"),
+            "mcp": _has_package("mcp"),
         },
         "environment": {
-            "openai_api_key_set": bool(os.environ.get("OPENAI_API_KEY")),
             "hf_hub_offline": os.environ.get("HF_HUB_OFFLINE") == "1",
             "tokenpack_hf_offline": os.environ.get("TOKENPACK_HF_OFFLINE") == "1",
             "tokenpack_ollama_model": os.environ.get("TOKENPACK_OLLAMA_MODEL"),

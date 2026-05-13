@@ -1,22 +1,32 @@
 from __future__ import annotations
 
 import uuid
+import math
+import re
 from pathlib import Path
 
+import pytest
+
+from tokenpack import cli as cli_module
+from tokenpack import mcp_server
 from tokenpack.benchmark import redundancy_score, run_gold_benchmark
 from tokenpack.chunk_profiles import resolve_chunk_size_config
-from tokenpack.chunking import ParagraphGroupChunker
+from tokenpack.chunking import StructureAwareChunker
 from tokenpack.compression import CompressionConfig, compress_chunks
 from tokenpack.dataset import GoldRecord, load_gold_records, save_gold_records, validate_gold_records
-from tokenpack.embeddings import EmbeddingCache, HashingEmbedder
+from tokenpack.embeddings import EmbeddingCache
 from tokenpack.export import render_context
 from tokenpack.generation import _default_ollama_model
 from tokenpack.index import ChunkIndex, load_index, save_index
-from tokenpack.loaders import load_blocks, load_text_blocks
+from tokenpack.loaders import iter_supported_files, load_blocks, load_text_blocks
 from tokenpack.pipeline import ingest_path
 from tokenpack.models import Chunk, ScoredChunk, TextBlock
 from tokenpack.reranking import blend_reranker_scores
 from tokenpack.scoring import SCORING_PROFILES, score_chunks
+from tokenpack.scoring_experimental import (
+    SCORING_PROFILES as EXPERIMENTAL_SCORING_PROFILES,
+    score_experimental_chunks,
+)
 from tokenpack.selectors import select_chunks
 from tokenpack.tokenization import TokenCounter
 
@@ -34,12 +44,80 @@ def test_text_loader_preserves_metadata():
     assert blocks[1].char_start > blocks[0].char_start
 
 
+def test_supported_files_include_common_document_data_and_code_formats():
+    tmp_path = _workspace_tmp()
+    for name in ["notes.md", "page.html", "records.jsonl", "table.csv", "deck.pptx", "sheet.xlsx", "component.tsx"]:
+        (tmp_path / name).write_text("alpha", encoding="utf-8")
+    (tmp_path / "image.png").write_text("ignored", encoding="utf-8")
+
+    files = {path.name for path in iter_supported_files(tmp_path)}
+
+    assert {"notes.md", "page.html", "records.jsonl", "table.csv", "deck.pptx", "sheet.xlsx", "component.tsx"} <= files
+    assert "image.png" not in files
+
+
+def test_html_loader_extracts_visible_text_and_ignores_scripts():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "page.html"
+    source.write_text(
+        "<html><head><script>secret()</script></head><body><h1>Alpha Title</h1><p>Beta evidence.</p></body></html>",
+        encoding="utf-8",
+    )
+
+    blocks = load_blocks(source)
+    text = "\n".join(block.text for block in blocks)
+
+    assert "Alpha Title" in text
+    assert "Beta evidence" in text
+    assert "secret" not in text
+    assert blocks[0].metadata["source_format"] == "html"
+
+
+def test_jsonl_loader_creates_structured_blocks():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "records.jsonl"
+    source.write_text('{"title": "Alpha", "score": 3}\n{"title": "Beta"}\n', encoding="utf-8")
+
+    blocks = load_blocks(source)
+
+    assert len(blocks) == 2
+    assert "title: Alpha" in blocks[0].text
+    assert blocks[0].metadata["content_type"] == "structured"
+    assert blocks[0].metadata["line"] == 1
+
+
+def test_csv_loader_creates_row_blocks():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "table.csv"
+    source.write_text("name,role\nAlpha,Researcher\nBeta,Engineer\n", encoding="utf-8")
+
+    blocks = load_blocks(source)
+
+    assert len(blocks) == 2
+    assert "name: Alpha" in blocks[0].text
+    assert "role: Researcher" in blocks[0].text
+    assert blocks[0].metadata["source_format"] == "csv"
+
+
+def test_yaml_loader_marks_config_as_structured_text():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "config.yaml"
+    source.write_text("name: Alpha\nrole: Researcher\n", encoding="utf-8")
+
+    blocks = load_blocks(source)
+
+    assert blocks
+    assert "name: Alpha" in blocks[0].text
+    assert blocks[0].metadata["content_type"] == "structured"
+    assert blocks[0].metadata["source_format"] == "yaml"
+
+
 def test_chunker_respects_max_tokens():
     tmp_path = _workspace_tmp()
     source = tmp_path / "doc.txt"
     source.write_text("\n\n".join(f"paragraph {idx} " + "word " * 20 for idx in range(8)), encoding="utf-8")
     blocks = load_text_blocks(source)
-    chunker = ParagraphGroupChunker(target_tokens=40, min_tokens=20, max_tokens=55, token_counter=TokenCounter())
+    chunker = StructureAwareChunker(target_tokens=40, min_tokens=20, max_tokens=55, token_counter=TokenCounter())
 
     chunks = chunker.chunk(blocks)
 
@@ -76,7 +154,7 @@ def test_chunk_id_hash_tolerates_pdf_surrogate_text():
         char_start=0,
         char_end=30,
     )
-    chunker = ParagraphGroupChunker(target_tokens=20, min_tokens=1, max_tokens=50, token_counter=TokenCounter())
+    chunker = StructureAwareChunker(target_tokens=20, min_tokens=1, max_tokens=50, token_counter=TokenCounter())
 
     chunks = chunker.chunk([source])
 
@@ -86,7 +164,7 @@ def test_chunk_id_hash_tolerates_pdf_surrogate_text():
 def test_embedding_cache_reuses_existing_vectors():
     tmp_path = _workspace_tmp()
     cache = EmbeddingCache(tmp_path / "embeddings.json")
-    embedder = HashingEmbedder(dimensions=16)
+    embedder = _ToyEmbedder(dimensions=16)
 
     first = cache.get_or_embed(["alpha beta"], embedder)
     second = EmbeddingCache(tmp_path / "embeddings.json").get_or_embed(["alpha beta"], embedder)
@@ -97,7 +175,7 @@ def test_embedding_cache_reuses_existing_vectors():
 def test_embedding_cache_tolerates_pdf_surrogate_text():
     tmp_path = _workspace_tmp()
     cache = EmbeddingCache(tmp_path / "embeddings.json")
-    embedder = HashingEmbedder(dimensions=16)
+    embedder = _ToyEmbedder(dimensions=16)
 
     vectors = cache.get_or_embed(["bad \ud835 text"], embedder)
 
@@ -148,7 +226,7 @@ def test_semantic_threshold_chunker_splits_topic_shift():
     index = ingest_path(
         source,
         tmp_path / "index.json",
-        embedder=HashingEmbedder(dimensions=64),
+        embedder=_ToyEmbedder(dimensions=64),
         target_tokens=80,
         min_tokens=1,
         max_tokens=80,
@@ -158,6 +236,30 @@ def test_semantic_threshold_chunker_splits_topic_shift():
 
     assert len(index.chunks) >= 2
     assert all(chunk.token_count <= 80 for chunk in index.chunks)
+
+
+def test_structure_aware_chunker_uses_semantic_boundaries_inside_sections():
+    blocks = [
+        TextBlock("alpha alpha retrieval", "doc.txt", 0, paragraph_index=0, metadata={"content_type": "document"}),
+        TextBlock("alpha beta evidence", "doc.txt", 0, paragraph_index=1, metadata={"content_type": "document"}),
+        TextBlock("zebra yak unrelated", "doc.txt", 0, paragraph_index=2, metadata={"content_type": "document"}),
+    ]
+    chunker = StructureAwareChunker(
+        target_tokens=100,
+        min_tokens=1,
+        max_tokens=120,
+        token_counter=TokenCounter(),
+        block_embeddings=[[1.0, 0.0], [0.95, 0.05], [0.0, 1.0]],
+        semantic_threshold=0.4,
+    )
+
+    chunks = chunker.chunk(blocks)
+
+    assert len(chunks) == 2
+    assert "alpha beta evidence" in chunks[0].text
+    assert chunks[1].text == "zebra yak unrelated"
+    assert chunks[0].metadata["chunker"] == "structure-aware"
+    assert chunks[0].metadata["semantic_threshold"] == 0.4
 
 
 def test_code_loader_extracts_python_symbols():
@@ -207,7 +309,7 @@ def test_structure_aware_ingest_preserves_python_function_metadata():
     index = ingest_path(
         source,
         tmp_path / "index.json",
-        embedder=HashingEmbedder(dimensions=32),
+        embedder=_ToyEmbedder(dimensions=32),
         chunker_name="structure-aware",
         source_type="code",
         target_tokens=40,
@@ -238,7 +340,7 @@ def test_cosine_scoring_preserves_existing_value_behavior():
     chunks = [_chunk("match"), _chunk("miss", paragraph=1)]
     embeddings = [[1.0, 0.0], [0.0, 1.0]]
 
-    scored = score_chunks([1.0, 0.0], chunks, embeddings)
+    scored = score_experimental_chunks([1.0, 0.0], chunks, embeddings, scoring="cosine")
 
     assert scored[0].value == 1.0
     assert scored[1].value == 0.0
@@ -251,7 +353,7 @@ def test_hybrid_bm25_component_favors_query_terms():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
+    scored = score_experimental_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
 
     assert scored[0].score_components["bm25"] > scored[1].score_components["bm25"]
 
@@ -264,7 +366,7 @@ def test_hybrid_position_bias_favors_document_edges():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="")
+    scored = score_experimental_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="")
 
     assert scored[0].score_components["position"] > scored[1].score_components["position"]
     assert scored[2].score_components["position"] > scored[1].score_components["position"]
@@ -274,7 +376,7 @@ def test_hybrid_scoring_exposes_all_components():
     chunks = [_chunk("alpha", text="alpha evidence"), _chunk("beta", paragraph=1, text="beta evidence")]
     embeddings = [[1.0, 0.0], [0.8, 0.2]]
 
-    scored = score_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
+    scored = score_experimental_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
 
     assert set(scored[0].score_components) == {"cosine", "bm25", "position", "neighbor_coherence"}
 
@@ -295,7 +397,7 @@ def test_evidence_hybrid_scoring_uses_query_and_structure_components():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -308,6 +410,14 @@ def test_evidence_hybrid_scoring_uses_query_and_structure_components():
     assert scored[0].score_components["structural_prior"] > scored[1].score_components["structural_prior"]
 
 
+def test_production_scoring_rejects_experimental_profiles():
+    chunks = [_chunk("alpha", text="alpha evidence")]
+    embeddings = [[1.0, 0.0]]
+
+    with pytest.raises(ValueError, match="Unsupported production scoring profile"):
+        score_chunks([1.0, 0.0], chunks, embeddings, scoring="cosine", query_text="alpha")
+
+
 def test_knapsack_aware_scoring_exposes_density_and_length_components():
     chunks = [
         _chunk("short", weight=40, text="alpha optimizer"),
@@ -315,7 +425,7 @@ def test_knapsack_aware_scoring_exposes_density_and_length_components():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -336,7 +446,7 @@ def test_query_support_scoring_exposes_general_support_components():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -357,7 +467,7 @@ def test_query_support_scoring_is_not_longbench_specific():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -383,7 +493,7 @@ def test_decision_aware_scoring_favors_discriminative_candidate_evidence():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -406,7 +516,7 @@ def test_decision_aware_scoring_falls_back_without_candidates():
     chunks = [_chunk("alpha", text="alpha evidence"), _chunk("beta", paragraph=1, text="unrelated")]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -431,7 +541,7 @@ def test_budgetmem_style_profile_exposes_feature_proxy_components():
     ]
     embeddings = [[1.0, 0.0], [1.0, 0.0]]
 
-    scored = score_chunks(
+    scored = score_experimental_chunks(
         [1.0, 0.0],
         chunks,
         embeddings,
@@ -439,45 +549,13 @@ def test_budgetmem_style_profile_exposes_feature_proxy_components():
         query_text="retrieval memory policy benchmark accuracy",
     )
 
-    assert "budgetmem-style" in SCORING_PROFILES
+    assert SCORING_PROFILES == ("evidence-hybrid",)
+    assert "budgetmem-style" in EXPERIMENTAL_SCORING_PROFILES
     assert scored[0].value > scored[1].value
     assert scored[0].score_components["bm25"] > scored[1].score_components["bm25"]
     assert scored[0].score_components["entity_density"] > scored[1].score_components["entity_density"]
     assert scored[0].score_components["numerical_density"] > scored[1].score_components["numerical_density"]
     assert scored[0].score_components["discourse_marker"] > scored[1].score_components["discourse_marker"]
-
-
-def test_instruction_ami_falls_back_to_evidence_hybrid_offline():
-    chunks = [_chunk("alpha", text="alpha evidence", metadata={"content_type": "document"})]
-    embeddings = [[1.0, 0.0]]
-
-    scored = score_chunks([1.0, 0.0], chunks, embeddings, scoring="instruction-ami", query_text="alpha")
-
-    assert scored[0].score_components["ami_fallback"] == 1.0
-
-
-def test_instruction_ami_can_rerank_with_time_budgeted_scorer():
-    chunks = [
-        _chunk("weak", text="alpha short", metadata={"content_type": "document"}),
-        _chunk("strong", paragraph=1, text="alpha detailed optimizer configuration", metadata={"content_type": "document"}),
-    ]
-    embeddings = [[1.0, 0.0], [1.0, 0.0]]
-
-    scored = score_chunks(
-        [1.0, 0.0],
-        chunks,
-        embeddings,
-        scoring="instruction-ami",
-        query_text="alpha optimizer",
-        ami_scorer=_FakeAmiScorer({"alpha short": 0.1, "alpha detailed optimizer configuration": 2.0}),
-        ami_candidate_pool=2,
-        ami_time_budget_seconds=10.0,
-    )
-
-    assert scored[1].value > scored[0].value
-    assert scored[1].score_components["ami_measured"] == 1.0
-    assert scored[1].score_components["ami_model"] == "fake-ami"
-    assert scored[1].score_components["ami_blend_weight"] == 0.35
 
 
 def test_redundancy_penalty_tracks_lexical_and_novelty_components():
@@ -557,7 +635,7 @@ def test_knapsack_respects_budget_with_hybrid_scoring():
         _chunk("gamma", paragraph=2, weight=4, text="gamma alpha short"),
     ]
     embeddings = [[1.0, 0.0], [0.8, 0.2], [0.7, 0.3]]
-    scored = score_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
+    scored = score_experimental_chunks([1.0, 0.0], chunks, embeddings, scoring="hybrid", query_text="alpha")
 
     result = select_chunks(scored, strategy="knapsack", budget=10)
 
@@ -575,6 +653,20 @@ def test_knapsack_candidate_pool_includes_dense_tradeoff_items():
 
     assert topk_result.selected == []
     assert [item.chunk.id for item in knapsack_result.selected] == ["dense"]
+
+
+def test_production_rag_uses_dense_similarity_ranking_under_budget():
+    scored = [
+        ScoredChunk(_chunk("evidence-scored", weight=4), value=0.95, raw_similarity=0.30, weight=4),
+        ScoredChunk(_chunk("dense-rag-hit", paragraph=1, weight=4), value=0.40, raw_similarity=0.90, weight=4),
+    ]
+
+    production_rag = select_chunks(scored, strategy="production-rag", budget=4)
+    budget_top_k = select_chunks(scored, strategy="budget-top-k", budget=4)
+
+    assert [item.chunk.id for item in production_rag.selected] == ["dense-rag-hit"]
+    assert [item.chunk.id for item in budget_top_k.selected] == ["evidence-scored"]
+    assert production_rag.used_tokens <= 4
 
 
 def test_knapsack_redundancy_penalizes_repeated_embeddings_without_mutating_input():
@@ -697,9 +789,153 @@ def test_redundancy_score_increases_for_similar_chunks():
     assert redundancy_score(similar) > redundancy_score(dissimilar)
 
 
-def test_default_ollama_model_uses_local_default_for_openai_placeholder():
+def test_default_ollama_model_uses_local_default_for_cloud_placeholder():
     assert _default_ollama_model("gpt-4o-mini") == "llama3.2:1b"
     assert _default_ollama_model("qwen2.5:3b") == "qwen2.5:3b"
+
+
+def test_pack_infers_default_output_paths():
+    tmp_path = _workspace_tmp()
+    source_file = tmp_path / "paper.pdf"
+    source_file.write_text("placeholder", encoding="utf-8")
+    source_dir = tmp_path / "docs"
+    source_dir.mkdir()
+
+    assert cli_module._infer_pack_output_path(source_file) == tmp_path / "paper-tp.md"
+    assert cli_module._infer_pack_output_path(source_dir) == tmp_path / "docs-tp.md"
+    assert cli_module._infer_pack_output_path(source_file, str(tmp_path / "custom.md")) == tmp_path / "custom.md"
+
+
+def test_pack_auto_budget_defaults_and_clamps():
+    small = cli_module._resolve_pack_budget(
+        source_tokens=2_000,
+        budget=None,
+        budget_ratio=0.50,
+        min_budget=1_200,
+        max_budget=64_000,
+        reserve_output=None,
+    )
+    medium = cli_module._resolve_pack_budget(
+        source_tokens=40_000,
+        budget=None,
+        budget_ratio=0.50,
+        min_budget=1_200,
+        max_budget=64_000,
+        reserve_output=None,
+    )
+    large = cli_module._resolve_pack_budget(
+        source_tokens=200_000,
+        budget=None,
+        budget_ratio=0.50,
+        min_budget=1_200,
+        max_budget=64_000,
+        reserve_output=None,
+    )
+    manual = cli_module._resolve_pack_budget(
+        source_tokens=200_000,
+        budget=9_000,
+        budget_ratio=0.50,
+        min_budget=1_200,
+        max_budget=64_000,
+        reserve_output=None,
+    )
+
+    assert small.budget == 1_200
+    assert small.cap_reason == "min-budget"
+    assert medium.budget == 20_000
+    assert medium.reserve_output == 2_000
+    assert large.budget == 64_000
+    assert large.reserve_output == 4_000
+    assert large.cap_reason == "max-budget"
+    assert manual.mode == "manual"
+    assert manual.budget == 9_000
+    assert manual.reserve_output == 900
+
+
+def test_pack_command_writes_markdown_with_auto_budget(monkeypatch):
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "mini_context.txt"
+    source.write_text(
+        "Alpha evidence explains the TokenPack budget selector.\n\n"
+        "Beta notes describe unrelated implementation details.\n\n"
+        "Alpha budget packing keeps useful evidence under a context limit.",
+        encoding="utf-8",
+    )
+    output = tmp_path / "mini_context-tp.md"
+    monkeypatch.setattr(cli_module, "_make_cli_embedder", lambda args, model_name: _ToyEmbedder(dimensions=16))
+
+    exit_code = cli_module.main(["pack", str(source), "--query", "alpha budget evidence", "--out", str(output)])
+
+    text = output.read_text(encoding="utf-8")
+    assert exit_code == 0
+    assert "# TokenPack Packed Context" in text
+    assert "| Budget mode | auto |" in text
+    assert "| Selector | budget-top-k |" in text
+    assert "Alpha evidence" in text
+
+
+def test_pack_command_refuses_existing_output():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "mini_context.txt"
+    source.write_text("Alpha evidence.", encoding="utf-8")
+    output = tmp_path / "mini_context-tp.md"
+    output.write_text("existing", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as exc:
+        cli_module.main(["pack", str(source), "--query", "alpha", "--out", str(output)])
+
+    assert "Output already exists" in str(exc.value)
+
+
+def test_mcp_pack_context_returns_inline_markdown_and_artifacts(monkeypatch):
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "mini_context.txt"
+    source.write_text(
+        "Alpha evidence explains the TokenPack budget selector.\n\n"
+        "Beta notes describe unrelated implementation details.\n\n"
+        "Alpha budget packing keeps useful evidence under a context limit.",
+        encoding="utf-8",
+    )
+    config = mcp_server.McpServerConfig(workspace=tmp_path)
+    monkeypatch.setattr(mcp_server, "_make_mcp_embedder", lambda config: _ToyEmbedder(dimensions=16))
+
+    payload = mcp_server.pack_context_tool(
+        source="mini_context.txt",
+        query="alpha budget evidence",
+        config=config,
+    )
+
+    assert payload["output_path"] == str((tmp_path / "mini_context-tp.md").resolve())
+    assert payload["selection_path"].startswith(str((tmp_path / ".tokenpack" / "runs").resolve()))
+    assert payload["budget_mode"] == "auto"
+    assert payload["selector"] == "budget-top-k"
+    assert "# TokenPack Packed Context" in payload["markdown"]
+    assert (tmp_path / "mini_context-tp.md").exists()
+
+
+def test_mcp_workspace_rejects_outside_paths():
+    workspace = _workspace_tmp()
+    outside = _workspace_tmp() / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    config = mcp_server.McpServerConfig(workspace=workspace)
+
+    with pytest.raises(ValueError) as exc:
+        mcp_server.read_packed_context_tool(path=str(outside.resolve()), config=config)
+
+    assert "outside the MCP workspace" in str(exc.value)
+
+
+def test_mcp_read_packed_context_slices_workspace_file():
+    workspace = _workspace_tmp()
+    packed = workspace / "packed.md"
+    packed.write_text("abcdef", encoding="utf-8")
+    config = mcp_server.McpServerConfig(workspace=workspace)
+
+    payload = mcp_server.read_packed_context_tool(path="packed.md", offset=2, max_chars=3, config=config)
+
+    assert payload["text"] == "cde"
+    assert payload["next_offset"] == 5
+    assert payload["truncated"] is True
 
 
 def test_export_orders_chunks_by_original_position():
@@ -791,14 +1027,22 @@ class _StaticEmbedder:
         return [self.vectors.get(text, [0.0, 1.0]) for text in texts]
 
 
-class _FakeAmiScorer:
-    model_name = "fake-ami"
+class _ToyEmbedder:
+    model_name = "test-toy-embedder"
 
-    def __init__(self, values: dict[str, float]) -> None:
-        self.values = values
+    def __init__(self, dimensions: int = 32) -> None:
+        self.dimensions = dimensions
 
-    def ami(self, query: str, context: str) -> float:
-        return self.values.get(context, 0.0)
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return [self._embed_one(text) for text in texts]
+
+    def _embed_one(self, text: str) -> list[float]:
+        vector = [0.0] * self.dimensions
+        for token in re.findall(r"\w+", text.lower()):
+            index = sum(ord(char) for char in token) % self.dimensions
+            vector[index] += 1.0
+        norm = math.sqrt(sum(value * value for value in vector))
+        return [value / norm for value in vector] if norm else vector
 
 
 class _FakePromptCompressor:

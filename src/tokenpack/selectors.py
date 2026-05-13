@@ -31,6 +31,9 @@ def select_chunks(
     elif strategy == "top-k":
         candidates = _candidate_pool(filtered, candidate_pool)
         selected = _top_k(candidates)
+    elif strategy == "production-rag":
+        candidates = _similarity_candidate_pool(filtered, candidate_pool)
+        selected = _production_rag(candidates, budget)
     elif strategy == "budget-top-k":
         candidates = _candidate_pool(filtered, candidate_pool)
         selected = _budget_top_k(candidates, budget)
@@ -91,6 +94,10 @@ def _filtered_candidates(scored: list[ScoredChunk], threshold: float) -> list[Sc
 
 def _candidate_pool(scored: list[ScoredChunk], candidate_pool: int) -> list[ScoredChunk]:
     return sorted(scored, key=lambda item: item.value, reverse=True)[:candidate_pool]
+
+
+def _similarity_candidate_pool(scored: list[ScoredChunk], candidate_pool: int) -> list[ScoredChunk]:
+    return sorted(scored, key=lambda item: item.raw_similarity, reverse=True)[:candidate_pool]
 
 
 def _knapsack_candidate_pool(scored: list[ScoredChunk], candidate_pool: int) -> list[ScoredChunk]:
@@ -155,6 +162,10 @@ def _full_document(candidates: list[ScoredChunk]) -> list[ScoredChunk]:
 
 def _top_k(candidates: list[ScoredChunk], k: int = 5) -> list[ScoredChunk]:
     return candidates[:k]
+
+
+def _production_rag(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:
+    return _greedy_by(candidates, budget, key=lambda item: item.raw_similarity)
 
 
 def _budget_top_k(candidates: list[ScoredChunk], budget: int) -> list[ScoredChunk]:

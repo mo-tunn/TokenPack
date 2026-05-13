@@ -3,26 +3,42 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tokenpack"
+name = "tokenpack-rag"
 version = "0.1.0"
 description = "Query-aware semantic chunk selection under LLM context-window budgets."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
-authors = [{ name = "TokenPack Contributors" }]
-dependencies = []
+authors = [{ name = "Metehan Kizilcik", email = "metekizilcik@gmail.com" }]
+dependencies = ["sentence-transformers>=3.0.0"]
+keywords = ["rag", "llm", "context-compression", "retrieval", "knapsack"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Indexing",
+]
 
 [project.optional-dependencies]
-embeddings = ["sentence-transformers>=3.0.0"]
 reranking = ["sentence-transformers>=3.0.0"]
 pdf = ["PyMuPDF>=1.24.0", "pypdf>=4.0.0"]
 tokens = ["tiktoken>=0.7.0"]
-ami = ["torch>=2.2.0", "transformers>=4.40.0"]
 compression = ["llmlingua>=0.2.2"]
 modal = ["modal>=0.64.0", "pandas>=2.0.0"]
-dev = ["pytest>=8.0.0"]
+mcp = ["mcp>=1.2.0"]
+office = ["python-docx>=1.1.0", "python-pptx>=0.6.23", "openpyxl>=3.1.0"]
+dev = ["pytest>=8.0.0", "coverage>=7.0.0", "mcp>=1.2.0"]
+
+[project.urls]
+Homepage = "https://github.com/mo-tunn/TokenPack"
+Repository = "https://github.com/mo-tunn/TokenPack"
+Paper = "https://github.com/mo-tunn/TokenPack/blob/main/submission/TokenPack-paper.pdf"
 
 [project.scripts]
+tokenpack-rag = "tokenpack.cli:main"
+tokenpack-rag-mcp = "tokenpack.mcp_server:main"
 tokenpack = "tokenpack.cli:main"
 ckrag = "tokenpack.cli:main"
 
@@ -32,4 +48,10 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["src/tokenpack"]
+
+[tool.coverage.report]
+show_missing = true
 

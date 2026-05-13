@@ -104,7 +104,7 @@ def _make_llmlingua_backend(config: CompressionConfig) -> PromptCompressorBacken
     except ImportError as exc:
         raise RuntimeError(
             "LLMLingua is not installed. Install optional compression dependencies with "
-            "`pip install -e .[compression]`."
+            "`pip install tokenpack-rag[compression]` or `pip install -e .[compression]`."
         ) from exc
     model_name = _resolve_local_model_path(config.model_name) if config.local_files_only else config.model_name
     return PromptCompressor(
@@ -129,7 +129,8 @@ def _resolve_local_model_path(model_name: str) -> str:
     except Exception as exc:
         raise RuntimeError(
             f"LLMLingua model is not cached locally: {model_name}. "
-            "Run once with `--compression-allow-download` or download the model before offline use."
+            "Run once with `--allow-download` for `pack`, use `--compression-allow-download` for "
+            "`export-context`, or download the model before offline use."
         ) from exc
 
 

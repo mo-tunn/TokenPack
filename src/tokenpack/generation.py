@@ -22,8 +22,6 @@ def answer_from_selection(
     prompt = f"Use the context below to answer the question.\n\nContext:\n{context}\nQuestion: {query}\nAnswer:"
     if provider == "none":
         answer = ""
-    elif provider == "openai":
-        answer = _openai_answer(prompt, model=model)
     elif provider in {"ollama", "local"}:
         local_model = _default_ollama_model(model)
         answer = _ollama_answer(prompt, model=local_model, base_url=ollama_url)
@@ -48,31 +46,6 @@ def save_answer(payload: dict, path: str | Path) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-def _openai_answer(prompt: str, model: str) -> str:
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is required for provider=openai.")
-    body = json.dumps(
-        {
-            "model": model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0,
-        }
-    ).encode("utf-8")
-    request = urllib.request.Request(
-        "https://api.openai.com/v1/chat/completions",
-        data=body,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-    with urllib.request.urlopen(request, timeout=60) as response:
-        payload = json.loads(response.read().decode("utf-8"))
-    return payload["choices"][0]["message"]["content"]
 
 
 def _cerebras_answer(prompt: str, model: str) -> str:

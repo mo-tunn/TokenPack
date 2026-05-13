@@ -8,7 +8,7 @@ from tokenpack.dataset import GoldRecord, propose_gold_records
 from tokenpack.embeddings import Embedder, cosine
 from tokenpack.index import ChunkIndex
 from tokenpack.models import ScoredChunk, SelectionResult
-from tokenpack.scoring import score_chunks
+from tokenpack.scoring import DEFAULT_SCORING_PROFILE, score_chunks
 from tokenpack.selectors import select_chunks
 
 
@@ -16,6 +16,7 @@ STRATEGIES = [
     "document-prefix",
     "full-document",
     "top-k",
+    "production-rag",
     "budget-top-k",
     "greedy-value",
     "greedy-density",
@@ -44,7 +45,7 @@ def run_benchmark(
     reserve_output: int,
     sample_size: int = 12,
     candidate_pool: int = 250,
-    scoring: str = "cosine",
+    scoring: str = DEFAULT_SCORING_PROFILE,
 ) -> dict:
     """Developer smoke benchmark using auto-proposed single-evidence queries."""
 
@@ -75,7 +76,7 @@ def run_gold_benchmark(
     candidate_pool: int = 250,
     strategies: list[str] | None = None,
     redundancy_penalty: float = 0.35,
-    scoring: str = "cosine",
+    scoring: str = DEFAULT_SCORING_PROFILE,
 ) -> dict:
     strategy_names = strategies or STRATEGIES
     budget_runs = [

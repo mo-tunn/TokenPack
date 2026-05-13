@@ -20,6 +20,7 @@ from eval_utils import (  # type: ignore[import-not-found]
     summarize_rows,
 )
 from tokenpack.models import Chunk, ScoredChunk
+import client as longbench_client  # type: ignore[import-not-found]
 
 
 def test_parse_choice_extracts_first_letter() -> None:
@@ -131,7 +132,8 @@ def test_summarize_grounded_rows_metrics() -> None:
     assert tokenpack["correct_but_unsupported_rate"] == 0.5
 
 
-def test_build_tasks_from_local_json_without_compression() -> None:
+def test_build_tasks_from_local_json_without_compression(monkeypatch) -> None:
+    monkeypatch.setattr(longbench_client, "make_embedder", lambda **_: _TinyEmbedder())
     data_path = ROOT / ".tokenpack" / "test_longbench_eval_fixture.json"
     data_path.parent.mkdir(parents=True, exist_ok=True)
     context = " ".join(f"word{i}" for i in range(140))
@@ -163,7 +165,6 @@ def test_build_tasks_from_local_json_without_compression() -> None:
             source_min_tokens=10,
             source_max_tokens=500,
             max_scanned=10,
-            backend="hash",
             embedding_model="unused",
             chunker="structure-aware",
             scoring="evidence-hybrid",
@@ -186,8 +187,25 @@ def test_build_tasks_from_local_json_without_compression() -> None:
         tasks, report = build_tasks(args)
 
         assert report["cases"] == 1
-        assert {task["method"] for task in tasks} == {"full-context", "tokenpack-50"}
+        assert {task["method"] for task in tasks} == {"full-context", "production-rag-50", "tokenpack-50"}
         assert all(task["answer"] == "A" for task in tasks)
+        assert report["production_rag_baseline"] is True
+
+        args.selection_strategy = "budget-top-k"
+        greedy_tasks, greedy_report = build_tasks(args)
+        assert {task["method"] for task in greedy_tasks} == {"full-context", "production-rag-50", "tokenpack-50"}
+        assert greedy_report["selection_strategy"] == "budget-top-k"
+
+        args.diagnostic_selectors = True
+        diagnostic_tasks, diagnostic_report = build_tasks(args)
+        assert {task["method"] for task in diagnostic_tasks} == {
+            "full-context",
+            "production-rag-50",
+            "similarity-knapsack-50",
+            "hybrid-greedy-50",
+            "hybrid-knapsack-50",
+        }
+        assert diagnostic_report["diagnostic_selectors"] is True
     finally:
         if data_path.exists():
             data_path.unlink()
@@ -236,3 +254,21 @@ def _scored(chunk_id: str, *, value: float, paragraph: int) -> ScoredChunk:
         token_count=5,
     )
     return ScoredChunk(chunk=chunk, value=value, raw_similarity=value, weight=5)
+
+
+class _TinyEmbedder:
+    model_name = "test-tiny-embedder"
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        vectors: list[list[float]] = []
+        for text in texts:
+            lowered = text.lower()
+            vectors.append(
+                [
+                    1.0 if "alpha" in lowered else 0.0,
+                    1.0 if "beta" in lowered else 0.0,
+                    1.0 if "gamma" in lowered else 0.0,
+                    1.0 if "delta" in lowered else 0.0,
+                ]
+            )
+        return vectors

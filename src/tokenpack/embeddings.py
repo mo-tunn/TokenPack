@@ -4,9 +4,10 @@ import hashlib
 import json
 import math
 import os
-import re
 from pathlib import Path
 from typing import Protocol
+
+DEFAULT_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 class Embedder(Protocol):
@@ -16,33 +17,12 @@ class Embedder(Protocol):
         ...
 
 
-class HashingEmbedder:
-    """Deterministic offline embedding fallback for tests and no-network usage."""
-
-    def __init__(self, dimensions: int = 384, model_name: str = "hashing-384") -> None:
-        self.dimensions = dimensions
-        self.model_name = model_name
-
-    def embed(self, texts: list[str]) -> list[list[float]]:
-        return [self._embed_one(_clean_text(text)) for text in texts]
-
-    def _embed_one(self, text: str) -> list[float]:
-        vector = [0.0] * self.dimensions
-        tokens = re.findall(r"\w+", text.lower(), flags=re.UNICODE)
-        for token in tokens:
-            digest = hashlib.sha256(token.encode("utf-8")).digest()
-            index = int.from_bytes(digest[:4], "big") % self.dimensions
-            sign = 1.0 if digest[4] % 2 == 0 else -1.0
-            vector[index] += sign
-        return normalize(vector)
-
-
 class SentenceTransformerEmbedder:
-    """Local sentence-transformers backend; no external API is used."""
+    """Sentence-transformers embedding backend used by TokenPack."""
 
     def __init__(
         self,
-        model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+        model_name: str = DEFAULT_EMBEDDING_MODEL,
         local_files_only: bool | None = None,
     ) -> None:
         self.model_name = model_name
@@ -65,20 +45,10 @@ class SentenceTransformerEmbedder:
 
 
 def make_embedder(
-    backend: str = "auto",
-    model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+    model_name: str = DEFAULT_EMBEDDING_MODEL,
     local_files_only: bool | None = None,
 ) -> Embedder:
-    if backend == "hash":
-        return HashingEmbedder()
-    if backend not in {"auto", "sentence-transformers"}:
-        raise ValueError(f"Unknown embedding backend: {backend}")
-    try:
-        return SentenceTransformerEmbedder(model_name=model_name, local_files_only=local_files_only)
-    except Exception:
-        if backend == "sentence-transformers":
-            raise
-        return HashingEmbedder()
+    return SentenceTransformerEmbedder(model_name=model_name, local_files_only=local_files_only)
 
 
 def normalize(vector: list[float]) -> list[float]:

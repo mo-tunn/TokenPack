@@ -12,8 +12,8 @@ from tokenpack.tokenization import TokenCounter
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 
 
-class ParagraphGroupChunker:
-    """Group neighboring paragraphs while preserving document order and metadata."""
+class _ChunkGroupBase:
+    """Shared token-bounded grouping helpers for structure-aware chunkers."""
 
     def __init__(
         self,
@@ -28,39 +28,6 @@ class ParagraphGroupChunker:
         self.min_tokens = min_tokens
         self.max_tokens = max_tokens
         self.token_counter = token_counter or TokenCounter()
-
-    def chunk(self, blocks: Sequence[TextBlock]) -> list[Chunk]:
-        chunks: list[Chunk] = []
-        current: list[tuple[int, TextBlock, int]] = []
-        current_tokens = 0
-
-        for block_id, block in enumerate(blocks):
-            block_tokens = max(1, self.token_counter.count(block.text))
-            if block_tokens > self.max_tokens:
-                chunks.extend(self._flush(current))
-                current = []
-                current_tokens = 0
-                chunks.extend(self._split_large_block(block_id, block))
-                continue
-
-            starts_new_doc = current and block.source_path != current[-1][1].source_path
-            would_exceed = current_tokens + block_tokens > self.max_tokens
-            good_enough = current_tokens >= self.min_tokens
-            if current and (starts_new_doc or (would_exceed and good_enough)):
-                chunks.extend(self._flush(current))
-                current = []
-                current_tokens = 0
-
-            current.append((block_id, block, block_tokens))
-            current_tokens += block_tokens
-
-            if current_tokens >= self.target_tokens:
-                chunks.extend(self._flush(current))
-                current = []
-                current_tokens = 0
-
-        chunks.extend(self._flush(current))
-        return chunks
 
     def _split_large_block(self, block_id: int, block: TextBlock) -> list[Chunk]:
         units = self._split_block_units(block)
@@ -200,10 +167,31 @@ class ParagraphGroupChunker:
         return metadata
 
 
-class StructureAwareChunker(ParagraphGroupChunker):
-    """Chunk documents and code using structural metadata produced by loaders."""
+class StructureAwareChunker(_ChunkGroupBase):
+    """Chunk documents and code using structural metadata plus semantic drift."""
+
+    def __init__(
+        self,
+        target_tokens: int = 650,
+        min_tokens: int = 120,
+        max_tokens: int = 900,
+        token_counter: TokenCounter | None = None,
+        block_embeddings: Sequence[list[float]] | None = None,
+        semantic_threshold: float = 0.35,
+    ) -> None:
+        super().__init__(
+            target_tokens=target_tokens,
+            min_tokens=min_tokens,
+            max_tokens=max_tokens,
+            token_counter=token_counter,
+        )
+        self.block_embeddings = block_embeddings
+        self.semantic_threshold = semantic_threshold
 
     def chunk(self, blocks: Sequence[TextBlock]) -> list[Chunk]:
+        if self.block_embeddings is not None and len(self.block_embeddings) != len(blocks):
+            raise ValueError("StructureAwareChunker requires one embedding per text block when semantic boundaries are enabled.")
+
         chunks: list[Chunk] = []
         current: list[tuple[int, TextBlock, int]] = []
         current_tokens = 0
@@ -236,8 +224,9 @@ class StructureAwareChunker(ParagraphGroupChunker):
                 flush()
 
             would_exceed = current_tokens + block_tokens > self.max_tokens
+            topic_shift = self._semantic_boundary(block_id, block, current)
             good_enough = current_tokens >= self.min_tokens
-            if current and would_exceed and good_enough:
+            if current and good_enough and (would_exceed or topic_shift):
                 flush()
 
             current.append((block_id, block, block_tokens))
@@ -249,6 +238,8 @@ class StructureAwareChunker(ParagraphGroupChunker):
         flush()
         for chunk in chunks:
             chunk.metadata["chunker"] = "structure-aware"
+            if self.block_embeddings is not None:
+                chunk.metadata["semantic_threshold"] = self.semantic_threshold
         return chunks
 
     def _structural_boundary(self, previous: TextBlock, current: TextBlock) -> bool:
@@ -262,9 +253,22 @@ class StructureAwareChunker(ParagraphGroupChunker):
             return bool(previous.metadata.get("section_hint") or current.metadata.get("section_hint"))
         return False
 
+    def _semantic_boundary(self, block_id: int, block: TextBlock, current: list[tuple[int, TextBlock, int]]) -> bool:
+        if self.block_embeddings is None or not current:
+            return False
+        previous_id, previous, _ = current[-1]
+        if previous.source_path != block.source_path:
+            return False
+        if previous.metadata.get("content_type", "document") != "document":
+            return False
+        if block.metadata.get("content_type", "document") != "document":
+            return False
+        similarity = cosine(self.block_embeddings[previous_id], self.block_embeddings[block_id])
+        return similarity < self.semantic_threshold
 
-class SemanticThresholdChunker(ParagraphGroupChunker):
-    """Start a new paragraph group when adjacent block embeddings indicate topic drift."""
+
+class SemanticThresholdChunker(_ChunkGroupBase):
+    """Start a new chunk when adjacent block embeddings indicate topic drift."""
 
     def __init__(
         self,
