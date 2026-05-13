@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -205,6 +206,7 @@ def _run_root(config: McpServerConfig) -> Path:
     return config.workspace.resolve() / ".tokenpack" / "runs"
 
 
+@lru_cache(maxsize=4)
 def _make_mcp_embedder(config: McpServerConfig):
     return make_embedder(
         model_name=config.model_name,
