@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/tokenpack-logo.png" alt="TokenPack logo" width="260">
-</p>
-
 <h1 align="center">TokenPack-RAG</h1>
 
 <p align="center">
@@ -13,20 +9,30 @@
   <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/pypi/pyversions/tokenpack-rag" alt="Python versions"></a>
   <a href="https://github.com/mo-tunn/TokenPack/actions/workflows/tests.yml"><img src="https://github.com/mo-tunn/TokenPack/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
   <img src="https://img.shields.io/badge/coverage-74%25-2f6654" alt="Package coverage">
-  <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/pypi/dm/tokenpack-rag?label=downloads" alt="PyPI downloads"></a>
+  <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/badge/downloads-PyPI-2f6654" alt="PyPI downloads"></a>
   <img src="https://img.shields.io/badge/MCP-local%20stdio-7b5d46" alt="Local MCP server">
   <img src="https://img.shields.io/badge/inputs-PDF%20%7C%20Office%20%7C%20Code%20%7C%20Data-476a8a" alt="Supported inputs">
   <img src="https://img.shields.io/badge/license-BSL--1.1-7b5d46" alt="Business Source License 1.1">
 </p>
 
-TokenPack-RAG selects the most useful chunks from documents, code, PDFs, tables, and folders under a strict token budget. It does **not** call an LLM during packing: it runs local embeddings, evidence scoring, and budget-aware selection, then writes a Markdown context file you can give to any LLM or agent.
+TokenPack-RAG selects the most useful parts of documents, code, PDFs, tables, and folders under a strict token budget. It does **not** call an LLM during packing: it runs local embeddings, evidence scoring, and budget-aware selection, then writes a Markdown context file you can give to any LLM or agent.
+
+In plain English, TokenPack-RAG does three things:
+
+| Step | What happens |
+|---|---|
+| **Split intelligently** | Breaks the source into chunks that respect headings, paragraphs, code blocks, and semantic shifts. |
+| **Score by evidence value** | Ranks chunks by how useful they look for your query, using semantic similarity, keyword support, document position, and structure signals. |
+| **Pack the best context** | Fills your token budget with the highest-value chunks first, avoiding the waste of blindly pasting everything. |
+
+Internally, the default pipeline is:
 
 ```text
 structure-aware semantic chunks + evidence-hybrid scoring + hybrid-greedy packing
 ```
 
 <p align="center">
-  <img src="assets/tokenpack-headline-result.png" alt="TokenPack + LongLLMLingua saves 74.6% context tokens while retaining a +15.6% pilot lift over full context">
+  <img src="assets/tokenpack-headline-result.png" alt="TokenPack + LongLLMLingua saves 74.6% context tokens with a +15.6% relative pilot accuracy lift over full context">
 </p>
 
 ## Why Use It
@@ -74,31 +80,60 @@ TokenPack-RAG uses `sentence-transformers/all-MiniLM-L6-v2` as the default embed
 
 ## 30-Second Start
 
-Pack one document:
+Pick the path that matches what you want:
+
+| Goal | Use this | Output |
+|---|---|---|
+| **Fast default** | Selection-only packing. No LLM call, no prompt-compression model. | `paper-tp.md` |
+| **Best combination** | TokenPack selection + LongLLMLingua compression for the strongest current context-saving setup. | smaller `paper-tp.md` |
+| **Folder pack** | Pack a whole project or document folder into one context file. | `docs-tp.md` |
+
+**Fast default**
+
+Use this first for most documents:
 
 ```bash
 tokenpack-rag pack paper.pdf --query "What are the main contributions?"
 ```
 
-This writes:
+Writes:
 
 ```text
 paper-tp.md
 ```
 
-Pack a folder:
+**Best combination**
+
+Use this when you want the most aggressive current setup from the paper-style experiments: select the best evidence first, then compress the selected context with LongLLMLingua.
+
+```bash
+tokenpack-rag pack paper.pdf \
+  --query "What evidence supports the main claim?" \
+  --compress llmlingua \
+  --longllmlingua \
+  --compression-rate 0.50 \
+  --overwrite
+```
+
+This is the setup behind the headline result: about **74.6% context-token saving** in the LongBench v2 pilot while retaining TokenPack's **+15.6% relative pilot lift** over full-context prompting. It requires the `compression` extra and a local/cached compression model unless you intentionally add `--allow-download`.
+
+**Folder pack**
+
+Use this for a repo, notes folder, or mixed document set:
 
 ```bash
 tokenpack-rag pack docs/ --query "Summarize the design decisions in this project."
 ```
 
-This writes:
+Writes:
 
 ```text
 docs-tp.md
 ```
 
-Choose your own budget:
+**Manual budget**
+
+Use this when you already know your target context size:
 
 ```bash
 tokenpack-rag pack paper.pdf \
@@ -124,11 +159,13 @@ The output is a packed Markdown context file, not a modified PDF. You can paste 
 | All required evidence kept | TokenPack keeps complete evidence for 87.0% of QASPER questions vs 12.0% for compression-only. |
 | Selection + compression | TokenPack + LLMLingua-2 reaches 58.4% context saving while keeping 85.1% of required evidence. |
 | Pilot answer accuracy | On an 83-case LongBench v2 pilot, TokenPack improves relative accuracy by 15.6% over full-context prompting while saving 50.6% context. |
-| Aggressive cascade | TokenPack + LongLLMLingua keeps the same pilot accuracy while reaching 74.6% context saving. |
+| Aggressive cascade | TokenPack + LongLLMLingua reaches 74.6% context saving while retaining TokenPack's +15.6% relative pilot lift over full context. |
 
 </details>
 
 The practical takeaway: pack the useful evidence first, then optionally compress it. This is different from blindly compressing the whole retrieved context.
+
+For the full methodology, tables, limitations, and experiment details, read the paper: [`submission/TokenPack-paper.pdf`](submission/TokenPack-paper.pdf).
 
 ## Use With Agents / MCP
 
@@ -350,25 +387,6 @@ selector: budget-top-k (TokenPack hybrid-greedy)
 
 Historical selectors such as `knapsack`, `knapsack-redundancy`, and `semantic-threshold` chunking remain available for ablation work, but the main pipeline is hybrid-greedy.
 
-## Testing & Coverage
-
-The current local test suite has **75 passing tests**:
-
-```bash
-python -m pytest -q
-```
-
-Current coverage, measured over `src/tokenpack`, is **74%**:
-
-```bash
-python -m coverage run -m pytest -q
-python -m coverage report -m
-```
-
-The full repository coverage including research and submission scripts is **71%**. Core package coverage is stronger in the main production path: packing is 90%, pipeline is 95%, selectors are 96%, scoring is 85%, and chunking is 82%. The lower-coverage areas are mostly optional generation/reporting paths, MCP edge paths, format-specific loaders, and experiment harnesses.
-
-GitHub Actions runs the package tests with coverage on Python 3.10, 3.11, and 3.12.
-
 ## Reproduce Paper Runs
 
 LongBench v2 Modal pilot used in the current paper:
@@ -393,7 +411,7 @@ See [`submission/source_code_manifest.md`](submission/source_code_manifest.md) f
 ```text
 src/tokenpack/                     Python package and CLI implementation
 tests/                             Unit and smoke tests
-assets/                            README logo and visual result assets
+assets/                            README visual result assets
 examples/                          Small local examples for the CLI
 submission/paper/                  LaTeX paper source, tables, figures
 submission/experiments/            QASPER, LongBench, compression, and ablation scripts
