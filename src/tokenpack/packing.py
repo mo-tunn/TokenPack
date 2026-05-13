@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable
 
 from tokenpack.chunk_profiles import resolve_chunk_size_config
 from tokenpack.compression import CompressionConfig, CompressionResult
@@ -114,6 +115,8 @@ def pack_source(
     compression_context_filter: bool = False,
     compression_sentence_filter: bool = False,
     no_compression_token_filter: bool = False,
+    output_detail: str = "clean",
+    progress: Callable[[str], None] | None = None,
     run_root: str | Path = PACK_RUN_ROOT,
 ) -> PackResult:
     source_path = Path(source)
@@ -124,6 +127,8 @@ def pack_source(
         raise FileExistsError(f"Output already exists: {output_path}\nUse --overwrite or choose --out.")
     if compress not in {"none", "llmlingua"}:
         raise ValueError(f"Unknown compressor: {compress}")
+    if output_detail not in {"clean", "debug", "none"}:
+        raise ValueError(f"Unknown output detail: {output_detail}")
 
     run_dir = _pack_run_dir(source_path, run_root=run_root)
     index_path = Path(index_out) if index_out else run_dir / "index.json"
@@ -135,6 +140,7 @@ def pack_source(
         min_tokens,
         max_tokens,
     )
+    _emit_progress(progress, f"Indexing source with structure-aware chunks: {source_path}")
     index = ingest_path(
         source_path,
         index_path,
@@ -146,6 +152,7 @@ def pack_source(
         source_type=source_type,
     )
     source_tokens = sum(max(0, chunk.token_count) for chunk in index.chunks)
+    _emit_progress(progress, f"Indexed {len(index.chunks)} chunks / {_fmt_int(source_tokens)} source tokens.")
     resolved_budget = _resolve_pack_budget(
         source_tokens=source_tokens,
         budget=budget,
@@ -155,6 +162,7 @@ def pack_source(
         reserve_output=reserve_output,
     )
 
+    _emit_progress(progress, "Embedding query and scoring chunks.")
     query_embedding = embedder.embed([query])[0]
     scored = score_chunks(
         query_embedding,
@@ -165,6 +173,7 @@ def pack_source(
         query_text=query,
         redundancy_candidate_pool=candidate_pool,
     )
+    _emit_progress(progress, f"Selecting context with {DEFAULT_SELECTOR}.")
     result = select_chunks(
         scored,
         strategy=DEFAULT_SELECTOR,
@@ -192,7 +201,10 @@ def pack_source(
 
     chunks = [item.chunk for item in result.selected]
     compression_result = None
+    context_header_style = "technical" if output_detail == "debug" else "source"
+    include_context_headers = output_detail != "none"
     if compress == "llmlingua":
+        _emit_progress(progress, "Compressing selected context with LLMLingua/LongLLMLingua.")
         compression_config = CompressionConfig(
             compressor="llmlingua",
             model_name=compression_model,
@@ -208,10 +220,19 @@ def pack_source(
             device_map=compression_device_map,
             local_files_only=not allow_download,
         )
-        context, compression_result = render_compressed_context(chunks, compression_config, include_headers=True)
+        context, compression_result = render_compressed_context(
+            chunks,
+            compression_config,
+            include_headers=output_detail == "debug",
+        )
     else:
-        context = render_context(chunks, include_headers=True)
+        context = render_context(
+            chunks,
+            include_headers=include_context_headers,
+            header_style=context_header_style,
+        )
 
+    _emit_progress(progress, f"Writing packed context: {output_path}")
     markdown = (
         _render_pack_markdown_header(
             source=source_path,
@@ -224,6 +245,7 @@ def pack_source(
             selection_path=selection_path,
             compression=compress,
             compression_result=compression_result,
+            output_detail=output_detail,
         )
         + context
     )
@@ -358,13 +380,27 @@ def _render_pack_markdown_header(
     selection_path: Path,
     compression: str,
     compression_result,
+    output_detail: str,
 ) -> str:
+    if output_detail == "none":
+        return ""
+
     compression_value = compression
     if compression_result is not None:
         compression_value = (
             f"{compression} ({compression_result.origin_tokens}->{compression_result.compressed_tokens} tokens, "
             f"saving={compression_result.saving_rate:.1%})"
         )
+    if output_detail == "clean":
+        return (
+            "# TokenPack Packed Context\n\n"
+            f"**Source:** `{source}`\n\n"
+            f"**Query:** {query}\n\n"
+            f"**Selected:** {selected_chunks} chunks / {_fmt_int(selected_tokens)} tokens\n\n"
+            f"**Compression:** {compression_value}\n\n"
+            "## Context\n\n"
+        )
+
     rows = [
         ("Source", str(source)),
         ("Output", str(output_path)),
@@ -403,3 +439,8 @@ def _md_table_cell(value: object) -> str:
 
 def _fmt_int(value: int) -> str:
     return f"{value:,}"
+
+
+def _emit_progress(progress: Callable[[str], None] | None, message: str) -> None:
+    if progress is not None:
+        progress(message)

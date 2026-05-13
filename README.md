@@ -76,7 +76,7 @@ cd TokenPack
 pip install -e ".[pdf,office,tokens,compression,mcp,dev]"
 ```
 
-TokenPack-RAG uses `sentence-transformers/all-MiniLM-L6-v2` as the default embedding model.
+TokenPack-RAG uses `sentence-transformers/all-MiniLM-L6-v2` as the default embedding model. The CLI tries local model files first and prints progress while loading; first-time users may see a Hugging Face download unless they pass `--offline-models`.
 
 ## 30-Second Start
 
@@ -293,6 +293,13 @@ tokenpack-rag pack paper.pdf \
   --query "..." \
   --index-out .tokenpack/paper.index.json \
   --selection-out paper-tp.selection.json
+```
+
+The default Markdown is intentionally clean: it keeps the query, source, selected-token summary, and source/page markers, but leaves chunk ids, token counts, and artifact paths out of the LLM context. Use debug output only when you are inspecting the pipeline:
+
+```bash
+tokenpack-rag pack paper.pdf --query "..." --output-detail debug
+tokenpack-rag pack paper.pdf --query "..." --output-detail none
 ```
 
 ## Optional Compression

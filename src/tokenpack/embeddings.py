@@ -18,7 +18,13 @@ class Embedder(Protocol):
 
 
 class SentenceTransformerEmbedder:
-    """Sentence-transformers embedding backend used by TokenPack."""
+    """Sentence-transformers embedding backend used by TokenPack.
+
+    When network access is allowed implicitly, prefer already-cached local model
+    files first. This avoids slow Hugging Face network checks on machines that
+    have used TokenPack before, while still allowing a first-run download when
+    the model is not cached.
+    """
 
     def __init__(
         self,
@@ -32,7 +38,15 @@ class SentenceTransformerEmbedder:
             os.environ.get("TOKENPACK_HF_OFFLINE") == "1"
             or os.environ.get("HF_HUB_OFFLINE") == "1"
         )
-        use_local_files = offline if local_files_only is None else local_files_only
+        if local_files_only is None and not offline:
+            try:
+                self._model = SentenceTransformer(model_name, local_files_only=True)
+                return
+            except Exception:
+                self._model = SentenceTransformer(model_name, local_files_only=False)
+                return
+
+        use_local_files = True if offline else bool(local_files_only)
         self._model = SentenceTransformer(model_name, local_files_only=use_local_files)
 
     def embed(self, texts: list[str]) -> list[list[float]]:

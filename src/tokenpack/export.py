@@ -11,14 +11,23 @@ def ordered_chunks(chunks: list[Chunk]) -> list[Chunk]:
     return sorted(chunks, key=lambda chunk: chunk.order_key)
 
 
-def render_context(chunks: list[Chunk], include_headers: bool = True) -> str:
+def render_context(
+    chunks: list[Chunk],
+    include_headers: bool = True,
+    header_style: str = "technical",
+) -> str:
     parts: list[str] = []
     for number, chunk in enumerate(ordered_chunks(chunks), start=1):
         if include_headers:
             page_info = f", pages {chunk.start_page}-{chunk.end_page}" if chunk.start_page is not None else ""
-            parts.append(
-                f"[Chunk {number}: id={chunk.id}, source={chunk.source_path}{page_info}, tokens={chunk.token_count}]"
-            )
+            if header_style == "technical":
+                parts.append(
+                    f"[Chunk {number}: id={chunk.id}, source={chunk.source_path}{page_info}, tokens={chunk.token_count}]"
+                )
+            elif header_style == "source":
+                parts.append(f"[Source: {chunk.source_path}{page_info}]")
+            elif header_style != "none":
+                raise ValueError(f"Unknown context header style: {header_style}")
         parts.append(chunk.text)
     return "\n\n".join(parts).strip() + "\n"
 

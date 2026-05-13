@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tokenpack-rag"
-version = "0.1.0"
+version = "0.1.1"
 description = "Query-aware semantic chunk selection under LLM context-window budgets."
 readme = "README.md"
 license = { file = "LICENSE" }

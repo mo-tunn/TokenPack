@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from tokenpack.benchmark import run_benchmark, run_gold_benchmark, save_benchmark
@@ -89,6 +90,16 @@ def build_parser() -> argparse.ArgumentParser:
     pack.add_argument("--min-tokens", type=int, default=120, help="Minimum tokens per chunk when using manual sizing.")
     pack.add_argument("--max-tokens", type=int, default=900, help="Maximum tokens per chunk when using manual sizing.")
     pack.add_argument("--source-type", choices=["auto", "document", "code", "mixed"], default="auto", help="Loader hint.")
+    pack.add_argument(
+        "--output-detail",
+        choices=["clean", "debug", "none"],
+        default="clean",
+        help=(
+            "How much metadata to include in the packed Markdown. "
+            "clean is LLM-ready; debug includes chunk ids, token counts, and artifact paths; none writes only context."
+        ),
+    )
+    pack.add_argument("--quiet", action="store_true", help="Suppress pack progress messages.")
     pack.add_argument("--compress", choices=["none", "llmlingua"], default="none", help="Optional second-stage compression.")
     pack.add_argument("--compression-model", default=DEFAULT_COMPRESSION_MODEL, help="LLMLingua model name or local path.")
     pack.add_argument("--compression-rate", type=float, default=0.85, help="LLMLingua compression rate.")
@@ -384,6 +395,10 @@ def _run_pack(args: argparse.Namespace, model_name: str) -> int:
     output_path = _infer_pack_output_path(source, args.out)
     if output_path.exists() and not args.overwrite:
         raise SystemExit(f"Output already exists: {output_path}\nUse --overwrite or choose --out.")
+    progress = None if args.quiet else _pack_progress
+    if progress is not None:
+        mode = "local cache only" if args.offline_models else "local cache first; download if missing"
+        progress(f"Loading embedding model: {model_name} ({mode}).")
     embedder = _make_cli_embedder(args, model_name)
     try:
         result = pack_source(
@@ -416,6 +431,8 @@ def _run_pack(args: argparse.Namespace, model_name: str) -> int:
             compression_context_filter=args.compression_context_filter,
             compression_sentence_filter=args.compression_sentence_filter,
             no_compression_token_filter=args.no_compression_token_filter,
+            output_detail=args.output_detail,
+            progress=progress,
             embedder=embedder,
         )
     except (FileExistsError, ValueError) as exc:
@@ -430,6 +447,10 @@ def _make_cli_embedder(args: argparse.Namespace, model_name: str):
         model_name=model_name,
         local_files_only=True if args.offline_models else None,
     )
+
+
+def _pack_progress(message: str) -> None:
+    print(f"[tokenpack] {message}", file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":

@@ -869,9 +869,40 @@ def test_pack_command_writes_markdown_with_auto_budget(monkeypatch):
     text = output.read_text(encoding="utf-8")
     assert exit_code == 0
     assert "# TokenPack Packed Context" in text
+    assert "**Source:**" in text
+    assert "**Selected:**" in text
+    assert "[Source:" in text
+    assert "Index artifact" not in text
+    assert "id=chunk" not in text
+    assert "Alpha evidence" in text
+
+
+def test_pack_command_debug_output_keeps_technical_metadata(monkeypatch):
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "mini_context.txt"
+    source.write_text("Alpha evidence explains the TokenPack budget selector.", encoding="utf-8")
+    output = tmp_path / "mini_context-debug.md"
+    monkeypatch.setattr(cli_module, "_make_cli_embedder", lambda args, model_name: _ToyEmbedder(dimensions=16))
+
+    exit_code = cli_module.main(
+        [
+            "pack",
+            str(source),
+            "--query",
+            "alpha budget evidence",
+            "--out",
+            str(output),
+            "--output-detail",
+            "debug",
+        ]
+    )
+
+    text = output.read_text(encoding="utf-8")
+    assert exit_code == 0
     assert "| Budget mode | auto |" in text
     assert "| Selector | budget-top-k |" in text
-    assert "Alpha evidence" in text
+    assert "Index artifact" in text
+    assert "[Chunk 1:" in text
 
 
 def test_pack_command_refuses_existing_output():
