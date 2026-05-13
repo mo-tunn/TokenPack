@@ -5,6 +5,7 @@ import json
 import re
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -16,7 +17,7 @@ for path in (SRC, THIS_DIR):
         sys.path.insert(0, str(path))
 
 from eval_utils import pairwise_rows, read_jsonl, summarize_rows, write_csv, write_jsonl  # noqa: E402
-from tokenpack.chunking import ParagraphGroupChunker, StructureAwareChunker  # noqa: E402
+from tokenpack.chunking import StructureAwareChunker  # noqa: E402
 from tokenpack.compression import CompressionConfig, compress_chunks  # noqa: E402
 from tokenpack.embeddings import make_embedder  # noqa: E402
 from tokenpack.models import Chunk, ScoredChunk, TextBlock  # noqa: E402
@@ -31,6 +32,7 @@ DEFAULT_WORK_DIR = ROOT / ".tokenpack" / "longbench_v2_pilot"
 LONG_BENCH_REPO = "zai-org/LongBench-v2"
 PIPELINES = [
     "full-context",
+    "production-rag-50",
     "tokenpack-50",
     "only-longllmlingua-rate050",
     "tokenpack-50+longllmlingua-rate050",
@@ -50,12 +52,12 @@ def main() -> int:
     parser.add_argument("--source-min-tokens", type=int, default=8_000)
     parser.add_argument("--source-max-tokens", type=int, default=24_000)
     parser.add_argument("--max-scanned", type=int, default=180)
-    parser.add_argument("--backend", choices=["auto", "hash", "sentence-transformers"], default="hash")
     parser.add_argument("--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "structure-aware"], default="structure-aware")
+    parser.add_argument("--embedding-allow-download", action="store_true")
+    parser.add_argument("--chunker", choices=["structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
-        choices=[profile for profile in SCORING_PROFILES if profile != "instruction-ami"],
+        choices=list(SCORING_PROFILES),
         default="evidence-hybrid",
     )
     parser.add_argument("--budget-ratio", type=float, default=0.50)
@@ -67,8 +69,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--selection-strategy",
-        choices=["knapsack-redundancy", "knapsack-coverage"],
-        default="knapsack-redundancy",
+        choices=["budget-top-k", "knapsack-redundancy", "knapsack-coverage"],
+        default="budget-top-k",
     )
     parser.add_argument("--candidate-pool", type=int, default=300)
     parser.add_argument("--target-tokens", type=int, default=650)
@@ -88,6 +90,11 @@ def main() -> int:
     parser.add_argument("--reranker-weight", type=float, default=0.35)
     parser.add_argument("--reranker-allow-download", action="store_true")
     parser.add_argument("--cascade-frontier", action="store_true")
+    parser.add_argument(
+        "--diagnostic-selectors",
+        action="store_true",
+        help="Build selector/scoring diagnostic methods: similarity-knapsack, hybrid-greedy, and hybrid-knapsack.",
+    )
     parser.add_argument("--skip-compression", action="store_true", help="Build only full-context and TokenPack tasks.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--run-modal", action="store_true")
@@ -146,7 +153,10 @@ def main() -> int:
 def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     _apply_default_args(args)
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.embedding_model, local_files_only=True)
+    embedder = make_embedder(
+        model_name=args.embedding_model,
+        local_files_only=not args.embedding_allow_download,
+    )
     compressor_backend = None
     reranker_backend = _make_reranker(args)
     tasks: list[dict[str, Any]] = []
@@ -173,6 +183,8 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             context=case["context"],
             chunker_name=args.chunker,
             token_counter=token_counter,
+            embedder=embedder,
+            semantic_threshold=0.35,
             target_tokens=args.target_tokens,
             min_tokens=args.min_tokens,
             max_tokens=args.max_tokens,
@@ -206,6 +218,55 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             candidate_pool=args.candidate_pool,
             coverage_query=query,
         )
+        production_rag = select_chunks(
+            scored,
+            strategy="production-rag",
+            budget=budget_tokens,
+            candidate_pool=args.candidate_pool,
+        )
+        diagnostic_contexts: dict[str, tuple[str, int, dict[str, Any]]] = {}
+        if args.diagnostic_selectors:
+            similarity_scored = _with_similarity_values(scored)
+            similarity_knapsack = select_chunks(
+                similarity_scored,
+                strategy="knapsack",
+                budget=budget_tokens,
+                candidate_pool=args.candidate_pool,
+            )
+            hybrid_greedy = select_chunks(
+                scored,
+                strategy="budget-top-k",
+                budget=budget_tokens,
+                candidate_pool=args.candidate_pool,
+            )
+            hybrid_knapsack = (
+                selection
+                if args.selection_strategy == "knapsack-redundancy"
+                else select_chunks(
+                    scored,
+                    strategy="knapsack-redundancy",
+                    budget=budget_tokens,
+                    candidate_pool=args.candidate_pool,
+                    coverage_query=query,
+                )
+            )
+            diagnostic_contexts = {
+                "similarity-knapsack-50": (
+                    _render_similarity_context(similarity_knapsack.selected),
+                    similarity_knapsack.used_tokens,
+                    {"selection_seconds": similarity_knapsack.elapsed_seconds, "compression_seconds": 0.0},
+                ),
+                "hybrid-greedy-50": (
+                    _render_selected_context(hybrid_greedy.selected, order=args.context_order),
+                    hybrid_greedy.used_tokens,
+                    {"selection_seconds": hybrid_greedy.elapsed_seconds, "compression_seconds": 0.0},
+                ),
+                "hybrid-knapsack-50": (
+                    _render_selected_context(hybrid_knapsack.selected, order=args.context_order),
+                    hybrid_knapsack.used_tokens,
+                    {"selection_seconds": hybrid_knapsack.elapsed_seconds, "compression_seconds": 0.0},
+                ),
+            }
         selected_chunks = [item.chunk for item in selection.selected]
 
         contexts: dict[str, tuple[str, int, dict[str, Any]]] = {
@@ -214,12 +275,20 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                 source_tokens,
                 {"selection_seconds": 0.0, "compression_seconds": 0.0},
             ),
-            "tokenpack-50": (
+            "production-rag-50": (
+                _render_production_rag_context(production_rag.selected),
+                production_rag.used_tokens,
+                {"selection_seconds": production_rag.elapsed_seconds, "compression_seconds": 0.0},
+            ),
+        }
+        if args.diagnostic_selectors:
+            contexts.update(diagnostic_contexts)
+        else:
+            contexts["tokenpack-50"] = (
                 _render_selected_context(selection.selected, order=args.context_order),
                 selection.used_tokens,
                 {"selection_seconds": selection.elapsed_seconds, "compression_seconds": 0.0},
-            ),
-        }
+            )
 
         if not args.skip_compression:
             if compressor_backend is None:
@@ -333,6 +402,8 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
         "methods": sorted(by_method),
         "selection_strategy": args.selection_strategy,
         "context_order": args.context_order,
+        "production_rag_baseline": True,
+        "diagnostic_selectors": bool(args.diagnostic_selectors),
         "reranker": args.reranker,
         "reranker_model": args.reranker_model,
         "reranker_candidate_pool": args.reranker_candidate_pool,
@@ -413,6 +484,8 @@ def _apply_default_args(args: argparse.Namespace) -> None:
         "longllmlingua_model": "gpt2",
         "compression_device_map": "cpu",
         "compression_allow_download": False,
+        "embedding_allow_download": False,
+        "diagnostic_selectors": False,
     }
     for name, value in defaults.items():
         if not hasattr(args, name):
@@ -436,17 +509,23 @@ def _chunk_context(
     context: str,
     chunker_name: str,
     token_counter: TokenCounter,
+    embedder: Any | None = None,
+    semantic_threshold: float = 0.35,
     target_tokens: int,
     min_tokens: int,
     max_tokens: int,
 ) -> list[Chunk]:
     blocks = _blocks_from_context(case_id, context)
-    chunker_cls = StructureAwareChunker if chunker_name == "structure-aware" else ParagraphGroupChunker
-    chunker = chunker_cls(
+    if chunker_name != "structure-aware":
+        raise ValueError(f"Unknown chunker: {chunker_name}")
+    block_embeddings = embedder.embed([block.text for block in blocks]) if embedder is not None else None
+    chunker = StructureAwareChunker(
         target_tokens=target_tokens,
         min_tokens=min_tokens,
         max_tokens=max_tokens,
         token_counter=token_counter,
+        block_embeddings=block_embeddings,
+        semantic_threshold=semantic_threshold,
     )
     return chunker.chunk(blocks)
 
@@ -495,6 +574,35 @@ def _render_selected_context(items: list[ScoredChunk], *, order: str = "score") 
             parts.append(_render_ordered_chunks(remaining, label="Chunk").strip())
         return "\n\n".join(part for part in parts if part).strip() + "\n"
     raise ValueError(f"Unknown context order: {order}")
+
+
+def _render_production_rag_context(items: list[ScoredChunk]) -> str:
+    return _render_ordered_chunks(
+        sorted(items, key=lambda item: item.raw_similarity, reverse=True),
+        label="Retrieved Chunk",
+    )
+
+
+def _render_similarity_context(items: list[ScoredChunk]) -> str:
+    return _render_ordered_chunks(
+        sorted(items, key=lambda item: item.raw_similarity, reverse=True),
+        label="Similarity-Knapsack Chunk",
+    )
+
+
+def _with_similarity_values(items: list[ScoredChunk]) -> list[ScoredChunk]:
+    return [
+        replace(
+            item,
+            value=max(0.0, item.raw_similarity),
+            score_components={
+                **item.score_components,
+                "diagnostic_value": max(0.0, item.raw_similarity),
+                "diagnostic_profile": "raw_similarity",
+            },
+        )
+        for item in items
+    ]
 
 
 def _render_score_sorted_context(items: list[ScoredChunk]) -> str:
@@ -637,8 +745,10 @@ def _summarize_results(results_jsonl: Path, output_dir: Path) -> None:
     rows = read_jsonl(results_jsonl)
     summary = summarize_rows(rows)
     pairwise = pairwise_rows(rows)
+    pairwise_vs_production_rag = pairwise_rows(rows, baseline="production-rag-50")
     write_csv(summary, output_dir / "longbench_generation_summary.csv")
     write_csv(pairwise, output_dir / "longbench_generation_pairwise.csv")
+    write_csv(pairwise_vs_production_rag, output_dir / "longbench_generation_pairwise_vs_production_rag.csv")
     _write_readout(summary, pairwise, output_dir / "longbench_generation_readout.md")
     _write_ablation_readouts(summary, pairwise, output_dir, _load_task_report(output_dir))
     print(f"Wrote summary assets to {output_dir}")

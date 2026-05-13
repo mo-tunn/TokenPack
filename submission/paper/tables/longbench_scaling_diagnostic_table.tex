@@ -1,0 +1,26 @@
+\begin{table}[!t]
+\caption{LongBench v2 Larger-Context Scaling Diagnostic with Qwen/Qwen2.5-14B-Instruct. HG denotes evidence-hybrid greedy fill; DP denotes the diagnostic dynamic-programming selector after the stated value function. These larger-window runs are feasibility diagnostics only, not primary accuracy evidence or a stable selector ranking.}
+\label{tab:longbench-scaling-diagnostic}
+\centering
+\tiny
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llrrcrrrr@{}}
+\toprule
+\rowcolor{tablehead}
+Source Window & Method & Cases & Acc. & Correct & Avg. Ctx. & Saving & Total s & Speedup \\
+\midrule
+32k--58k & Full context & 30 & 0.400 & 12/30 & 43704 & 0.000 & 13.580 & 1.00$\times$ \\
+32k--58k & Prod-RAG-50 & 30 & 0.433 & 13/30 & 21770 & 0.502 & 6.440 & 2.11$\times$ \\
+32k--58k & Dense DP-50 & 30 & 0.300 & 9/30 & 21813 & 0.501 & 6.883 & 1.97$\times$ \\
+\rowcolor{tokenpackhighlight}\textbf{32k--58k} & \textbf{TP-HG-50} & \textbf{30} & \textbf{0.500} & \textbf{15/30} & \textbf{21767} & \textbf{0.502} & \textbf{6.313} & \textbf{2.15$\times$} \\
+32k--58k & Hybrid DP-50 & 30 & 0.367 & 11/30 & 21803 & 0.501 & 6.718 & 2.02$\times$ \\
+\midrule
+64k--112k & Full context & 8 & 0.375 & 3/8 & 78844 & 0.000 & 9.317 & 1.00$\times$ \\
+64k--112k & Prod-RAG-50 & 8 & 0.500 & 4/8 & 39300 & 0.501 & 4.049 & 2.30$\times$ \\
+64k--112k & Dense DP-50 & 8 & 0.375 & 3/8 & 39401 & 0.500 & 4.530 & 2.06$\times$ \\
+\rowcolor{tokenpackhighlight}\textbf{64k--112k} & \textbf{TP-HG-50} & \textbf{8} & \textbf{0.375} & \textbf{3/8} & \textbf{39290} & \textbf{0.501} & \textbf{3.991} & \textbf{2.33$\times$} \\
+64k--112k & Hybrid DP-50 & 8 & 0.500 & 4/8 & 39340 & 0.501 & 4.666 & 2.00$\times$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

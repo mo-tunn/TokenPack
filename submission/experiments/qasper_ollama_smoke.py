@@ -41,15 +41,14 @@ def main() -> int:
     parser.add_argument("--data-file", required=True)
     parser.add_argument("--model", default="qwen3:4b")
     parser.add_argument("--ollama-url", default="http://localhost:11434")
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold"], default="semantic-threshold")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
         default="hybrid",
     )
-    parser.add_argument("--strategies", default="budget-top-k,knapsack")
+    parser.add_argument("--strategies", default="production-rag,budget-top-k,knapsack")
     parser.add_argument("--budget-ratios", default="0.60,0.80,1.00")
     parser.add_argument("--max-questions", type=int, default=30)
     parser.add_argument("--max-papers", type=int, default=10_000)
@@ -72,7 +71,7 @@ def main() -> int:
 
     rows = list(_load_qasper_rows(args.data_file, "validation"))
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.embedding_model, local_files_only=True)
+    embedder = make_embedder(model_name=args.embedding_model, local_files_only=True)
     strategies = [item.strip() for item in args.strategies.split(",") if item.strip()]
 
     generated_rows: list[dict[str, Any]] = []

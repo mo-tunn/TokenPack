@@ -4,14 +4,14 @@ The main project source code is located in the repository root under `src/tokenp
 
 ## Important Modules
 
-- `src/tokenpack/selectors.py`: top-k, budget-top-k, MMR, 0/1 knapsack, redundancy-aware knapsack, and experimental query-coverage selection.
-- `src/tokenpack/scoring.py`: baseline (`cosine`, `hybrid`), default (`evidence-hybrid`), budget-aware (`knapsack-aware`), related-work proxy (`budgetmem-style`), and experimental (`query-support`, `decision-aware`, `instruction-ami`) value scoring.
-- `src/tokenpack/embeddings.py`: deterministic `hashing-384` embeddings and optional `sentence-transformers/all-MiniLM-L6-v2` embeddings.
-- `src/tokenpack/ami.py`: optional time-budgeted AMI reranking with local Hugging Face causal language models.
+- `src/tokenpack/selectors.py`: production-style dense RAG, top-k, budget-top-k, MMR, 0/1 knapsack, redundancy-aware knapsack, and experimental query-coverage selection.
+- `src/tokenpack/scoring.py`: production `evidence-hybrid` value scoring only.
+- `src/tokenpack/scoring_experimental.py`: historical and ablation-only scoring profiles (`cosine`, `hybrid`, `knapsack-aware`, `budgetmem-style`, `query-support`, `decision-aware`).
+- `src/tokenpack/embeddings.py`: required `sentence-transformers/all-MiniLM-L6-v2` embeddings by default.
 - `src/tokenpack/chunk_profiles.py`: named chunk-size presets, including the low-budget evidence preset used for aggressive compression experiments.
-- `src/tokenpack/chunking.py`: paragraph-group, semantic-threshold, and structure-aware chunking.
-- `src/tokenpack/benchmark.py`: gold/smoke benchmark metrics.
-- `src/tokenpack/generation.py`: local Ollama and OpenAI generation adapters.
+- `src/tokenpack/chunking.py`: standalone semantic-threshold ablation plus the default structure-aware chunker with semantic drift boundaries.
+- `src/tokenpack/benchmark.py`: lightweight local benchmark helpers kept for smoke tests, not used for final paper claims.
+- `src/tokenpack/generation.py`: local Ollama plus optional non-paper cloud generation adapters.
 - `src/tokenpack/cli.py`: `tokenpack` command-line interface.
 - `tests/test_core.py`: unit and integration smoke tests.
 - `submission/experiments/knapsack_performance.py`: repeated algorithm-analysis experiment comparing exact DP, value-density greedy, simulated annealing, value greedy, lightest-first greedy, and random feasible selection over 100 runs per problem size.
@@ -21,31 +21,26 @@ The main project source code is located in the repository root under `src/tokenp
 ## Installation
 
 ```powershell
-pip install -e ".[embeddings,pdf,tokens,dev]"
+pip install -e ".[pdf,tokens,dev]"
 ```
 
-Fast offline test without external model downloads:
+Fast local smoke test. Use `--offline-models` only if the sentence-transformers model is already cached locally:
 
 ```powershell
 $env:PYTHONPATH="src"
-python -m tokenpack.cli --backend hash ingest README.md --index .tokenpack/demo-index.json
-python -m tokenpack.cli --backend hash select --index .tokenpack/demo-index.json --query "knapsack retrieval context budget" --budget 300 --reserve-output 50
+python -m tokenpack.cli --offline-models ingest README.md --index .tokenpack/demo-index.json
+python -m tokenpack.cli --offline-models select --index .tokenpack/demo-index.json --query "knapsack retrieval context budget" --budget 300 --reserve-output 50
 python -m pytest -p no:cacheprovider
 ```
 
 ## Reproducibility Defaults
 
-- Paper QASPER and LongBench runs use `--backend hash`, implemented as deterministic `hashing-384` embeddings.
-- If `--backend sentence-transformers` is selected, the default neural embedding model is `sentence-transformers/all-MiniLM-L6-v2`.
+- New QASPER and LongBench runs use `sentence-transformers/all-MiniLM-L6-v2`; older deterministic lexical-embedding artifacts are deprecated and should not be used for final paper claims.
+- LongBench v2 generation and latency tables use `Qwen/Qwen2.5-14B-Instruct` via vLLM on Modal.
+- The main chunking path is `structure-aware`: it preserves metadata for code/PDF sources and now also uses adjacent block embedding similarity to split semantic topic shifts inside compatible document sections.
 - QASPER 200-question compression runs stream the validation split in dataset order and stop after the first 200 questions from papers with parseable text blocks and questions; they are not random subsamples.
 - Synthetic simulated annealing starts from density-greedy selection, uses temperature `max(1, n/2)`, iterations `min(25000, max(2000, 12*n))`, cooling `0.9995`, and deterministic reheating by `1.02` every 250 steps.
-- `budgetmem-style` is an artifact-local proxy baseline using BM25, query coverage, position, term specificity, entity density, numerical density, discourse markers, and length utility. It is not a reproduction of BudgetMem's learned policy.
-
-BudgetMem-style QASPER proxy run:
-
-```powershell
-python submission\experiments\qasper_selector_eval.py --data-file .tokenpack\data\qasper-validation.parquet --backend hash --chunker structure-aware --scoring budgetmem-style --strategies budget-top-k,knapsack-redundancy --budget-ratios 0.20,0.30,0.40,0.50 --max-papers 500 --max-questions 861 --candidate-pool 300 --chunk-size-preset low-budget --output-dir submission\results\qasper_budgetmem_style --no-paper-table
-```
+- `budgetmem-style` is retained only as an artifact-local proxy in `scoring_experimental.py`. It is not a reproduction of BudgetMem's learned policy and is no longer selectable from production experiment CLIs.
 
 Local LLM test with Ollama:
 
@@ -64,7 +59,7 @@ LongBench v2 Modal pilot used by the paper:
 
 ```powershell
 $env:PYTHONIOENCODING="utf-8"
-python -m modal run submission/longbench_eval/app.py::build_and_run --output-dir submission/results/longbench_v2_modal_pilot100_score_then_source --limit 100 --source-min-tokens 8000 --source-max-tokens 24000 --max-scanned 503 --batch-size 1 --context-order score-then-source
+python -m modal run submission/longbench_eval/app.py::build_and_run --output-dir submission/results/longbench_v2_modal_hybrid_greedy_83_latency --limit 83 --source-min-tokens 8000 --source-max-tokens 24000 --max-scanned 503 --model-id Qwen/Qwen2.5-14B-Instruct --batch-size 1 --context-order score-then-source --latency-mode
 ```
 
 Coverage-selector LongBench ablation:

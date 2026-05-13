@@ -1,5 +1,5 @@
 \begin{table}[!t]
-\caption{Compression Frontier on QASPER (All Rows Use 200 Questions)}
+\caption{Compression Frontier on QASPER (All Rows Use 200 Questions). LLM2 denotes LLMLingua-2.}
 \label{tab:qasper-compression-frontier}
 \centering
 \scriptsize
@@ -9,11 +9,11 @@
 \rowcolor{tablehead}
 Method & Saving & Evidence Recall & Answer Overlap F1 & Run \\
 \midrule
-Only LLMLingua-2 rate=0.50 & 50.6\% & 0.714 & 0.010 & current-200q \\
-\rowcolor{tokenpackhighlight}Only TokenPack & 50.9\% & 0.900 & 0.013 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.85 & 58.3\% & 0.823 & 0.014 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.75 & 63.4\% & 0.765 & 0.014 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLMLingua-2 rate=0.50 & 75.8\% & 0.613 & 0.017 & current-200q \\
+Only LLM2-0.50 & 50.6\% & 0.713 & 0.010 & current-200q \\
+\rowcolor{tokenpackhighlight}Only TokenPack & 51.1\% & 0.934 & 0.013 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.85 & 58.4\% & 0.851 & 0.014 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.75 & 63.5\% & 0.792 & 0.015 & current-200q \\
+\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.50 & 75.9\% & 0.632 & 0.018 & current-200q \\
 \bottomrule
 \end{tabular}%
 }

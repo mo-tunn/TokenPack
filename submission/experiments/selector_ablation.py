@@ -36,15 +36,14 @@ from tokenpack.selectors import select_chunks
 from tokenpack.tokenization import TokenCounter
 
 
-STRATEGIES = ["budget-top-k", "greedy-density", "knapsack"]
+STRATEGIES = ["production-rag", "budget-top-k", "greedy-density", "knapsack"]
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Compare budget-safe selectors under the same scoring function.")
     parser.add_argument("--source", default=str(DEFAULT_SOURCE))
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold"], default="semantic-threshold")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
@@ -71,7 +70,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     blocks = _load_experiment_blocks(
         Path(args.source),
         max_documents=args.max_documents,

@@ -1,0 +1,10 @@
+method,baseline,compared,wins,ties,losses,win_rate
+full-context,only-longllmlingua-rate050,82,9,66,7,0.10975609756097561
+production-rag-50,only-longllmlingua-rate050,82,13,60,9,0.15853658536585366
+similarity-knapsack-50,only-longllmlingua-rate050,0,0,0,0,0.0
+hybrid-greedy-50,only-longllmlingua-rate050,0,0,0,0,0.0
+hybrid-knapsack-50,only-longllmlingua-rate050,0,0,0,0,0.0
+tokenpack-50,only-longllmlingua-rate050,82,12,65,5,0.14634146341463414
+tokenpack-50+longllmlingua-rate050,only-longllmlingua-rate050,82,9,71,2,0.10975609756097561
+tokenpack-60+longllmlingua-rate050,only-longllmlingua-rate050,0,0,0,0,0.0
+tokenpack-50+longllmlingua-rate065,only-longllmlingua-rate050,0,0,0,0,0.0

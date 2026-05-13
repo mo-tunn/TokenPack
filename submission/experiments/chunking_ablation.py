@@ -15,7 +15,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from tokenpack.chunking import ParagraphGroupChunker, SemanticThresholdChunker, StructureAwareChunker
+from tokenpack.chunking import SemanticThresholdChunker, StructureAwareChunker
 from tokenpack.embeddings import EmbeddingCache, make_embedder
 from tokenpack.index import ChunkIndex, save_index
 from tokenpack.loaders import iter_supported_files, load_text_blocks
@@ -28,7 +28,7 @@ from tokenpack.tokenization import TokenCounter
 DEFAULT_SOURCE = ROOT / "resources"
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results"
 DEFAULT_WORK_DIR = ROOT / ".tokenpack" / "chunking-ablation"
-CHUNKERS = ["paragraph", "semantic-threshold", "structure-aware"]
+CHUNKERS = ["semantic-threshold", "structure-aware"]
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z-]{3,}")
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 STOPWORDS = {
@@ -67,7 +67,6 @@ class EvidenceTemplate:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Compare chunking strategies under the same knapsack solver.")
     parser.add_argument("--source", default=str(DEFAULT_SOURCE))
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
     parser.add_argument("--budget-ratios", default="0.01,0.03,0.05")
     parser.add_argument("--budgets", help="Optional comma-separated absolute budgets; overrides --budget-ratios.")
@@ -95,7 +94,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     blocks = _load_experiment_blocks(
         Path(args.source),
         max_documents=args.max_documents,
@@ -239,10 +238,16 @@ def _build_index(
     token_counter: TokenCounter,
 ) -> ChunkIndex:
     cache = EmbeddingCache(work_dir / f"{chunker_name}.embeddings.json")
-    if chunker_name == "paragraph":
-        chunker = ParagraphGroupChunker(target_tokens, min_tokens, max_tokens, token_counter=token_counter)
-    elif chunker_name == "structure-aware":
-        chunker = StructureAwareChunker(target_tokens, min_tokens, max_tokens, token_counter=token_counter)
+    if chunker_name == "structure-aware":
+        block_embeddings = cache.get_or_embed([block.text for block in blocks], embedder)
+        chunker = StructureAwareChunker(
+            target_tokens,
+            min_tokens,
+            max_tokens,
+            token_counter=token_counter,
+            block_embeddings=block_embeddings,
+            semantic_threshold=semantic_threshold,
+        )
     elif chunker_name == "semantic-threshold":
         block_embeddings = cache.get_or_embed([block.text for block in blocks], embedder)
         chunker = SemanticThresholdChunker(
@@ -299,6 +304,7 @@ def _evaluate_index(
     budget: int,
     candidate_pool: int,
     scoring: str,
+    scorer=score_chunks,
 ) -> dict[str, float]:
     totals = {
         "evidence_term_recall": 0.0,
@@ -310,7 +316,7 @@ def _evaluate_index(
     }
     for template in templates:
         query_embedding = embedder.embed([template.query])[0]
-        scored = score_chunks(
+        scored = scorer(
             query_embedding,
             index.chunks,
             index.embeddings,

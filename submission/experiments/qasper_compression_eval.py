@@ -77,16 +77,15 @@ def main() -> int:
     )
     parser.add_argument("--data-file", help="Local QASPER parquet/json/jsonl file.")
     parser.add_argument("--split", choices=["validation", "test", "train"], default="validation")
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="structure-aware")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
         default="evidence-hybrid",
     )
     parser.add_argument("--pipelines", default=DEFAULT_PIPELINES)
-    parser.add_argument("--selection-strategies", default="knapsack-redundancy")
+    parser.add_argument("--selection-strategies", default="budget-top-k")
     parser.add_argument("--budget-ratios", default="0.50")
     parser.add_argument("--budgets")
     parser.add_argument("--max-papers", type=int, default=40)
@@ -132,7 +131,7 @@ def main() -> int:
 
     rows = list(_load_qasper_rows(args.data_file, args.split))
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     chunk_size = resolve_chunk_size_config(args.chunk_size_preset, args.target_tokens, args.min_tokens, args.max_tokens)
     compressor_pool = _CompressorPool(args)
 

@@ -10,6 +10,7 @@ from typing import Any, Iterable
 
 METHODS = [
     "full-document",
+    "production-rag-50",
     "budget-top-k-50",
     "tokenpack-50",
     "tokenpack-score-sorted-50",

@@ -1,5 +1,5 @@
 \begin{table}[htbp]
-\caption{LongBench v2 Hot-Model Latency Rerun. TP denotes TokenPack; LLL denotes LongLLMLingua context-level filtering. Latency is measured with batch size one and excludes Modal cold start/model loading.}
+\caption{Latency Companion to the Exploratory 83-case LongBench v2 Pilot with Qwen/Qwen2.5-14B-Instruct. TP-HG denotes TokenPack hybrid-greedy; LLL denotes LongLLMLingua context-level filtering; -50 denotes an approximately 50\% source-token selection budget. Latency is measured with batch size one and excludes Modal cold start/model loading.}
 \label{tab:longbench-latency}
 \centering
 \tiny
@@ -8,10 +8,11 @@
 \rowcolor{tablehead}
 Method & Runs & Saving & Prep s & LLM s & Total s & Speedup \\
 \midrule
-Full context & 83 & 0.000 & 0.000 & 4.106 & 4.106 & 1.00$\times$ \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50} & \textbf{83} & \textbf{0.504} & \textbf{0.019} & \textbf{2.166} & \textbf{2.184} & \textbf{1.88$\times$} \\
-LLL-0.50 & 83 & 0.512 & 0.537 & 1.895 & 2.432 & 1.69$\times$ \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50 + LLL-0.50} & \textbf{83} & \textbf{0.745} & \textbf{0.289} & \textbf{0.835} & \textbf{1.124} & \textbf{3.65$\times$} \\
+Full context & 83 & 0.000 & 0.000 & 4.140 & 4.140 & 1.00$\times$ \\
+Prod-RAG-50 & 83 & 0.506 & 0.000 & 2.223 & 2.223 & 1.86$\times$ \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50} & \textbf{83} & \textbf{0.506} & \textbf{0.000} & \textbf{2.196} & \textbf{2.196} & \textbf{1.89$\times$} \\
+LLL-0.50 & 83 & 0.511 & 0.523 & 1.914 & 2.437 & 1.70$\times$ \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50 + LLL-0.50} & \textbf{83} & \textbf{0.746} & \textbf{0.261} & \textbf{0.800} & \textbf{1.060} & \textbf{3.90$\times$} \\
 \bottomrule
 \end{tabular}
 \end{table}

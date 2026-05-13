@@ -10,6 +10,10 @@ from typing import Any
 
 METHODS = [
     "full-context",
+    "production-rag-50",
+    "similarity-knapsack-50",
+    "hybrid-greedy-50",
+    "hybrid-knapsack-50",
     "tokenpack-50",
     "only-longllmlingua-rate050",
     "tokenpack-50+longllmlingua-rate050",

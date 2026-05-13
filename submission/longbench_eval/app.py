@@ -69,7 +69,7 @@ secrets = [modal.Secret.from_name(SECRET_NAME)] if SECRET_NAME else []
 app = modal.App(APP_NAME)
 
 _LLM: Any | None = None
-_LLM_MODEL_ID: str | None = None
+_LLM_CACHE_KEY: tuple[str, int, bool, float] | None = None
 
 
 @app.function(
@@ -110,11 +110,19 @@ def run_eval_shard(
     tasks: list[dict[str, Any]],
     shard_id: int,
     model_id: str = DEFAULT_MODEL_ID,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
     max_answer_tokens: int = 8,
     batch_size: int = 2,
     latency_mode: bool = False,
 ) -> dict[str, Any]:
-    llm = _get_llm(model_id)
+    llm = _get_llm(
+        model_id,
+        max_model_len=max_model_len,
+        enable_yarn=enable_yarn,
+        yarn_factor=yarn_factor,
+    )
 
     from vllm import SamplingParams
 
@@ -168,11 +176,19 @@ def run_grounded_eval_shard(
     tasks: list[dict[str, Any]],
     shard_id: int,
     model_id: str = DEFAULT_MODEL_ID,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
     max_answer_tokens: int = 192,
     max_judge_tokens: int = 160,
     batch_size: int = 1,
 ) -> dict[str, Any]:
-    llm = _get_llm(model_id)
+    llm = _get_llm(
+        model_id,
+        max_model_len=max_model_len,
+        enable_yarn=enable_yarn,
+        yarn_factor=yarn_factor,
+    )
 
     from vllm import SamplingParams
 
@@ -243,6 +259,9 @@ def run(
     tasks_jsonl: str,
     output_jsonl: str = "submission/results/longbench_eval/longbench_generation.jsonl",
     model_id: str = DEFAULT_MODEL_ID,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
     shard_size: int = 80,
     max_answer_tokens: int = 8,
     batch_size: int = 2,
@@ -257,6 +276,9 @@ def run(
         shard_ids,
         kwargs={
             "model_id": model_id,
+            "max_model_len": max_model_len,
+            "enable_yarn": enable_yarn,
+            "yarn_factor": yarn_factor,
             "max_answer_tokens": max_answer_tokens,
             "batch_size": batch_size,
             "latency_mode": latency_mode,
@@ -274,6 +296,9 @@ def grounded_from_tasks(
     tasks_jsonl: str,
     output_dir: str = "submission/results/longbench_v2_grounded100",
     model_id: str = DEFAULT_MODEL_ID,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
     max_cases: int = 0,
     shard_size: int = 80,
     max_answer_tokens: int = 192,
@@ -304,6 +329,9 @@ def grounded_from_tasks(
         shard_ids,
         kwargs={
             "model_id": model_id,
+            "max_model_len": max_model_len,
+            "enable_yarn": enable_yarn,
+            "yarn_factor": yarn_factor,
             "max_answer_tokens": max_answer_tokens,
             "max_judge_tokens": max_judge_tokens,
             "batch_size": batch_size,
@@ -330,9 +358,8 @@ def build_and_run(
     source_min_tokens: int = 8000,
     source_max_tokens: int = 24000,
     max_scanned: int = 503,
-    backend: str = "hash",
     scoring: str = "evidence-hybrid",
-    selection_strategy: str = "knapsack-redundancy",
+    selection_strategy: str = "budget-top-k",
     budget_ratio: float = 0.50,
     context_order: str = "score",
     compression_rate: float = 0.50,
@@ -343,10 +370,15 @@ def build_and_run(
     reranker_candidate_pool: int = 80,
     reranker_weight: float = 0.35,
     cascade_frontier: bool = False,
+    diagnostic_selectors: bool = False,
     shard_size: int = 80,
     batch_size: int = 2,
     latency_mode: bool = False,
     model_id: str = DEFAULT_MODEL_ID,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
+    skip_compression: bool = False,
 ) -> None:
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -356,8 +388,8 @@ def build_and_run(
         "source_min_tokens": source_min_tokens,
         "source_max_tokens": source_max_tokens,
         "max_scanned": max_scanned,
-        "backend": backend,
         "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_allow_download": True,
         "chunker": "structure-aware",
         "scoring": scoring,
         "selection_strategy": selection_strategy,
@@ -377,7 +409,8 @@ def build_and_run(
         "reranker_weight": reranker_weight,
         "reranker_allow_download": True,
         "cascade_frontier": cascade_frontier,
-        "skip_compression": False,
+        "diagnostic_selectors": diagnostic_selectors,
+        "skip_compression": skip_compression,
     }
     build_result = build_tasks_remote.remote(args_payload)
     tasks = build_result["tasks"]
@@ -398,6 +431,9 @@ def build_and_run(
         shard_ids,
         kwargs={
             "model_id": model_id,
+            "max_model_len": max_model_len,
+            "enable_yarn": enable_yarn,
+            "yarn_factor": yarn_factor,
             "max_answer_tokens": 8,
             "batch_size": batch_size,
             "latency_mode": latency_mode,
@@ -411,8 +447,10 @@ def build_and_run(
     write_jsonl(all_rows, results_path)
     summary = summarize_rows(all_rows)
     pairwise = pairwise_rows(all_rows)
+    pairwise_vs_production_rag = pairwise_rows(all_rows, baseline="production-rag-50")
     write_csv(summary, output_path / "longbench_generation_summary.csv")
     write_csv(pairwise, output_path / "longbench_generation_pairwise.csv")
+    write_csv(pairwise_vs_production_rag, output_path / "longbench_generation_pairwise_vs_production_rag.csv")
     _write_readout(summary, pairwise, output_path / "longbench_generation_readout.md")
     if context_order != "score":
         _write_readout(summary, pairwise, output_path / "ordering_ablation_readout.md")
@@ -423,22 +461,48 @@ def build_and_run(
     print(f"Wrote merged results and summaries to {output_path}")
 
 
-def _get_llm(model_id: str):
-    global _LLM, _LLM_MODEL_ID
-    if _LLM is not None and _LLM_MODEL_ID == model_id:
+def _get_llm(
+    model_id: str,
+    *,
+    max_model_len: int = 32768,
+    enable_yarn: bool = False,
+    yarn_factor: float = 4.0,
+):
+    global _LLM, _LLM_CACHE_KEY
+    cache_key = (model_id, int(max_model_len), bool(enable_yarn), float(yarn_factor))
+    if _LLM is not None and _LLM_CACHE_KEY == cache_key:
         return _LLM
     os.environ.setdefault("HF_HOME", "/data/hf-cache")
     os.environ.setdefault("TRANSFORMERS_CACHE", "/data/hf-cache")
+    os.environ.setdefault("VLLM_USE_DEEP_GEMM", "0")
+    os.environ.setdefault("VLLM_USE_DEEP_GEMM_E8M0", "0")
+    if enable_yarn or max_model_len > 32768:
+        os.environ.setdefault("VLLM_ALLOW_LONG_MAX_MODEL_LEN", "1")
     from vllm import LLM
 
+    llm_kwargs: dict[str, Any] = {
+        "model": model_id,
+        "download_dir": "/data/hf-cache",
+        "dtype": "auto",
+        "trust_remote_code": True,
+        "max_model_len": max_model_len,
+        "gpu_memory_utilization": 0.95,
+    }
+    if enable_yarn:
+        llm_kwargs["hf_overrides"] = {
+            "rope_theta": 1_000_000,
+            "rope_scaling": {
+                "rope_type": "yarn",
+                "factor": float(yarn_factor),
+                "original_max_position_embeddings": 32768,
+            },
+            "max_model_len": int(max_model_len),
+        }
+
     _LLM = LLM(
-        model=model_id,
-        download_dir="/data/hf-cache",
-        dtype="auto",
-        trust_remote_code=True,
-        max_model_len=32768,
+        **llm_kwargs,
     )
-    _LLM_MODEL_ID = model_id
+    _LLM_CACHE_KEY = cache_key
     return _LLM
 
 
@@ -456,9 +520,12 @@ def _generate_texts_with_latencies(llm: Any, prompts: list[str], params: Any) ->
     latencies: list[float] = []
     for prompt in prompts:
         started = time.perf_counter()
-        outputs = llm.generate([prompt], params)
+        try:
+            outputs = llm.generate([prompt], params)
+            texts.extend(_first_output(output) for output in outputs)
+        except Exception:
+            texts.append("")
         latencies.append(time.perf_counter() - started)
-        texts.extend(_first_output(output) for output in outputs)
     return texts, latencies
 
 

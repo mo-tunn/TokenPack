@@ -1,0 +1,30 @@
+\begin{table}[!t]
+\caption{QASPER Cost-Quality Proxy Under Reduced Context Budgets}
+\label{tab:qasper-cost-quality}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrrr}
+\hline
+Selector & Budget & Used Tok. & Saving & Ans. vs 100 & Ev. vs 100 & Preserved \\
+\hline
+\rowcolor{tokenpackhighlight}\textbf{TokenPack hybrid-greedy} & 50\% & 2420 & 51.0\% & 0.942 & 0.930 & 0.674 \\
+knapsack & 50\% & 2434 & 50.7\% & 0.944 & 0.931 & 0.677 \\
+knapsack-redundancy & 50\% & 2434 & 50.7\% & 0.944 & 0.931 & 0.684 \\
+production-rag & 50\% & 2417 & 51.1\% & 0.944 & 0.926 & 0.675 \\
+\rowcolor{tokenpackhighlight}\textbf{TokenPack hybrid-greedy} & 70\% & 3396 & 31.2\% & 0.981 & 0.978 & 0.786 \\
+knapsack & 70\% & 3410 & 30.9\% & 0.981 & 0.977 & 0.785 \\
+knapsack-redundancy & 70\% & 3409 & 30.9\% & 0.979 & 0.975 & 0.784 \\
+production-rag & 70\% & 3388 & 31.4\% & 0.974 & 0.969 & 0.765 \\
+\rowcolor{tokenpackhighlight}\textbf{TokenPack hybrid-greedy} & 80\% & 3881 & 21.3\% & 0.991 & 0.989 & 0.815 \\
+knapsack & 80\% & 3892 & 21.1\% & 0.988 & 0.987 & 0.808 \\
+knapsack-redundancy & 80\% & 3891 & 21.2\% & 0.989 & 0.987 & 0.812 \\
+production-rag & 80\% & 3872 & 21.6\% & 0.987 & 0.983 & 0.804 \\
+\rowcolor{tokenpackhighlight}\textbf{TokenPack hybrid-greedy} & 100\% & 4812 & 2.3\% & 1.000 & 1.000 & 0.850 \\
+knapsack & 100\% & 4811 & 2.3\% & 1.000 & 1.000 & 0.850 \\
+knapsack-redundancy & 100\% & 4808 & 2.4\% & 1.000 & 1.000 & 0.850 \\
+production-rag & 100\% & 4791 & 2.8\% & 1.000 & 1.000 & 0.847 \\
+\hline
+\end{tabular}%
+}
+\end{table}

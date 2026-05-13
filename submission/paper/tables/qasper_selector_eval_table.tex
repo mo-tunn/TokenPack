@@ -1,5 +1,5 @@
 \begin{table}[htbp]
-\caption{QASPER Selector Evaluation With Fixed Scoring}
+\caption{QASPER Selector Evaluation With Fixed Scoring. Prod-RAG uses raw dense similarity; budget-top-k is TokenPack hybrid-greedy.}
 \label{tab:qasper-selector}
 \centering
 \scriptsize
@@ -9,22 +9,26 @@
 \rowcolor{tablehead}
 Selector & Budget & Avg Tok. & Evidence Recall & Complete & Answer Overlap F1 & Value & Lat. \\
 \midrule
-budget-top-k & 20\% & 982.549 & 0.713 & 0.424 & 0.028 & 2.257 & 0.000 \\
-greedy-density & 20\% & 982.549 & 0.694 & 0.382 & 0.028 & 2.339 & 0.000 \\
-knapsack & 20\% & 982.549 & 0.703 & 0.401 & 0.027 & 2.383 & 0.002 \\
-\rowcolor{tokenpackhighlight}knapsack-redundancy & 20\% & 982.549 & 0.707 & 0.407 & 0.027 & 2.105 & 0.009 \\
-budget-top-k & 30\% & 1473.954 & 0.815 & 0.596 & 0.021 & 3.174 & 0.000 \\
-greedy-density & 30\% & 1473.954 & 0.804 & 0.570 & 0.021 & 3.267 & 0.000 \\
-knapsack & 30\% & 1473.954 & 0.807 & 0.571 & 0.020 & 3.313 & 0.003 \\
-\rowcolor{tokenpackhighlight}knapsack-redundancy & 30\% & 1473.954 & 0.807 & 0.571 & 0.020 & 2.883 & 0.010 \\
-budget-top-k & 40\% & 1965.483 & 0.872 & 0.718 & 0.017 & 3.991 & 0.000 \\
-greedy-density & 40\% & 1965.483 & 0.869 & 0.704 & 0.017 & 4.080 & 0.000 \\
-knapsack & 40\% & 1965.483 & 0.871 & 0.708 & 0.016 & 4.123 & 0.005 \\
-\rowcolor{tokenpackhighlight}knapsack-redundancy & 40\% & 1965.483 & 0.871 & 0.711 & 0.016 & 3.555 & 0.012 \\
-budget-top-k & 50\% & 2457.100 & 0.911 & 0.818 & 0.014 & 4.722 & 0.000 \\
-greedy-density & 50\% & 2457.100 & 0.908 & 0.799 & 0.014 & 4.795 & 0.000 \\
-knapsack & 50\% & 2457.100 & 0.908 & 0.799 & 0.014 & 4.837 & 0.006 \\
-\rowcolor{tokenpackhighlight}knapsack-redundancy & 50\% & 2457.100 & 0.906 & 0.793 & 0.014 & 4.146 & 0.013 \\
+\rowcolor{tokenpackhighlight}budget-top-k & 20\% & 982.549 & 0.771 & 0.525 & 0.029 & 2.429 & 0.000 \\
+greedy-density & 20\% & 982.549 & 0.731 & 0.443 & 0.029 & 2.625 & 0.000 \\
+knapsack & 20\% & 982.549 & 0.750 & 0.476 & 0.028 & 2.670 & 0.002 \\
+knap-red. & 20\% & 982.549 & 0.748 & 0.473 & 0.028 & 2.337 & 0.011 \\
+Prod-RAG & 20\% & 982.549 & 0.758 & 0.515 & 0.029 & 2.336 & 0.000 \\
+\rowcolor{tokenpackhighlight}budget-top-k & 30\% & 1473.954 & 0.853 & 0.684 & 0.021 & 3.380 & 0.000 \\
+greedy-density & 30\% & 1473.954 & 0.827 & 0.612 & 0.021 & 3.581 & 0.000 \\
+knapsack & 30\% & 1473.954 & 0.834 & 0.626 & 0.021 & 3.628 & 0.004 \\
+knap-red. & 30\% & 1473.954 & 0.835 & 0.628 & 0.021 & 3.132 & 0.012 \\
+Prod-RAG & 30\% & 1473.954 & 0.842 & 0.659 & 0.021 & 3.264 & 0.000 \\
+\rowcolor{tokenpackhighlight}budget-top-k & 40\% & 1965.483 & 0.903 & 0.790 & 0.017 & 4.230 & 0.000 \\
+greedy-density & 40\% & 1965.483 & 0.890 & 0.747 & 0.017 & 4.413 & 0.000 \\
+knapsack & 40\% & 1965.483 & 0.895 & 0.751 & 0.017 & 4.459 & 0.005 \\
+knap-red. & 40\% & 1965.483 & 0.892 & 0.746 & 0.017 & 3.817 & 0.013 \\
+Prod-RAG & 40\% & 1965.483 & 0.898 & 0.771 & 0.017 & 4.094 & 0.000 \\
+\rowcolor{tokenpackhighlight}budget-top-k & 50\% & 2457.100 & 0.936 & 0.865 & 0.014 & 4.991 & 0.000 \\
+greedy-density & 50\% & 2457.100 & 0.931 & 0.850 & 0.014 & 5.154 & 0.000 \\
+knapsack & 50\% & 2457.100 & 0.936 & 0.856 & 0.014 & 5.198 & 0.007 \\
+knap-red. & 50\% & 2457.100 & 0.936 & 0.857 & 0.014 & 4.423 & 0.015 \\
+Prod-RAG & 50\% & 2457.100 & 0.931 & 0.852 & 0.014 & 4.855 & 0.000 \\
 \bottomrule
 \end{tabular}%
 }

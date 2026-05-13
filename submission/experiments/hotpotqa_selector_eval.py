@@ -34,7 +34,7 @@ from tokenpack.tokenization import TokenCounter  # noqa: E402
 
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results" / "hotpotqa"
 DEFAULT_WORK_DIR = ROOT / ".tokenpack" / "hotpotqa"
-STRATEGIES = ["budget-top-k", "greedy-density", "knapsack", "knapsack-redundancy", "knapsack-augment"]
+STRATEGIES = ["production-rag", "budget-top-k", "greedy-density", "knapsack", "knapsack-redundancy", "knapsack-augment"]
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z-]{2,}")
 STOPWORDS = {
     "and",
@@ -74,9 +74,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Evaluate selectors on HotpotQA supporting facts.")
     parser.add_argument("--data-file", help="Optional local HotpotQA JSON/JSONL file.")
     parser.add_argument("--split", default="validation", choices=["validation", "train"])
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="paragraph")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
@@ -108,7 +107,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     chunk_size = resolve_chunk_size_config(
         args.chunk_size_preset,
         args.target_tokens,

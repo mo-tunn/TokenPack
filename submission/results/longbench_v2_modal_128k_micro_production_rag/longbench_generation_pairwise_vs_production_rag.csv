@@ -1,0 +1,7 @@
+method,baseline,compared,wins,ties,losses,win_rate
+full-context,production-rag-50,8,0,7,1,0.0
+tokenpack-50,production-rag-50,8,1,6,1,0.125
+only-longllmlingua-rate050,production-rag-50,0,0,0,0,0.0
+tokenpack-50+longllmlingua-rate050,production-rag-50,0,0,0,0,0.0
+tokenpack-60+longllmlingua-rate050,production-rag-50,0,0,0,0,0.0
+tokenpack-50+longllmlingua-rate065,production-rag-50,0,0,0,0,0.0

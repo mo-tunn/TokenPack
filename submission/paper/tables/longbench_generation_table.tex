@@ -1,17 +1,20 @@
 \begin{table}[htbp]
-\caption{LongBench v2 End-to-End Multiple-Choice Accuracy. TP denotes TokenPack; LLL denotes LongLLMLingua context-level filtering.}
+\caption{Exploratory 83-case LongBench v2 Multiple-Choice Pilot with Qwen/Qwen2.5-14B-Instruct. TP-HG denotes TokenPack hybrid-greedy; LLL denotes LongLLMLingua context-level filtering; -50 denotes an approximately 50\% source-token selection budget. Rel. vs Full is descriptive and is not a statistically powered significance claim.}
 \label{tab:longbench-generation}
 \centering
 \tiny
-\begin{tabular}{@{}lrrrr@{}}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
 \rowcolor{tablehead}
-Method & Runs & Acc. & Avg. Ctx. & Saving \\
+Method & Runs & Correct & Acc. & Rel. vs Full & Avg. Ctx. & Saving \\
 \midrule
-Full context & 83 & 0.398 & 17646 & 0.000 \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50} & \textbf{83} & \textbf{0.386} & \textbf{8758} & \textbf{0.504} \\
-LLL-0.50 & 83 & 0.402 & 8560 & 0.512 \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50 + LLL-0.50} & \textbf{83} & \textbf{0.410} & \textbf{4486} & \textbf{0.745} \\
+Full context & 83 & 32/83 & 0.386 & -- & 17646 & 0.000 \\
+Prod-RAG-50 & 83 & 34/83 & 0.410 & +6.2\% & 8720 & 0.506 \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50} & \textbf{83} & \textbf{37/83} & \textbf{0.446} & \textbf{+15.6\%} & \textbf{8731} & \textbf{0.506} \\
+LLL-0.50 & 83 & 30/82 & 0.366 & -5.1\% & 8570 & 0.511 \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50 + LLL-0.50} & \textbf{83} & \textbf{37/83} & \textbf{0.446} & \textbf{+15.6\%} & \textbf{4468} & \textbf{0.746} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}

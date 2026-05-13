@@ -17,7 +17,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tokenpack.chunk_profiles import resolve_chunk_size_config
-from tokenpack.chunking import ParagraphGroupChunker, SemanticThresholdChunker, StructureAwareChunker
+from tokenpack.chunking import SemanticThresholdChunker, StructureAwareChunker
 from tokenpack.embeddings import EmbeddingCache, make_embedder
 from tokenpack.index import ChunkIndex
 from tokenpack.models import Chunk, TextBlock
@@ -33,7 +33,7 @@ DEFAULT_PARQUET_URLS = {
     "test": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/test/0000.parquet",
     "train": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/train/0000.parquet",
 }
-STRATEGIES = ["budget-top-k", "greedy-density", "knapsack"]
+STRATEGIES = ["production-rag", "budget-top-k", "greedy-density", "knapsack", "knapsack-redundancy"]
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z-]{2,}")
 
 
@@ -58,13 +58,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Evaluate selectors on QASPER evidence annotations.")
     parser.add_argument("--data-file", help="Local QASPER parquet/json/jsonl file. Prefer converted parquet.")
     parser.add_argument("--split", choices=["validation", "test", "train"], default="validation")
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="semantic-threshold")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
-        default="hybrid",
+        default="evidence-hybrid",
     )
     parser.add_argument("--budget-ratios", default="0.05,0.10,0.20")
     parser.add_argument("--budgets", help="Optional absolute budgets; overrides --budget-ratios.")
@@ -82,12 +81,6 @@ def main() -> int:
         help="Override target/min/max token limits with a named chunking preset.",
     )
     parser.add_argument("--semantic-threshold", type=float, default=0.35)
-    parser.add_argument("--ami-model", help="Optional local Hugging Face causal LM for real instruction-ami scoring.")
-    parser.add_argument("--ami-candidate-pool", type=int, default=20)
-    parser.add_argument("--ami-time-budget", type=float, default=5.0)
-    parser.add_argument("--ami-blend-weight", type=float, default=0.35)
-    parser.add_argument("--ami-device")
-    parser.add_argument("--ami-max-input-tokens", type=int, default=2048)
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     parser.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR))
     parser.add_argument(
@@ -107,14 +100,13 @@ def main() -> int:
         raise SystemExit("No QASPER rows loaded.")
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     chunk_size = resolve_chunk_size_config(
         args.chunk_size_preset,
         args.target_tokens,
         args.min_tokens,
         args.max_tokens,
     )
-    ami_scorer = _make_ami_scorer(args)
     strategies = _csv_list(args.strategies)
     per_strategy: dict[tuple[str, str], dict[str, float]] = {}
     processed_questions = 0
@@ -155,10 +147,6 @@ def main() -> int:
                 index.embeddings,
                 scoring=args.scoring,
                 query_text=question.question,
-                ami_scorer=ami_scorer,
-                ami_candidate_pool=args.ami_candidate_pool,
-                ami_time_budget_seconds=args.ami_time_budget,
-                ami_blend_weight=args.ami_blend_weight,
                 redundancy_candidate_pool=args.candidate_pool,
             )
             for budget_spec in budgets:
@@ -223,28 +211,6 @@ def _load_qasper_rows(data_file: str | None, split: str) -> Iterable[dict[str, A
 
     url = DEFAULT_PARQUET_URLS[split]
     return pd.read_parquet(url).to_dict(orient="records")
-
-
-def _make_ami_scorer(args: argparse.Namespace):
-    scoring_value = getattr(args, "scoring", None)
-    if scoring_value is None:
-        scoring_value = getattr(args, "scorings", "")
-    scorings = {item.strip() for item in str(scoring_value).split(",") if item.strip()}
-    if "instruction-ami" not in scorings or not args.ami_model:
-        return None
-    try:
-        from tokenpack.ami import TransformersAmiScorer
-
-        return TransformersAmiScorer(
-            model_name=args.ami_model,
-            device=args.ami_device,
-            max_input_tokens=args.ami_max_input_tokens,
-        )
-    except Exception as exc:
-        raise SystemExit(
-            "Unable to initialize --ami-model. Install optional dependencies with "
-            "`pip install -e .[ami]` and ensure the model is locally available."
-        ) from exc
 
 
 def _blocks_from_qasper_row(row: dict[str, Any], document_index: int, token_counter: TokenCounter) -> list[TextBlock]:
@@ -352,10 +318,16 @@ def _build_index(
     token_counter: TokenCounter,
 ) -> ChunkIndex:
     cache = EmbeddingCache(work_dir / f"qasper-{paper_id}-{chunker_name}.embeddings.json")
-    if chunker_name == "paragraph":
-        chunker = ParagraphGroupChunker(target_tokens, min_tokens, max_tokens, token_counter=token_counter)
-    elif chunker_name == "structure-aware":
-        chunker = StructureAwareChunker(target_tokens, min_tokens, max_tokens, token_counter=token_counter)
+    if chunker_name == "structure-aware":
+        block_embeddings = cache.get_or_embed([block.text for block in blocks], embedder)
+        chunker = StructureAwareChunker(
+            target_tokens,
+            min_tokens,
+            max_tokens,
+            token_counter=token_counter,
+            block_embeddings=block_embeddings,
+            semantic_threshold=semantic_threshold,
+        )
     elif chunker_name == "semantic-threshold":
         block_embeddings = cache.get_or_embed([block.text for block in blocks], embedder)
         chunker = SemanticThresholdChunker(

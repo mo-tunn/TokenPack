@@ -138,7 +138,7 @@ def _build_report_rows(
             continue
         rows.append(report_row)
     for row in legacy_summary_rows:
-        if row.get("strategy") != "knapsack-redundancy":
+        if row.get("strategy") != "budget-top-k":
             continue
         rate = _legacy_rate(row)
         method = f"TokenPack + LLMLingua-2 rate={rate:.2f}"
@@ -237,7 +237,7 @@ def _comparison_table_tex(rows: list[ReportRow]) -> str:
     ordered = sorted(rows, key=lambda item: item.method)
     lines = [
         r"\begin{table}[!t]",
-        r"\caption{QASPER Compression Comparison at Approximately Matched 50\% Token Saving}",
+        r"\caption{QASPER Compression Comparison at Approximately Matched 50\% Token Saving. LLM2 denotes LLMLingua-2.}",
         r"\label{tab:qasper-compression-comparison}",
         r"\centering",
         r"\scriptsize",
@@ -251,7 +251,7 @@ def _comparison_table_tex(rows: list[ReportRow]) -> str:
         lines.append(
             " & ".join(
                 [
-                    _latex_text(row.method),
+                    _latex_text(_display_method(row.method)),
                     f"{100.0 * row.token_saving:.1f}\\%",
                     f"{row.evidence_recall:.3f}",
                     f"{row.complete_evidence_rate:.3f}" if row.complete_evidence_rate is not None else "--",
@@ -275,7 +275,7 @@ def _frontier_table_tex(rows: list[ReportRow]) -> str:
     )
     lines = [
         r"\begin{table}[!t]",
-        r"\caption{Compression Frontier on QASPER (All Rows Use 200 Questions)}",
+        r"\caption{Compression Frontier on QASPER (All Rows Use 200 Questions). LLM2 denotes LLMLingua-2.}",
         r"\label{tab:qasper-compression-frontier}",
         r"\centering",
         r"\scriptsize",
@@ -289,7 +289,7 @@ def _frontier_table_tex(rows: list[ReportRow]) -> str:
         lines.append(
             " & ".join(
                 [
-                    _latex_text(row.method),
+                    _latex_text(_display_method(row.method)),
                     f"{100.0 * row.token_saving:.1f}\\%",
                     f"{row.evidence_recall:.3f}",
                     f"{row.answer_token_f1:.3f}",
@@ -455,6 +455,14 @@ def _error_analysis_markdown(wins: dict[str, float], top_cases: list[dict[str, A
             lines.append(f"  - {evidence}")
         lines.append("")
     return "\n".join(lines)
+
+
+def _display_method(method: str) -> str:
+    if method.startswith("Only LLMLingua-2 rate="):
+        return "Only LLM2-" + method.rsplit("=", 1)[-1]
+    if method.startswith("TokenPack + LLMLingua-2 rate="):
+        return "TokenPack + LLM2-" + method.rsplit("=", 1)[-1]
+    return method
 
 
 def _latex_text(value: str) -> str:

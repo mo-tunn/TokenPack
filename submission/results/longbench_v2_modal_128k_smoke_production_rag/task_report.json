@@ -1,0 +1,45 @@
+{
+  "tasks": 6,
+  "cases": 2,
+  "scanned": 10,
+  "skipped_too_short": 3,
+  "skipped_too_long": 5,
+  "source_token_window": [
+    64000,
+    112000
+  ],
+  "scoring": "evidence-hybrid",
+  "methods": [
+    "full-context",
+    "production-rag-50",
+    "tokenpack-50"
+  ],
+  "selection_strategy": "knapsack-redundancy",
+  "context_order": "score-then-source",
+  "production_rag_baseline": true,
+  "reranker": "none",
+  "reranker_model": "BAAI/bge-reranker-base",
+  "reranker_candidate_pool": 80,
+  "reranker_weight": 0.35,
+  "cascade_frontier": false,
+  "per_method": {
+    "full-context": {
+      "tasks": 2,
+      "avg_source_tokens": 74938.0,
+      "avg_context_tokens": 74938.0,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "production-rag-50": {
+      "tasks": 2,
+      "avg_source_tokens": 74938.0,
+      "avg_context_tokens": 37401.5,
+      "avg_token_saving_vs_full": 0.5010149964752417
+    },
+    "tokenpack-50": {
+      "tasks": 2,
+      "avg_source_tokens": 74938.0,
+      "avg_context_tokens": 37460.0,
+      "avg_token_saving_vs_full": 0.5001363897674057
+    }
+  }
+}

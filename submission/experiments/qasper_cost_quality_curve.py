@@ -23,14 +23,13 @@ from qasper_selector_eval import (  # noqa: E402
     _build_index,
     _clean_text,
     _load_qasper_rows,
-    _make_ami_scorer,
     _parse_budgets,
     _questions_from_qasper_row,
     _tokens,
 )
 from tokenpack.chunk_profiles import resolve_chunk_size_config  # noqa: E402
 from tokenpack.embeddings import make_embedder  # noqa: E402
-from tokenpack.scoring import score_chunks  # noqa: E402
+from tokenpack.scoring import SCORING_PROFILES, score_chunks  # noqa: E402
 from tokenpack.selectors import select_chunks  # noqa: E402
 from tokenpack.tokenization import TokenCounter  # noqa: E402
 
@@ -83,12 +82,11 @@ def main() -> int:
     )
     parser.add_argument("--data-file", help="Local QASPER parquet/json/jsonl file.")
     parser.add_argument("--split", choices=["validation", "test", "train"], default="validation")
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
     parser.add_argument("--allow-model-download", action="store_true")
-    parser.add_argument("--chunkers", default="semantic-threshold")
-    parser.add_argument("--scorings", default="hybrid")
-    parser.add_argument("--strategies", default="budget-top-k,greedy-density,knapsack")
+    parser.add_argument("--chunkers", default="structure-aware")
+    parser.add_argument("--scorings", default="evidence-hybrid")
+    parser.add_argument("--strategies", default="production-rag,budget-top-k,greedy-density,knapsack,knapsack-redundancy")
     parser.add_argument("--budget-ratios", default="0.05,0.10,0.20,0.40")
     parser.add_argument("--budgets")
     parser.add_argument("--max-papers", type=int, default=10_000)
@@ -104,12 +102,6 @@ def main() -> int:
         help="Override target/min/max token limits with a named chunking preset.",
     )
     parser.add_argument("--semantic-threshold", type=float, default=0.35)
-    parser.add_argument("--ami-model", help="Optional local Hugging Face causal LM for real instruction-ami scoring.")
-    parser.add_argument("--ami-candidate-pool", type=int, default=20)
-    parser.add_argument("--ami-time-budget", type=float, default=5.0)
-    parser.add_argument("--ami-blend-weight", type=float, default=0.35)
-    parser.add_argument("--ami-device")
-    parser.add_argument("--ami-max-input-tokens", type=int, default=2048)
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     parser.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR))
     args = parser.parse_args()
@@ -122,12 +114,14 @@ def main() -> int:
     rows = list(_load_qasper_rows(args.data_file, args.split))
     token_counter = TokenCounter()
     embedder = make_embedder(
-        backend=args.backend,
         model_name=args.model,
         local_files_only=not args.allow_model_download,
     )
     chunkers = _csv_list(args.chunkers)
     scorings = _csv_list(args.scorings)
+    unsupported_scorings = sorted(set(scorings) - set(SCORING_PROFILES))
+    if unsupported_scorings:
+        raise SystemExit(f"Unsupported production scoring profile(s): {', '.join(unsupported_scorings)}")
     strategies = _csv_list(args.strategies)
     chunk_size = resolve_chunk_size_config(
         args.chunk_size_preset,
@@ -135,8 +129,6 @@ def main() -> int:
         args.min_tokens,
         args.max_tokens,
     )
-    ami_scorer = _make_ami_scorer(args)
-
     raw_rows: list[dict[str, Any]] = []
     processed_papers = 0
     processed_questions = 0
@@ -187,10 +179,6 @@ def main() -> int:
                         index.embeddings,
                         scoring=scoring,
                         query_text=question.question,
-                        ami_scorer=ami_scorer,
-                        ami_candidate_pool=args.ami_candidate_pool,
-                        ami_time_budget_seconds=args.ami_time_budget,
-                        ami_blend_weight=args.ami_blend_weight,
                         redundancy_candidate_pool=args.candidate_pool,
                     )
                     for budget_spec in budget_specs:
@@ -394,9 +382,9 @@ def _write_latex(rows: list[dict[str, Any]], path: Path) -> None:
     selected = [
         row
         for row in rows
-        if row["chunker"] == "semantic-threshold"
-        and row["scoring"] == "hybrid"
-        and row["strategy"] in {"budget-top-k", "knapsack"}
+        if row["chunker"] == "structure-aware"
+        and row["scoring"] == "evidence-hybrid"
+        and row["strategy"] in {"production-rag", "budget-top-k", "knapsack", "knapsack-redundancy"}
     ]
     lines = [
         r"\begin{table}[!t]",
@@ -412,8 +400,8 @@ def _write_latex(rows: list[dict[str, Any]], path: Path) -> None:
     ]
     for row in selected:
         strategy = str(row["strategy"])
-        prefix = r"\rowcolor{tokenpackhighlight}" if strategy == "knapsack" else ""
-        strategy_text = r"\textbf{TokenPack knapsack}" if strategy == "knapsack" else strategy
+        prefix = r"\rowcolor{tokenpackhighlight}" if strategy == "budget-top-k" else ""
+        strategy_text = r"\textbf{TokenPack hybrid-greedy}" if strategy == "budget-top-k" else strategy
         lines.append(
             f"{prefix}{strategy_text} & {_latex_text(str(row['budget']))} & "
             f"{float(row['avg_used_tokens']):.0f} & "

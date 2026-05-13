@@ -179,6 +179,26 @@ Z.~Li, C.~Chen, T.~Yang, T.~Ding, R.~Sun, G.~Zhang, W.~Huang, and Z.~Luo,
 S.-H. Cha, G.~Kim, D.~Han, T.~Yang, and I.~Han, ``Knapspec: Self-speculative
   decoding via adaptive layer selection as a knapsack problem,'' 2026.
 
+\bibitem{reimers2019sentencebert}
+N.~Reimers and I.~Gurevych, ``Sentence-bert: Sentence embeddings using siamese
+  bert-networks,'' in \emph{Proceedings of the 2019 Conference on Empirical
+  Methods in Natural Language Processing and the 9th International Joint
+  Conference on Natural Language Processing}.\hskip 1em plus 0.5em minus
+  0.4em\relax Association for Computational Linguistics, 2019, pp. 3982--3992.
+
+\bibitem{sentenceTransformersMiniLM}
+{Sentence Transformers}, ``all-minilm-l6-v2,''
+  \url{https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2}, 2024,
+  accessed: 2026-05-13.
+
+\bibitem{dasigi2021qasper}
+P.~Dasigi, K.~Lo, I.~Beltagy, A.~Cohan, N.~A. Smith, and M.~Gardner, ``A
+  dataset of information-seeking questions and answers anchored in research
+  papers,'' in \emph{Proceedings of the 2021 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies}.\hskip 1em plus 0.5em minus 0.4em\relax Association for
+  Computational Linguistics, 2021, pp. 4599--4610.
+
 \bibitem{bai2024longbench2}
 Y.~Bai, S.~Tu, J.~Zhang, H.~Peng, X.~Wang, X.~Lv, S.~Cao, J.~Xu, L.~Hou,
   Y.~Dong, J.~Tang, and J.~Li, ``Longbench v2: Towards deeper understanding and

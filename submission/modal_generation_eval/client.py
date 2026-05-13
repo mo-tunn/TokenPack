@@ -42,7 +42,7 @@ from tokenpack.compression import CompressionConfig, compress_chunks  # noqa: E4
 from tokenpack.embeddings import make_embedder  # noqa: E402
 from tokenpack.export import render_context  # noqa: E402
 from tokenpack.models import ScoredChunk  # noqa: E402
-from tokenpack.scoring import score_chunks  # noqa: E402
+from tokenpack.scoring import SCORING_PROFILES, score_chunks  # noqa: E402
 from tokenpack.selectors import select_chunks  # noqa: E402
 from tokenpack.tokenization import TokenCounter  # noqa: E402
 
@@ -65,14 +65,10 @@ def main() -> int:
     parser.add_argument("--results-jsonl", help="Summarize an existing Modal result JSONL.")
     parser.add_argument("--limit", type=int, default=200)
     parser.add_argument("--max-papers", type=int, default=10_000)
-    parser.add_argument("--backend", choices=["auto", "hash", "sentence-transformers"], default="hash")
     parser.add_argument("--embedding-model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="structure-aware")
-    parser.add_argument(
-        "--scoring",
-        choices=["cosine", "hybrid", "evidence-hybrid", "knapsack-aware", "instruction-ami"],
-        default="evidence-hybrid",
-    )
+    parser.add_argument("--embedding-allow-download", action="store_true")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
+    parser.add_argument("--scoring", choices=list(SCORING_PROFILES), default="evidence-hybrid")
     parser.add_argument("--budget-ratio", type=float, default=0.50)
     parser.add_argument("--candidate-pool", type=int, default=300)
     parser.add_argument("--target-tokens", type=int, default=650)
@@ -146,7 +142,10 @@ def build_tasks(args: argparse.Namespace) -> list[dict[str, Any]]:
     desired_order = _load_question_order(Path(args.question_ids_from)) if args.question_ids_from else []
     desired = set(desired_order)
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.embedding_model, local_files_only=True)
+    embedder = make_embedder(
+        model_name=args.embedding_model,
+        local_files_only=not args.embedding_allow_download,
+    )
     chunk_size = resolve_chunk_size_config(
         args.chunk_size_preset,
         target_tokens=args.target_tokens,
@@ -200,15 +199,15 @@ def build_tasks(args: argparse.Namespace) -> list[dict[str, Any]]:
                 scoring=args.scoring,
                 query_text=question.question,
             )
-            budget_top_k = select_chunks(
+            tokenpack = select_chunks(
                 scored,
                 strategy="budget-top-k",
                 budget=budget_spec.tokens,
                 candidate_pool=args.candidate_pool,
             )
-            tokenpack = select_chunks(
+            production_rag = select_chunks(
                 scored,
-                strategy="knapsack-redundancy",
+                strategy="production-rag",
                 budget=budget_spec.tokens,
                 candidate_pool=args.candidate_pool,
             )
@@ -218,13 +217,19 @@ def build_tasks(args: argparse.Namespace) -> list[dict[str, Any]]:
                 method_contexts.update(
                     {
                         "full-document": (source_text, source_tokens, "default"),
-                        "budget-top-k-50": (
-                            render_context([item.chunk for item in budget_top_k.selected]),
-                            budget_top_k.used_tokens,
+                        "production-rag-50": (
+                            _render_production_rag_context(production_rag.selected),
+                            production_rag.used_tokens,
                             "default",
                         ),
                     }
                 )
+                if getattr(args, "include_budget_top_k", False):
+                    method_contexts["budget-top-k-50"] = (
+                        render_context([item.chunk for item in tokenpack.selected]),
+                        tokenpack.used_tokens,
+                        "default",
+                    )
             method_contexts.update(_tokenpack_variant_contexts(tokenpack.selected, tokenpack_variants))
             if not args.skip_llmlingua2 and not args.tokenpack_only:
                 if compressor_backend is None:
@@ -389,6 +394,20 @@ def _render_scored_context(items: list[ScoredChunk], *, order: str) -> str:
             "[Chunk "
             f"{number}: id={chunk.id}, source={chunk.source_path}, tokens={chunk.token_count}, "
             f"score={item.value:.4f}, density={item.value / max(1, item.weight):.6f}]"
+        )
+        parts.append(chunk.text)
+    return "\n\n".join(parts).strip() + "\n"
+
+
+def _render_production_rag_context(items: list[ScoredChunk]) -> str:
+    ordered = sorted(items, key=lambda item: item.raw_similarity, reverse=True)
+    parts: list[str] = []
+    for number, item in enumerate(ordered, start=1):
+        chunk = item.chunk
+        parts.append(
+            "[Retrieved Chunk "
+            f"{number}: id={chunk.id}, source={chunk.source_path}, tokens={chunk.token_count}, "
+            f"similarity={item.raw_similarity:.4f}]"
         )
         parts.append(chunk.text)
     return "\n\n".join(parts).strip() + "\n"

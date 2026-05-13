@@ -1,5 +1,5 @@
 \begin{table}[!t]
-\caption{Estimated Input Cost Savings From LongBench v2 Context Reduction}
+\caption{Estimated Input Cost Savings From LongBench v2 Context Reduction. TP-HG denotes TokenPack hybrid-greedy.}
 \label{tab:cost-savings}
 \centering
 \scriptsize
@@ -9,9 +9,10 @@
 Method & Paid Tokens & Cost (\$) & Saving vs Full Doc \\
 \midrule
 Full context & 1000000 & 2.500 & 0.0\% \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50} & \textbf{495725} & \textbf{1.239} & \textbf{50.4\%} \\
-LLL-0.50 & 487808 & 1.220 & 51.2\% \\
-\rowcolor{tokenpackhighlight}\textbf{TP-50 + LLL-0.50} & \textbf{255218} & \textbf{0.638} & \textbf{74.5\%} \\
+Prod-RAG-50 & 493674 & 1.234 & 50.6\% \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50} & \textbf{494369} & \textbf{1.236} & \textbf{50.6\%} \\
+LLL-0.50 & 488787 & 1.222 & 51.1\% \\
+\rowcolor{tokenpackhighlight}\textbf{TP-HG-50 + LLL-0.50} & \textbf{254293} & \textbf{0.636} & \textbf{74.6\%} \\
 \bottomrule
 \end{tabular}
 \end{table}

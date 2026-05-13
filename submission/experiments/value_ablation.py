@@ -29,16 +29,15 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tokenpack.embeddings import make_embedder
-from tokenpack.scoring import SCORING_PROFILES
+from tokenpack.scoring_experimental import SCORING_PROFILES, score_experimental_chunks
 from tokenpack.tokenization import TokenCounter
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Compare cosine and hybrid value functions with fixed chunking.")
+    parser = argparse.ArgumentParser(description="Compare experimental value functions with fixed chunking.")
     parser.add_argument("--source", default=str(DEFAULT_SOURCE))
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="semantic-threshold")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument("--budget-ratios", default="0.01,0.03,0.05")
     parser.add_argument("--budgets", help="Optional comma-separated absolute budgets; overrides --budget-ratios.")
     parser.add_argument("--sample-size", type=int, default=24)
@@ -60,7 +59,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     blocks = _load_experiment_blocks(
         Path(args.source),
         max_documents=args.max_documents,
@@ -102,6 +101,7 @@ def main() -> int:
                 budget=budget,
                 candidate_pool=args.candidate_pool,
                 scoring=scoring,
+                scorer=score_experimental_chunks,
             )
             rows.append(
                 {

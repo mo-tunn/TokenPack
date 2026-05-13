@@ -15,7 +15,7 @@ Setup:
 
 - Dataset: QASPER validation
 - Scope: 861 questions from 276 papers
-- Embeddings: deterministic `hashing-384`
+- Embeddings: deprecated historical hash run; regenerate with `sentence-transformers/all-MiniLM-L6-v2` before using this result in paper claims.
 - Chunker: `structure-aware`
 - Chunk preset: `low-budget`
 - Candidate pool: 300

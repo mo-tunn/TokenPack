@@ -1,0 +1,60 @@
+{
+  "tasks": 40,
+  "cases": 8,
+  "scanned": 42,
+  "skipped_too_short": 12,
+  "skipped_too_long": 22,
+  "source_token_window": [
+    64000,
+    112000
+  ],
+  "scoring": "evidence-hybrid",
+  "methods": [
+    "full-context",
+    "hybrid-greedy-50",
+    "hybrid-knapsack-50",
+    "production-rag-50",
+    "similarity-knapsack-50"
+  ],
+  "selection_strategy": "knapsack-redundancy",
+  "context_order": "score-then-source",
+  "production_rag_baseline": true,
+  "diagnostic_selectors": true,
+  "reranker": "none",
+  "reranker_model": "BAAI/bge-reranker-base",
+  "reranker_candidate_pool": 80,
+  "reranker_weight": 0.35,
+  "cascade_frontier": false,
+  "per_method": {
+    "full-context": {
+      "tasks": 8,
+      "avg_source_tokens": 78843.625,
+      "avg_context_tokens": 78843.625,
+      "avg_token_saving_vs_full": 0.0
+    },
+    "hybrid-greedy-50": {
+      "tasks": 8,
+      "avg_source_tokens": 78843.625,
+      "avg_context_tokens": 39290.375,
+      "avg_token_saving_vs_full": 0.501494205241748
+    },
+    "hybrid-knapsack-50": {
+      "tasks": 8,
+      "avg_source_tokens": 78843.625,
+      "avg_context_tokens": 39340.375,
+      "avg_token_saving_vs_full": 0.500933591987544
+    },
+    "production-rag-50": {
+      "tasks": 8,
+      "avg_source_tokens": 78843.625,
+      "avg_context_tokens": 39299.625,
+      "avg_token_saving_vs_full": 0.5014476108361123
+    },
+    "similarity-knapsack-50": {
+      "tasks": 8,
+      "avg_source_tokens": 78843.625,
+      "avg_context_tokens": 39401.125,
+      "avg_token_saving_vs_full": 0.5002685321076531
+    }
+  }
+}

@@ -41,9 +41,8 @@ def main() -> int:
     parser.add_argument("--dataset", choices=["hotpotqa"], default="hotpotqa")
     parser.add_argument("--data-file", help="Optional local HotpotQA JSON/JSONL/Arrow file.")
     parser.add_argument("--split", default="validation", choices=["validation", "train"])
-    parser.add_argument("--backend", default="hash", choices=["auto", "hash", "sentence-transformers"])
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--chunker", choices=["paragraph", "semantic-threshold", "structure-aware"], default="paragraph")
+    parser.add_argument("--chunker", choices=["semantic-threshold", "structure-aware"], default="structure-aware")
     parser.add_argument(
         "--scoring",
         choices=list(SCORING_PROFILES),
@@ -76,7 +75,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
 
     token_counter = TokenCounter()
-    embedder = make_embedder(backend=args.backend, model_name=args.model, local_files_only=True)
+    embedder = make_embedder(model_name=args.model, local_files_only=True)
     chunk_size = resolve_chunk_size_config(
         args.chunk_size_preset,
         args.target_tokens,

@@ -1,0 +1,34 @@
+\begin{table}[htbp]
+\caption{QASPER Selector Evaluation With Fixed Scoring}
+\label{tab:qasper-selector}
+\centering
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\hline
+Selector & Budget & Avg Tok. & Evidence Recall & Complete & Answer Overlap F1 & Value & Lat. \\
+\hline
+budget-top-k & 20\% & 982.549 & 0.771 & 0.525 & 0.029 & 2.429 & 0.000 \\
+greedy-density & 20\% & 982.549 & 0.731 & 0.443 & 0.029 & 2.625 & 0.000 \\
+knapsack & 20\% & 982.549 & 0.750 & 0.476 & 0.028 & 2.670 & 0.002 \\
+knapsack-redundancy & 20\% & 982.549 & 0.748 & 0.473 & 0.028 & 2.337 & 0.011 \\
+production-rag & 20\% & 982.549 & 0.758 & 0.515 & 0.029 & 2.336 & 0.000 \\
+budget-top-k & 30\% & 1473.954 & 0.853 & 0.684 & 0.021 & 3.380 & 0.000 \\
+greedy-density & 30\% & 1473.954 & 0.827 & 0.612 & 0.021 & 3.581 & 0.000 \\
+knapsack & 30\% & 1473.954 & 0.834 & 0.626 & 0.021 & 3.628 & 0.004 \\
+knapsack-redundancy & 30\% & 1473.954 & 0.835 & 0.628 & 0.021 & 3.132 & 0.012 \\
+production-rag & 30\% & 1473.954 & 0.842 & 0.659 & 0.021 & 3.264 & 0.000 \\
+budget-top-k & 40\% & 1965.483 & 0.903 & 0.790 & 0.017 & 4.230 & 0.000 \\
+greedy-density & 40\% & 1965.483 & 0.890 & 0.747 & 0.017 & 4.413 & 0.000 \\
+knapsack & 40\% & 1965.483 & 0.895 & 0.751 & 0.017 & 4.459 & 0.005 \\
+knapsack-redundancy & 40\% & 1965.483 & 0.892 & 0.746 & 0.017 & 3.817 & 0.013 \\
+production-rag & 40\% & 1965.483 & 0.898 & 0.771 & 0.017 & 4.094 & 0.000 \\
+budget-top-k & 50\% & 2457.100 & 0.936 & 0.865 & 0.014 & 4.991 & 0.000 \\
+greedy-density & 50\% & 2457.100 & 0.931 & 0.850 & 0.014 & 5.154 & 0.000 \\
+knapsack & 50\% & 2457.100 & 0.936 & 0.856 & 0.014 & 5.198 & 0.007 \\
+knapsack-redundancy & 50\% & 2457.100 & 0.936 & 0.857 & 0.014 & 4.423 & 0.015 \\
+production-rag & 50\% & 2457.100 & 0.931 & 0.852 & 0.014 & 4.855 & 0.000 \\
+\hline
+\end{tabular}%
+}
+\end{table}
