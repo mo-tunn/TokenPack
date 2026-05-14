@@ -115,7 +115,7 @@ tokenpack-rag pack paper.pdf \
   --overwrite
 ```
 
-This is the setup behind the headline result: about **74.6% context-token saving**, **3.90x mean-latency speedup**, and roughly **$1.86 saved per 1M input tokens** at the paper's illustrative `$2.50 / 1M input tokens` price, while retaining TokenPack's **+15.6% relative pilot lift** over full-context prompting. It requires the `compression` extra and a local/cached compression model unless you intentionally add `--allow-download`.
+This is the setup behind the headline result: about **74.6% context-token saving**, **3.90x mean-latency speedup**, and roughly **$1.86 saved per 1M input tokens** at the paper's illustrative GPT-5.4 standard input price of `$2.50 / 1M input tokens`, while retaining TokenPack's **+15.6% relative pilot lift** over full-context prompting. It requires the `compression` extra and a local/cached compression model unless you intentionally add `--allow-download`.
 
 **Folder pack**
 
@@ -147,21 +147,31 @@ The output is a packed Markdown context file, not a modified PDF. You can paste 
 ## Results Snapshot
 
 <p align="center">
-  <img src="assets/tokenpack-results-table.png" alt="TokenPack-RAG results table">
+  <img src="assets/tokenpack-results-table.png" alt="Paper-aligned TokenPack-RAG results table with QASPER and LongBench values">
 </p>
 
 <details>
 <summary>Technical result details behind the summary</summary>
 
-| Setting | Technical Result |
-|---|---|
-| Relevant evidence kept | TokenPack preserves 93.4% of QASPER evidence vs 71.3% for compression-only. |
-| All required evidence kept | TokenPack keeps complete evidence for 87.0% of QASPER questions vs 12.0% for compression-only. |
-| Selection + compression | TokenPack + LLMLingua-2 reaches 58.4% context saving while keeping 85.1% of required evidence. |
-| Pilot answer accuracy | On an 83-case LongBench v2 pilot, TokenPack improves relative accuracy by 15.6% over full-context prompting while saving 50.6% context. |
-| Aggressive cascade | TokenPack + LongLLMLingua reaches 74.6% context saving while retaining TokenPack's +15.6% relative pilot lift over full context. |
-| Latency impact | The same cascade reduces mean total latency from 4.140s to 1.060s, a 3.90x speedup in the pilot. |
-| Cost-scale example | At the paper's illustrative $2.50 per 1M input-token price, the cascade reduces 1M paid input tokens to about 254k, saving about $1.86. |
+The visual summary mixes two different experiment families, so the table below keeps the source of each number explicit. QASPER rows are evidence-retention proxies, while LongBench rows are exploratory end-to-end multiple-choice generation results.
+
+| Experiment | Paper source | Comparison | Paper-aligned result |
+|---|---|---|---|
+| QASPER compression comparison | `tab:qasper-compression-comparison` | Only TokenPack vs Only LLMLingua-2 at approximately matched 50% token saving | Only TokenPack saves **51.1%** of tokens and keeps **0.934** evidence recall with **0.870** complete-evidence rate. Only LLMLingua-2 saves **50.6%**, keeps **0.713** evidence recall, and reaches **0.120** complete-evidence rate. |
+| QASPER selection + lighter compression | `tab:qasper-compression-frontier` | TokenPack followed by LLMLingua-2 at rate 0.85 vs Only LLMLingua-2 at rate 0.50 | TokenPack + LLMLingua-2 rate 0.85 saves **58.4%** of tokens while keeping **0.851** evidence recall. This is more saving and higher evidence recall than Only LLMLingua-2 at 50.6% saving and 0.713 recall. |
+| QASPER aggressive compression caveat | `tab:qasper-compression-frontier` | TokenPack followed by LLMLingua-2 at rate 0.50 | The aggressive QASPER compression row saves **75.9%**, but evidence recall falls to **0.632** and complete-evidence rate to **0.035**. That is not the main evidence-preservation headline. |
+| QASPER budgeted selection proxy | `tab:qasper-cost-quality` | TP-HG at 50%, 70%, and 80% budgets against the 100% high-budget RAG reference | TP-HG retains **0.930** evidence recall at **51.0%** saving, **0.978** at **31.2%** saving, and **0.989** at **21.3%** saving. These are retrieval-side retention proxies, not generated-answer scores. |
+| LongBench v2 pilot accuracy | `tab:longbench-generation` | TP-HG-50 vs full-context prompting and production-RAG-50 | On **83** eligible LongBench v2 cases with Qwen/Qwen2.5-14B-Instruct, full context answers **32/83** correctly (**0.386**), production-RAG-50 answers **34/83** (**0.410**), and TP-HG-50 answers **37/83** (**0.446**) while saving **50.6%** context. The relative lift over full context is **+15.6%**. |
+| LongBench v2 cascade accuracy | `tab:longbench-generation` | TP-HG-50 + LongLLMLingua-0.50 vs TP-HG-50 | The cascade keeps the same **37/83** correctness and **0.446** accuracy as TP-HG-50, while reducing average context from **8,731** tokens to **4,468** tokens and increasing context saving from **50.6%** to **74.6%**. |
+| LongBench v2 latency | `tab:longbench-latency` | Same 83-case pilot, batch size one, excluding Modal cold start/model loading | Full context takes **4.140s** mean total latency. TP-HG-50 takes **2.196s** (**1.89x** speedup). TP-HG-50 + LongLLMLingua-0.50 takes **1.060s** (**3.90x** speedup). |
+| Cost-scale illustration | `tab:cost-savings` | 1M baseline-token scenario at the paper's illustrative GPT-5.4 standard input price | Full context costs **$2.500** per 1M baseline input tokens. TP-HG-50 + LongLLMLingua-0.50 reduces the scaled paid-token count to **254,293** and the cost to **$0.636**, saving about **$1.864**. The price assumption comes from the public [OpenAI API pricing](https://openai.com/api/pricing/) page and is only an economic scaling factor. |
+
+Important interpretation notes:
+
+- The QASPER numbers measure whether gold evidence text remains in the selected or compressed context. They do not measure final human-judged answer quality.
+- The LongBench v2 numbers are an 83-case descriptive pilot. They are useful operating-point evidence, but not a statistically powered benchmark claim.
+- TokenPack is not claimed to make the generator model smarter. The stronger claim is narrower: selection-first packing can keep answer-bearing evidence before optional compression, and that can improve the operating point of a downstream model or compressor.
+- The paper does not claim that exact knapsack selection universally beats every retrieval rule. In the current QASPER selector study, the most robust retrieval-side rule is the evidence-hybrid budget-top-k / TP-HG selector, while exact knapsack remains useful for algorithm analysis and budget-feasible optimization.
 
 </details>
 
