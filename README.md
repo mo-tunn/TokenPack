@@ -8,7 +8,7 @@
   <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/pypi/v/tokenpack-rag?label=PyPI" alt="PyPI version"></a>
   <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/pypi/pyversions/tokenpack-rag" alt="Python versions"></a>
   <a href="https://github.com/mo-tunn/TokenPack/actions/workflows/tests.yml"><img src="https://github.com/mo-tunn/TokenPack/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-  <img src="https://img.shields.io/badge/coverage-74%25-2f6654" alt="Package coverage">
+  <img src="https://img.shields.io/badge/coverage-99%25-2f6654" alt="Package coverage">
   <a href="https://pypi.org/project/tokenpack-rag/"><img src="https://img.shields.io/badge/downloads-PyPI-2f6654" alt="PyPI downloads"></a>
   <img src="https://img.shields.io/badge/MCP-local%20stdio-7b5d46" alt="Local MCP server">
   <img src="https://img.shields.io/badge/inputs-PDF%20%7C%20Office%20%7C%20Code%20%7C%20Data-476a8a" alt="Supported inputs">
