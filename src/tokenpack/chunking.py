@@ -35,21 +35,25 @@ class _ChunkGroupBase:
         current_units: list[str] = []
         current_tokens = 0
         split_offset = 0
+        source_cursor = 0
 
         def flush() -> None:
-            nonlocal current_units, current_tokens, split_offset
+            nonlocal current_units, current_tokens, split_offset, source_cursor
             if not current_units:
                 return
             separator = "\n" if block.metadata.get("content_type") == "code" else " "
             text = separator.join(current_units).strip()
             if text:
+                span_start, span_end = self._locate_source_span(block.text, current_units, source_cursor)
+                source_cursor = span_end
                 chunks.append(
                     self._make_chunk(
                         [(block_id, block, self.token_counter.count(text))],
                         text_override=text,
                         suffix=f"split-{split_offset}",
-                        char_start=block.char_start,
-                        char_end=block.char_start + len(text),
+                        char_start=block.char_start + span_start,
+                        char_end=block.char_start + span_end,
+                        metadata_overrides=self._split_metadata(block, span_start, span_end),
                     )
                 )
             split_offset += 1
@@ -61,13 +65,16 @@ class _ChunkGroupBase:
             if unit_tokens > self.max_tokens:
                 flush()
                 for piece in self._split_oversized_unit(unit):
+                    span_start, span_end = self._locate_source_span(block.text, [piece], source_cursor)
+                    source_cursor = span_end
                     chunks.append(
                         self._make_chunk(
                             [(block_id, block, self.token_counter.count(piece))],
                             text_override=piece,
                             suffix=f"split-{split_offset}",
-                            char_start=block.char_start,
-                            char_end=block.char_start + len(piece),
+                            char_start=block.char_start + span_start,
+                            char_end=block.char_start + span_end,
+                            metadata_overrides=self._split_metadata(block, span_start, span_end),
                         )
                     )
                     split_offset += 1
@@ -96,17 +103,46 @@ class _ChunkGroupBase:
         return units
 
     def _split_oversized_unit(self, unit: str) -> list[str]:
-        words = unit.split()
+        words = list(re.finditer(r"\S+", unit))
+        if not words:
+            return [unit]
         pieces: list[str] = []
-        current: list[str] = []
+        piece_start = words[0].start()
         for word in words:
-            current.append(word)
-            if self.token_counter.count(" ".join(current)) >= self.target_tokens:
-                pieces.append(" ".join(current))
-                current = []
-        if current:
-            pieces.append(" ".join(current))
-        return pieces or [unit]
+            candidate = unit[piece_start : word.end()]
+            if self.token_counter.count(candidate) >= self.target_tokens:
+                pieces.append(candidate.strip())
+                piece_start = word.end()
+                while piece_start < len(unit) and unit[piece_start].isspace():
+                    piece_start += 1
+        if piece_start < len(unit):
+            pieces.append(unit[piece_start:].strip())
+        return [piece for piece in pieces if piece] or [unit]
+
+    def _locate_source_span(self, source: str, parts: list[str], cursor: int) -> tuple[int, int]:
+        span_start: int | None = None
+        span_end = cursor
+        search_from = cursor
+        for part in parts:
+            index = source.find(part, search_from)
+            if index < 0:
+                fallback_start = cursor if span_start is None else span_start
+                fallback_end = min(len(source), max(search_from, fallback_start) + len(part))
+                return fallback_start, fallback_end
+            if span_start is None:
+                span_start = index
+            span_end = index + len(part)
+            search_from = span_end
+        return (span_start if span_start is not None else cursor), span_end
+
+    def _split_metadata(self, block: TextBlock, span_start: int, span_end: int) -> dict[str, Any]:
+        start_line = block.metadata.get("start_line")
+        if not isinstance(start_line, int):
+            return {}
+        return {
+            "start_line": start_line + block.text[:span_start].count("\n"),
+            "end_line": start_line + block.text[:span_end].count("\n"),
+        }
 
     def _flush(self, items: list[tuple[int, TextBlock, int]]) -> list[Chunk]:
         if not items:
@@ -120,6 +156,7 @@ class _ChunkGroupBase:
         suffix: str = "",
         char_start: int | None = None,
         char_end: int | None = None,
+        metadata_overrides: dict[str, Any] | None = None,
     ) -> Chunk:
         blocks = [item[1] for item in items]
         text = text_override if text_override is not None else "\n\n".join(block.text for block in blocks)
@@ -132,6 +169,8 @@ class _ChunkGroupBase:
         )
         digest = hashlib.sha1(digest_input.encode("utf-8", errors="replace")).hexdigest()[:12]
         metadata = self._chunk_metadata(blocks)
+        if metadata_overrides:
+            metadata.update(metadata_overrides)
         return Chunk(
             id=f"chunk-{digest}",
             text=text,

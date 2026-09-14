@@ -320,6 +320,56 @@ def test_code_loader_extracts_python_symbols():
     assert all(block.metadata.get("content_type") == "code" for block in blocks)
 
 
+def test_code_loader_preserves_file_level_character_offsets():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "module.py"
+    source.write_text(
+        "import os\n\n"
+        "def first():\n"
+        "    return 1\n\n"
+        "def second():\n"
+        "    return 2\n",
+        encoding="utf-8",
+    )
+
+    blocks = load_blocks(source, source_type="code")
+    by_symbol = {block.metadata.get("symbol_name"): block for block in blocks if block.metadata.get("symbol_name")}
+
+    assert by_symbol["first"].char_start > 0
+    assert by_symbol["second"].char_start > by_symbol["first"].char_end
+    source_text = source.read_text(encoding="utf-8")
+    assert source_text[by_symbol["second"].char_start : by_symbol["second"].char_end].startswith("def second")
+
+
+def test_large_code_split_preserves_distinct_source_and_line_spans():
+    class WordCounter:
+        def count(self, text: str) -> int:
+            return len(text.split())
+
+    block = TextBlock(
+        text="alpha\nbeta\ngamma\ndelta",
+        source_path="module.py",
+        document_index=0,
+        paragraph_index=0,
+        char_start=100,
+        char_end=122,
+        metadata={"content_type": "code", "start_line": 10, "end_line": 13},
+    )
+    chunker = StructureAwareChunker(target_tokens=2, min_tokens=1, max_tokens=2, token_counter=WordCounter())
+
+    chunks = chunker.chunk([block])
+
+    assert [chunk.text for chunk in chunks] == ["alpha\nbeta", "gamma\ndelta"]
+    assert chunks[0].char_start == 100
+    assert chunks[0].char_end == 110
+    assert chunks[0].metadata["start_line"] == 10
+    assert chunks[0].metadata["end_line"] == 11
+    assert chunks[1].char_start == 111
+    assert chunks[1].char_end == 122
+    assert chunks[1].metadata["start_line"] == 12
+    assert chunks[1].metadata["end_line"] == 13
+
+
 def test_pdf_loader_splits_longcodezip_into_fine_blocks():
     source = Path("resources/2510.00446v1.pdf")
     if not source.exists():

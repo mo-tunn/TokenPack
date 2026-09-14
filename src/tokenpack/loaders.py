@@ -471,7 +471,7 @@ def load_code_blocks(path: str | Path, document_index: int = 0) -> list[TextBloc
         blocks = _load_python_code_blocks(file_path, text, document_index, language)
     else:
         blocks = _load_regex_code_blocks(file_path, text, document_index, language)
-    return blocks or [_make_code_block(file_path, document_index, 0, text, 1, _line_count(text), language)]
+    return blocks or [_make_code_block(file_path, document_index, 0, text, 1, _line_count(text), language, source_text=text)]
 
 
 def load_pdf_blocks(path: str | Path, document_index: int = 0) -> list[TextBlock]:
@@ -749,7 +749,7 @@ def _load_python_code_blocks(path: Path, text: str, document_index: int, languag
         if cursor < start_line:
             prefix = "\n".join(lines[cursor - 1 : start_line - 1]).strip()
             if prefix:
-                blocks.append(_make_code_block(path, document_index, paragraph_index, prefix, cursor, start_line - 1, language))
+                blocks.append(_make_code_block(path, document_index, paragraph_index, prefix, cursor, start_line - 1, language, source_text=text))
                 paragraph_index += 1
         kind = "class" if isinstance(node, ast.ClassDef) else "function"
         symbol_text = "\n".join(lines[start_line - 1 : end_line]).strip()
@@ -764,6 +764,7 @@ def _load_python_code_blocks(path: Path, text: str, document_index: int, languag
                 language,
                 symbol_name=node.name,
                 symbol_kind=kind,
+                source_text=text,
             )
         )
         paragraph_index += 1
@@ -772,7 +773,7 @@ def _load_python_code_blocks(path: Path, text: str, document_index: int, languag
     if cursor <= len(lines):
         suffix = "\n".join(lines[cursor - 1 :]).strip()
         if suffix:
-            blocks.append(_make_code_block(path, document_index, paragraph_index, suffix, cursor, len(lines), language))
+            blocks.append(_make_code_block(path, document_index, paragraph_index, suffix, cursor, len(lines), language, source_text=text))
     return blocks
 
 
@@ -780,14 +781,14 @@ def _load_regex_code_blocks(path: Path, text: str, document_index: int, language
     lines = text.splitlines()
     starts = [index + 1 for index, line in enumerate(lines) if _looks_like_symbol_start(line, language)]
     if not starts:
-        return [_make_code_block(path, document_index, 0, text.strip(), 1, _line_count(text), language)] if text.strip() else []
+        return [_make_code_block(path, document_index, 0, text.strip(), 1, _line_count(text), language, source_text=text)] if text.strip() else []
 
     blocks: list[TextBlock] = []
     paragraph_index = 0
     if starts[0] > 1:
         prefix = "\n".join(lines[: starts[0] - 1]).strip()
         if prefix:
-            blocks.append(_make_code_block(path, document_index, paragraph_index, prefix, 1, starts[0] - 1, language))
+            blocks.append(_make_code_block(path, document_index, paragraph_index, prefix, 1, starts[0] - 1, language, source_text=text))
             paragraph_index += 1
     for offset, start_line in enumerate(starts):
         end_line = starts[offset + 1] - 1 if offset + 1 < len(starts) else len(lines)
@@ -804,6 +805,7 @@ def _load_regex_code_blocks(path: Path, text: str, document_index: int, language
                 language,
                 symbol_name=symbol_name,
                 symbol_kind=symbol_kind,
+                source_text=text,
             )
         )
         paragraph_index += 1
@@ -850,6 +852,7 @@ def _make_code_block(
     language: str,
     symbol_name: str | None = None,
     symbol_kind: str | None = None,
+    source_text: str | None = None,
 ) -> TextBlock:
     metadata = {
         "content_type": "code",
@@ -861,15 +864,32 @@ def _make_code_block(
         metadata["symbol_name"] = symbol_name
     if symbol_kind:
         metadata["symbol_kind"] = symbol_kind
+    if source_text is None:
+        char_start, char_end = 0, len(text)
+    else:
+        char_start, char_end = _line_char_span(source_text, start_line, end_line)
     return TextBlock(
         text=text,
         source_path=str(path),
         document_index=document_index,
         paragraph_index=paragraph_index,
-        char_start=0,
-        char_end=len(text),
+        char_start=char_start,
+        char_end=char_end,
         metadata=metadata,
     )
+
+
+def _line_char_span(text: str, start_line: int, end_line: int) -> tuple[int, int]:
+    lines = text.splitlines(keepends=True)
+    if not lines:
+        return 0, 0
+    start_index = max(0, min(len(lines) - 1, start_line - 1))
+    end_index = max(start_index, min(len(lines) - 1, end_line - 1))
+    char_start = sum(len(line) for line in lines[:start_index])
+    char_end = sum(len(line) for line in lines[: end_index + 1])
+    while char_end > char_start and text[char_end - 1] in "\r\n":
+        char_end -= 1
+    return char_start, char_end
 
 
 def _line_count(text: str) -> int:
