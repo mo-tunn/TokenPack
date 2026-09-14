@@ -534,6 +534,7 @@ def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_
     )
     assert calls == ["first.md", "second.md"]
     assert {Path(chunk.source_path).name for chunk in initial.chunks} == {"first.md", "second.md"}
+    assert [block_id for chunk in initial.chunks for block_id in chunk.block_ids] == [0, 1]
 
     calls.clear()
     reused = ingest_path(
@@ -548,6 +549,7 @@ def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_
     )
     assert calls == []
     assert [chunk.id for chunk in reused.chunks] == [chunk.id for chunk in initial.chunks]
+    assert [block_id for chunk in reused.chunks for block_id in chunk.block_ids] == [0, 1]
 
     second.write_text("beta evidence changed", encoding="utf-8")
     calls.clear()
@@ -563,6 +565,7 @@ def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_
     )
     assert calls == ["second.md"]
     assert any("changed" in chunk.text for chunk in refreshed.chunks)
+    assert [block_id for chunk in refreshed.chunks for block_id in chunk.block_ids] == [0, 1]
 
     first.unlink()
     calls.clear()
@@ -578,6 +581,7 @@ def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_
     )
     assert calls == []
     assert {Path(chunk.source_path).name for chunk in after_delete.chunks} == {"second.md"}
+    assert [block_id for chunk in after_delete.chunks for block_id in chunk.block_ids] == [0]
 
 
 def test_knapsack_never_exceeds_budget():

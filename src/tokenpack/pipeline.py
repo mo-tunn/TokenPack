@@ -14,7 +14,7 @@ from tokenpack.loaders import iter_supported_files, load_blocks
 from tokenpack.models import Chunk, TextBlock
 
 
-MANIFEST_VERSION = 1
+MANIFEST_VERSION = 2
 
 
 def ingest_path(
@@ -133,6 +133,7 @@ def _ingest_directory_incremental(
     all_chunks: list[Chunk] = []
     all_embeddings: list[list[float]] = []
     next_files: dict[str, dict[str, Any]] = {}
+    block_offset = 0
     for document_index, file_path in enumerate(iter_supported_files(source, source_type=source_type)):
         relative_path = file_path.relative_to(source).as_posix()
         digest = _hash_file(file_path)
@@ -140,8 +141,9 @@ def _ingest_directory_incremental(
         if isinstance(cached, dict) and cached.get("sha256") == digest:
             chunks = [Chunk.from_dict(item) for item in cached.get("chunks", [])]
             embeddings = [list(map(float, row)) for row in cached.get("embeddings", [])]
-            if len(chunks) != len(embeddings):
-                chunks, embeddings = _ingest_file(
+            block_count = cached.get("block_count")
+            if len(chunks) != len(embeddings) or not isinstance(block_count, int) or block_count < 0:
+                chunks, embeddings, block_count = _ingest_file(
                     file_path,
                     document_index=document_index,
                     source_type=source_type,
@@ -153,11 +155,8 @@ def _ingest_directory_incremental(
                     chunker_name=chunker_name,
                     semantic_threshold=semantic_threshold,
                 )
-            else:
-                for chunk in chunks:
-                    chunk.document_index = document_index
         else:
-            chunks, embeddings = _ingest_file(
+            chunks, embeddings, block_count = _ingest_file(
                 file_path,
                 document_index=document_index,
                 source_type=source_type,
@@ -170,13 +169,19 @@ def _ingest_directory_incremental(
                 semantic_threshold=semantic_threshold,
             )
 
-        all_chunks.extend(chunks)
+        indexed_chunks = [
+            _rebase_chunk(chunk, document_index=document_index, block_offset=block_offset)
+            for chunk in chunks
+        ]
+        all_chunks.extend(indexed_chunks)
         all_embeddings.extend(embeddings)
         next_files[relative_path] = {
             "sha256": digest,
+            "block_count": block_count,
             "chunks": [chunk.to_dict() for chunk in chunks],
             "embeddings": embeddings,
         }
+        block_offset += block_count
 
     _save_manifest(manifest_path, {"config": config, "files": next_files})
     return ChunkIndex(chunks=all_chunks, embeddings=all_embeddings, model_name=embedder.model_name)
@@ -194,7 +199,7 @@ def _ingest_file(
     max_tokens: int,
     chunker_name: str,
     semantic_threshold: float,
-) -> tuple[list[Chunk], list[list[float]]]:
+) -> tuple[list[Chunk], list[list[float]], int]:
     blocks = load_blocks(file_path, source_type=source_type)
     for block in blocks:
         block.document_index = document_index
@@ -209,7 +214,14 @@ def _ingest_file(
         semantic_threshold=semantic_threshold,
     )
     embeddings = cache.get_or_embed([chunk.text for chunk in chunks], embedder)
-    return chunks, embeddings
+    return chunks, embeddings, len(blocks)
+
+
+def _rebase_chunk(chunk: Chunk, *, document_index: int, block_offset: int) -> Chunk:
+    payload = chunk.to_dict()
+    payload["document_index"] = document_index
+    payload["block_ids"] = [block_offset + block_id for block_id in chunk.block_ids]
+    return Chunk.from_dict(payload)
 
 
 def _hash_file(path: Path) -> str:
