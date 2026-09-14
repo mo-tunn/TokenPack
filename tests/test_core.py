@@ -12,6 +12,7 @@ import pytest
 from tokenpack import cli as cli_module
 from tokenpack import mcp_server
 from tokenpack import packing as packing_module
+from tokenpack import pipeline as pipeline_module
 from tokenpack.benchmark import redundancy_score, run_gold_benchmark
 from tokenpack.chunk_profiles import resolve_chunk_size_config
 from tokenpack.chunking import StructureAwareChunker
@@ -602,6 +603,52 @@ def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_
     assert calls == []
     assert {Path(chunk.source_path).name for chunk in after_delete.chunks} == {"second.md"}
     assert [block_id for chunk in after_delete.chunks for block_id in chunk.block_ids] == [0]
+
+
+def test_manifest_rejects_older_concurrent_writer():
+    tmp_path = _workspace_tmp()
+    path = tmp_path / "manifest.json"
+    newer_saved = threading.Event()
+    errors: list[BaseException] = []
+
+    older_payload = {
+        "config": {"version": 2},
+        "files": {"old.md": {"sha256": "old"}},
+        "run_started_ns": 100,
+    }
+    newer_payload = {
+        "config": {"version": 2},
+        "files": {"new.md": {"sha256": "new"}},
+        "run_started_ns": 200,
+    }
+
+    def save_newer() -> None:
+        try:
+            assert pipeline_module._save_manifest(path, newer_payload) is True
+            newer_saved.set()
+        except BaseException as exc:  # pragma: no cover - asserted below
+            errors.append(exc)
+            newer_saved.set()
+
+    def save_older() -> None:
+        try:
+            assert newer_saved.wait(timeout=5)
+            assert pipeline_module._save_manifest(path, older_payload) is False
+        except BaseException as exc:  # pragma: no cover - asserted below
+            errors.append(exc)
+
+    newer = threading.Thread(target=save_newer)
+    older = threading.Thread(target=save_older)
+    newer.start()
+    older.start()
+    newer.join(timeout=10)
+    older.join(timeout=10)
+
+    assert errors == []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["run_started_ns"] == 200
+    assert set(payload["files"]) == {"new.md"}
+    assert not path.with_name(f"{path.name}.lock").exists()
 
 
 def test_knapsack_never_exceeds_budget():

@@ -3,9 +3,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import time
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from tokenpack.chunking import SemanticThresholdChunker, StructureAwareChunker
 from tokenpack.embeddings import EmbeddingCache, Embedder
@@ -15,6 +17,8 @@ from tokenpack.models import Chunk, TextBlock
 
 
 MANIFEST_VERSION = 2
+MANIFEST_LOCK_TIMEOUT_SECONDS = 10.0
+MANIFEST_LOCK_STALE_SECONDS = 60.0
 
 
 def ingest_path(
@@ -114,6 +118,7 @@ def _ingest_directory_incremental(
     source_type: str,
     manifest_path: Path,
 ) -> ChunkIndex:
+    run_started_ns = time.time_ns()
     config = {
         "version": MANIFEST_VERSION,
         "source": str(source.resolve()),
@@ -183,7 +188,10 @@ def _ingest_directory_incremental(
         }
         block_offset += block_count
 
-    _save_manifest(manifest_path, {"config": config, "files": next_files})
+    _save_manifest(
+        manifest_path,
+        {"config": config, "files": next_files, "run_started_ns": run_started_ns},
+    )
     return ChunkIndex(chunks=all_chunks, embeddings=all_embeddings, model_name=embedder.model_name)
 
 
@@ -242,12 +250,53 @@ def _load_manifest(path: Path) -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def _save_manifest(path: Path, payload: dict[str, Any]) -> None:
+def _save_manifest(path: Path, payload: dict[str, Any]) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
+    with _manifest_lock(path):
+        current = _load_manifest(path)
+        current_started_ns = current.get("run_started_ns")
+        incoming_started_ns = payload.get("run_started_ns")
+        if (
+            isinstance(current_started_ns, int)
+            and isinstance(incoming_started_ns, int)
+            and current_started_ns > incoming_started_ns
+        ):
+            return False
+        _write_manifest_unlocked(path, payload)
+    return True
+
+
+def _write_manifest_unlocked(path: Path, payload: dict[str, Any]) -> None:
     temporary = path.with_name(f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
     try:
         temporary.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8", errors="replace")
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
+
+
+@contextmanager
+def _manifest_lock(path: Path) -> Iterator[None]:
+    lock_path = path.with_name(f"{path.name}.lock")
+    deadline = time.monotonic() + MANIFEST_LOCK_TIMEOUT_SECONDS
+    descriptor: int | None = None
+    while descriptor is None:
+        try:
+            descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(descriptor, str(os.getpid()).encode("ascii", errors="replace"))
+        except FileExistsError:
+            try:
+                if time.time() - lock_path.stat().st_mtime > MANIFEST_LOCK_STALE_SECONDS:
+                    lock_path.unlink(missing_ok=True)
+                    continue
+            except OSError:
+                continue
+            if time.monotonic() >= deadline:
+                raise TimeoutError(f"Timed out waiting for manifest lock: {lock_path}")
+            time.sleep(0.05)
+    try:
+        yield
+    finally:
+        os.close(descriptor)
+        lock_path.unlink(missing_ok=True)
 
