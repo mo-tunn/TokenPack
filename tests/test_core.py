@@ -319,6 +319,26 @@ def test_index_save_tolerates_pdf_surrogate_text():
     assert loaded.chunks[0].text
 
 
+def test_index_save_is_atomic_when_replace_fails(monkeypatch):
+    tmp_path = _workspace_tmp()
+    path = tmp_path / "index.json"
+    path.write_text('{"sentinel": true}', encoding="utf-8")
+    index = ChunkIndex(chunks=[_chunk("new")], embeddings=[[1.0]], model_name="test")
+
+    def fail_replace(source, target):
+        assert Path(source).exists()
+        assert Path(target).read_text(encoding="utf-8") == '{"sentinel": true}'
+        raise OSError("simulated interrupted replace")
+
+    monkeypatch.setattr("tokenpack.index.os.replace", fail_replace)
+
+    with pytest.raises(OSError, match="simulated interrupted replace"):
+        save_index(index, path)
+
+    assert path.read_text(encoding="utf-8") == '{"sentinel": true}'
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
 def test_gold_jsonl_validation_catches_missing_chunk():
     index = ChunkIndex(chunks=[_chunk("known")], embeddings=[[1.0, 0.0]], model_name="test")
     records = [GoldRecord(query="alpha", answer="answer", evidence_chunk_ids=["missing"])]

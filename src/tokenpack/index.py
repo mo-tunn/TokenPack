@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -34,11 +36,16 @@ class ChunkIndex:
 def save_index(index: ChunkIndex, path: str | Path) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        json.dumps(index.to_dict(), ensure_ascii=False, indent=2),
-        encoding="utf-8",
-        errors="replace",
-    )
+    temporary = target.with_name(f".{target.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(index.to_dict(), ensure_ascii=False, indent=2),
+            encoding="utf-8",
+            errors="replace",
+        )
+        os.replace(temporary, target)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def load_index(path: str | Path) -> ChunkIndex:
