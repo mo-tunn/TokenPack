@@ -103,41 +103,65 @@ def iter_supported_files(path: str | Path, source_type: str = "auto") -> list[Pa
     root = Path(path)
     if root.is_file():
         return [root] if _supports_file(root, source_type) else []
-    ignore_spec = _load_ignore_spec(root)
+    ignore_specs: dict[Path, PathSpec] = {}
     files: list[Path] = []
     for current_root, dirnames, filenames in os.walk(root, topdown=True):
         current_path = Path(current_root)
         dirnames[:] = [
             dirname
             for dirname in dirnames
-            if not _is_ignored(current_path / dirname, root, ignore_spec, is_directory=True)
+            if not _is_ignored(current_path / dirname, root, ignore_specs, is_directory=True)
         ]
         for filename in filenames:
             candidate = current_path / filename
-            if _is_ignored(candidate, root, ignore_spec, is_directory=False):
+            if _is_ignored(candidate, root, ignore_specs, is_directory=False):
                 continue
             if _supports_file(candidate, source_type):
                 files.append(candidate)
     return sorted(files)
 
 
-def _load_ignore_spec(root: Path) -> PathSpec:
-    patterns = list(DEFAULT_IGNORE_PATTERNS)
+def _load_ignore_spec(directory: Path, root: Path) -> PathSpec:
+    patterns = list(DEFAULT_IGNORE_PATTERNS) if directory == root else []
     for ignore_name in (".gitignore", ".tokenpackignore"):
-        ignore_path = root / ignore_name
+        ignore_path = directory / ignore_name
         if ignore_path.is_file():
             patterns.extend(ignore_path.read_text(encoding="utf-8", errors="replace").splitlines())
     return PathSpec.from_lines("gitwildmatch", patterns)
 
 
-def _is_ignored(path: Path, root: Path, ignore_spec: PathSpec, *, is_directory: bool) -> bool:
+def _is_ignored(
+    path: Path,
+    root: Path,
+    ignore_specs: dict[Path, PathSpec],
+    *,
+    is_directory: bool,
+) -> bool:
     try:
-        relative = path.relative_to(root).as_posix()
+        relative_path = path.relative_to(root)
     except ValueError:
         return False
-    if is_directory:
-        relative = f"{relative}/"
-    return ignore_spec.match_file(relative)
+
+    ignored = False
+    scope = root
+    scopes = [root]
+    for part in relative_path.parent.parts:
+        scope = scope / part
+        scopes.append(scope)
+
+    for scope in scopes:
+        ignore_spec = ignore_specs.get(scope)
+        if ignore_spec is None:
+            ignore_spec = _load_ignore_spec(scope, root)
+            ignore_specs[scope] = ignore_spec
+        relative = path.relative_to(scope).as_posix()
+        if is_directory:
+            relative = f"{relative}/"
+        for pattern in ignore_spec.patterns:
+            if pattern.include is None or pattern.match_file(relative) is None:
+                continue
+            ignored = bool(pattern.include)
+    return ignored
 
 
 def load_blocks(path: str | Path, source_type: str = "auto") -> list[TextBlock]:

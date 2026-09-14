@@ -80,6 +80,41 @@ def test_supported_files_respect_repo_ignores_and_never_ingest_tokenpack_artifac
     assert files == {"notes.md", "src/keep.py"}
 
 
+def test_supported_files_respect_nested_ignore_scopes_and_negations():
+    tmp_path = _workspace_tmp()
+    nested = tmp_path / "nested"
+    deeper = nested / "deeper"
+    local_only = nested / "local-only"
+    deeper.mkdir(parents=True)
+    local_only.mkdir()
+
+    (tmp_path / ".gitignore").write_text("*.log\n", encoding="utf-8")
+    (nested / ".gitignore").write_text("!keep.log\n/only.txt\nlocal-only/\n", encoding="utf-8")
+    (deeper / ".tokenpackignore").write_text("*.md\n!keep.md\n", encoding="utf-8")
+
+    (tmp_path / "root.log").write_text("ignored", encoding="utf-8")
+    (nested / "keep.log").write_text("restored", encoding="utf-8")
+    (nested / "drop.log").write_text("ignored", encoding="utf-8")
+    (nested / "only.txt").write_text("ignored", encoding="utf-8")
+    (deeper / "only.txt").write_text("not matched by nested anchored rule", encoding="utf-8")
+    (deeper / "drop.md").write_text("ignored", encoding="utf-8")
+    (deeper / "keep.md").write_text("restored", encoding="utf-8")
+    (local_only / "secret.md").write_text("ignored", encoding="utf-8")
+    (nested / "visible.py").write_text("print('visible')", encoding="utf-8")
+
+    files = {path.relative_to(tmp_path).as_posix() for path in iter_supported_files(tmp_path)}
+
+    assert "nested/keep.log" in files
+    assert "nested/deeper/keep.md" in files
+    assert "nested/visible.py" in files
+    assert "root.log" not in files
+    assert "nested/drop.log" not in files
+    assert "nested/only.txt" not in files
+    assert "nested/deeper/drop.md" not in files
+    assert "nested/deeper/only.txt" in files
+    assert "nested/local-only/secret.md" not in files
+
+
 def test_html_loader_extracts_visible_text_and_ignores_scripts():
     tmp_path = _workspace_tmp()
     source = tmp_path / "page.html"
