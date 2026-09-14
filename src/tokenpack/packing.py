@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import re
@@ -135,6 +136,7 @@ def pack_source(
     index_path = Path(index_out) if index_out else run_dir / "index.json"
     selection_path = Path(selection_out) if selection_out else run_dir / "selection.json"
     cache_path = _pack_cache_path(index_out=index_out, run_root=run_root)
+    manifest_path = _pack_manifest_path(source=source_path, index_out=index_out, run_root=run_root)
 
     chunk_size = resolve_chunk_size_config(
         chunk_size_preset,
@@ -153,6 +155,7 @@ def pack_source(
         chunker_name="structure-aware",
         source_type=source_type,
         cache_path=cache_path,
+        manifest_path=manifest_path,
     )
     source_tokens = sum(max(0, chunk.token_count) for chunk in index.chunks)
     _emit_progress(progress, f"Indexed {len(index.chunks)} chunks / {_fmt_int(source_tokens)} source tokens.")
@@ -321,6 +324,13 @@ def _pack_cache_path(*, index_out: str | Path | None, run_root: str | Path) -> P
     if index_out is not None:
         return Path(index_out).with_suffix(".embeddings.json")
     return Path(run_root).parent / "cache" / "embeddings.json"
+
+
+def _pack_manifest_path(*, source: Path, index_out: str | Path | None, run_root: str | Path) -> Path:
+    if index_out is not None:
+        return Path(index_out).with_suffix(".manifest.json")
+    source_key = hashlib.sha256(str(source.resolve()).encode("utf-8", errors="replace")).hexdigest()[:16]
+    return Path(run_root).parent / "cache" / "manifests" / f"{source_key}.json"
 
 
 def _resolve_pack_budget(

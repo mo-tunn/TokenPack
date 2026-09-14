@@ -425,6 +425,86 @@ def test_structure_aware_ingest_preserves_python_function_metadata():
     assert train_chunks[0].metadata.get("start_line") == 4
 
 
+def test_directory_ingest_manifest_reuses_unchanged_files_and_refreshes_changed_files(monkeypatch):
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "repo"
+    source.mkdir()
+    first = source / "first.md"
+    second = source / "second.md"
+    first.write_text("alpha evidence", encoding="utf-8")
+    second.write_text("beta evidence", encoding="utf-8")
+    index_path = tmp_path / "index.json"
+    cache_path = tmp_path / "embeddings.json"
+    manifest_path = tmp_path / "manifest.json"
+    embedder = _ToyEmbedder(dimensions=16)
+
+    original_load_blocks = __import__("tokenpack.pipeline", fromlist=["load_blocks"]).load_blocks
+    calls: list[str] = []
+
+    def tracking_load_blocks(path, source_type="auto"):
+        calls.append(Path(path).name)
+        return original_load_blocks(path, source_type=source_type)
+
+    monkeypatch.setattr("tokenpack.pipeline.load_blocks", tracking_load_blocks)
+
+    initial = ingest_path(
+        source,
+        index_path,
+        embedder=embedder,
+        target_tokens=20,
+        min_tokens=1,
+        max_tokens=40,
+        cache_path=cache_path,
+        manifest_path=manifest_path,
+    )
+    assert calls == ["first.md", "second.md"]
+    assert {Path(chunk.source_path).name for chunk in initial.chunks} == {"first.md", "second.md"}
+
+    calls.clear()
+    reused = ingest_path(
+        source,
+        index_path,
+        embedder=embedder,
+        target_tokens=20,
+        min_tokens=1,
+        max_tokens=40,
+        cache_path=cache_path,
+        manifest_path=manifest_path,
+    )
+    assert calls == []
+    assert [chunk.id for chunk in reused.chunks] == [chunk.id for chunk in initial.chunks]
+
+    second.write_text("beta evidence changed", encoding="utf-8")
+    calls.clear()
+    refreshed = ingest_path(
+        source,
+        index_path,
+        embedder=embedder,
+        target_tokens=20,
+        min_tokens=1,
+        max_tokens=40,
+        cache_path=cache_path,
+        manifest_path=manifest_path,
+    )
+    assert calls == ["second.md"]
+    assert any("changed" in chunk.text for chunk in refreshed.chunks)
+
+    first.unlink()
+    calls.clear()
+    after_delete = ingest_path(
+        source,
+        index_path,
+        embedder=embedder,
+        target_tokens=20,
+        min_tokens=1,
+        max_tokens=40,
+        cache_path=cache_path,
+        manifest_path=manifest_path,
+    )
+    assert calls == []
+    assert {Path(chunk.source_path).name for chunk in after_delete.chunks} == {"second.md"}
+
+
 def test_knapsack_never_exceeds_budget():
     scored = [
         _scored("a", value=8.0, weight=7),
@@ -942,6 +1022,11 @@ def test_pack_uses_shared_embedding_cache_and_unique_run_directories():
 
     custom_index = tmp_path / "custom" / "index.json"
     assert packing_module._pack_cache_path(index_out=custom_index, run_root=run_root) == custom_index.with_suffix(".embeddings.json")
+    first_manifest = packing_module._pack_manifest_path(source=source, index_out=None, run_root=run_root)
+    second_manifest = packing_module._pack_manifest_path(source=source, index_out=None, run_root=run_root)
+    assert first_manifest == second_manifest
+    assert first_manifest.parent == tmp_path / ".tokenpack" / "cache" / "manifests"
+    assert packing_module._pack_manifest_path(source=source, index_out=custom_index, run_root=run_root) == custom_index.with_suffix(".manifest.json")
 
 
 def test_pack_auto_budget_defaults_and_clamps():
