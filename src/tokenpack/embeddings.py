@@ -4,11 +4,15 @@ import hashlib
 import json
 import math
 import os
+import time
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Protocol
+from typing import Iterator, Protocol
 
 DEFAULT_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+CACHE_LOCK_TIMEOUT_SECONDS = 10.0
+CACHE_LOCK_STALE_SECONDS = 60.0
 
 
 class Embedder(Protocol):
@@ -88,15 +92,7 @@ class EmbeddingCache:
 
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
-        self._records: dict[str, list[float]] = {}
-        if self.path.exists():
-            try:
-                payload = json.loads(self.path.read_text(encoding="utf-8"))
-                if not isinstance(payload, dict):
-                    raise ValueError("Embedding cache payload must be a JSON object.")
-                self._records = {key: list(map(float, value)) for key, value in payload.items()}
-            except (json.JSONDecodeError, UnicodeDecodeError, TypeError, ValueError):
-                self._records = {}
+        self._records = self._read_records()
 
     def get_or_embed(self, texts: list[str], embedder: Embedder) -> list[list[float]]:
         keys = [self._key(text, embedder.model_name) for text in texts]
@@ -114,12 +110,61 @@ class EmbeddingCache:
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self._lock():
+            latest = self._read_records()
+            latest.update(self._records)
+            self._records = latest
+            self._save_unlocked()
+
+    def _save_unlocked(self) -> None:
         temporary = self.path.with_name(f".{self.path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
         try:
             temporary.write_text(json.dumps(self._records), encoding="utf-8")
             os.replace(temporary, self.path)
         finally:
             temporary.unlink(missing_ok=True)
+
+    def _read_records(self) -> dict[str, list[float]]:
+        if not self.path.exists():
+            return {}
+        try:
+            payload = json.loads(self.path.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                raise ValueError("Embedding cache payload must be a JSON object.")
+            return {key: list(map(float, value)) for key, value in payload.items()}
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError, TypeError, ValueError):
+            return {}
+
+    @contextmanager
+    def _lock(self) -> Iterator[None]:
+        lock_path = self.path.with_name(f"{self.path.name}.lock")
+        deadline = time.monotonic() + CACHE_LOCK_TIMEOUT_SECONDS
+        descriptor: int | None = None
+        while descriptor is None:
+            try:
+                descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                try:
+                    os.write(descriptor, str(os.getpid()).encode("ascii", errors="replace"))
+                except OSError:
+                    os.close(descriptor)
+                    descriptor = None
+                    lock_path.unlink(missing_ok=True)
+                    raise
+            except FileExistsError:
+                try:
+                    if time.time() - lock_path.stat().st_mtime > CACHE_LOCK_STALE_SECONDS:
+                        lock_path.unlink(missing_ok=True)
+                        continue
+                except OSError:
+                    continue
+                if time.monotonic() >= deadline:
+                    raise TimeoutError(f"Timed out waiting for embedding cache lock: {lock_path}")
+                time.sleep(0.05)
+        try:
+            yield
+        finally:
+            os.close(descriptor)
+            lock_path.unlink(missing_ok=True)
 
     @staticmethod
     def _key(text: str, model_name: str) -> str:

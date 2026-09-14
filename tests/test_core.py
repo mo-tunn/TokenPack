@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import threading
 import uuid
 import math
 import re
@@ -252,6 +253,45 @@ def test_embedding_cache_recovers_from_corrupt_json_and_writes_atomically():
     assert len(vectors[0]) == 8
     assert isinstance(json.loads(path.read_text(encoding="utf-8")), dict)
     assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_embedding_cache_merges_parallel_writers_without_losing_records():
+    tmp_path = _workspace_tmp()
+    path = tmp_path / "embeddings.json"
+    first_cache = EmbeddingCache(path)
+    second_cache = EmbeddingCache(path)
+    barrier = threading.Barrier(2)
+
+    class BarrierEmbedder:
+        model_name = "parallel-test"
+
+        def embed(self, texts: list[str]) -> list[list[float]]:
+            barrier.wait(timeout=5)
+            return [[float(len(text)), 1.0] for text in texts]
+
+    embedder = BarrierEmbedder()
+    errors: list[BaseException] = []
+
+    def write(cache: EmbeddingCache, text: str) -> None:
+        try:
+            cache.get_or_embed([text], embedder)
+        except BaseException as exc:  # pragma: no cover - asserted below
+            errors.append(exc)
+
+    threads = [
+        threading.Thread(target=write, args=(first_cache, "alpha")),
+        threading.Thread(target=write, args=(second_cache, "beta")),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=10)
+
+    assert errors == []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert EmbeddingCache._key("alpha", embedder.model_name) in payload
+    assert EmbeddingCache._key("beta", embedder.model_name) in payload
+    assert not path.with_name(f"{path.name}.lock").exists()
 
 
 def test_cosine_rejects_mismatched_embedding_dimensions():
