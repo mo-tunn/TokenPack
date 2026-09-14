@@ -56,6 +56,28 @@ def test_supported_files_include_common_document_data_and_code_formats():
     assert "image.png" not in files
 
 
+def test_supported_files_respect_repo_ignores_and_never_ingest_tokenpack_artifacts():
+    tmp_path = _workspace_tmp()
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "keep.py").write_text("print('keep')", encoding="utf-8")
+    (tmp_path / "notes.md").write_text("keep me", encoding="utf-8")
+
+    (tmp_path / ".tokenpack" / "runs").mkdir(parents=True)
+    (tmp_path / ".tokenpack" / "runs" / "index.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "node_modules" / "pkg").mkdir(parents=True)
+    (tmp_path / "node_modules" / "pkg" / "index.js").write_text("export default 1", encoding="utf-8")
+    (tmp_path / "generated").mkdir()
+    (tmp_path / "generated" / "ignored.py").write_text("print('generated')", encoding="utf-8")
+    (tmp_path / "private").mkdir()
+    (tmp_path / "private" / "secret.md").write_text("secret", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("generated/\n", encoding="utf-8")
+    (tmp_path / ".tokenpackignore").write_text("private/\n", encoding="utf-8")
+
+    files = {path.relative_to(tmp_path).as_posix() for path in iter_supported_files(tmp_path)}
+
+    assert files == {"notes.md", "src/keep.py"}
+
+
 def test_html_loader_extracts_visible_text_and_ignores_scripts():
     tmp_path = _workspace_tmp()
     source = tmp_path / "page.html"

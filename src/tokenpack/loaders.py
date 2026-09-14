@@ -3,9 +3,12 @@ from __future__ import annotations
 import ast
 import csv
 import json
+import os
 import re
 from html.parser import HTMLParser
 from pathlib import Path
+
+from pathspec import PathSpec
 
 from tokenpack.models import TextBlock
 
@@ -70,6 +73,24 @@ SUPPORTED_EXTENSIONS = (
     | {".pdf"}
 )
 SOURCE_TYPES = {"auto", "document", "code", "mixed"}
+DEFAULT_IGNORE_PATTERNS = (
+    ".git/",
+    ".tokenpack/",
+    ".ckrag/",
+    ".venv/",
+    "venv/",
+    "env/",
+    "node_modules/",
+    "build/",
+    "dist/",
+    ".next/",
+    "coverage/",
+    "htmlcov/",
+    "__pycache__/",
+    ".pytest_cache/",
+    ".mypy_cache/",
+    ".ruff_cache/",
+)
 SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
 CODE_HINT_RE = re.compile(
     r"^\s*(def |class |function |const |let |var |import |from |public |private |protected |if |for |while |return|#include|package )"
@@ -82,11 +103,41 @@ def iter_supported_files(path: str | Path, source_type: str = "auto") -> list[Pa
     root = Path(path)
     if root.is_file():
         return [root] if _supports_file(root, source_type) else []
-    return sorted(
-        candidate
-        for candidate in root.rglob("*")
-        if candidate.is_file() and _supports_file(candidate, source_type)
-    )
+    ignore_spec = _load_ignore_spec(root)
+    files: list[Path] = []
+    for current_root, dirnames, filenames in os.walk(root, topdown=True):
+        current_path = Path(current_root)
+        dirnames[:] = [
+            dirname
+            for dirname in dirnames
+            if not _is_ignored(current_path / dirname, root, ignore_spec, is_directory=True)
+        ]
+        for filename in filenames:
+            candidate = current_path / filename
+            if _is_ignored(candidate, root, ignore_spec, is_directory=False):
+                continue
+            if _supports_file(candidate, source_type):
+                files.append(candidate)
+    return sorted(files)
+
+
+def _load_ignore_spec(root: Path) -> PathSpec:
+    patterns = list(DEFAULT_IGNORE_PATTERNS)
+    for ignore_name in (".gitignore", ".tokenpackignore"):
+        ignore_path = root / ignore_name
+        if ignore_path.is_file():
+            patterns.extend(ignore_path.read_text(encoding="utf-8", errors="replace").splitlines())
+    return PathSpec.from_lines("gitwildmatch", patterns)
+
+
+def _is_ignored(path: Path, root: Path, ignore_spec: PathSpec, *, is_directory: bool) -> bool:
+    try:
+        relative = path.relative_to(root).as_posix()
+    except ValueError:
+        return False
+    if is_directory:
+        relative = f"{relative}/"
+    return ignore_spec.match_file(relative)
 
 
 def load_blocks(path: str | Path, source_type: str = "auto") -> list[TextBlock]:

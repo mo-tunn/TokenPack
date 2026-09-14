@@ -10,7 +10,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 authors = [{ name = "Metehan Kizilcik", email = "metekizilcik@gmail.com" }]
-dependencies = ["sentence-transformers>=3.0.0"]
+dependencies = ["sentence-transformers>=3.0.0", "pathspec>=0.12.1"]
 keywords = ["rag", "llm", "context-compression", "retrieval", "knapsack"]
 classifiers = [
     "Programming Language :: Python :: 3",
