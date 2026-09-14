@@ -9,6 +9,7 @@ import pytest
 
 from tokenpack import cli as cli_module
 from tokenpack import mcp_server
+from tokenpack import packing as packing_module
 from tokenpack.benchmark import redundancy_score, run_gold_benchmark
 from tokenpack.chunk_profiles import resolve_chunk_size_config
 from tokenpack.chunking import StructureAwareChunker
@@ -909,6 +910,24 @@ def test_pack_infers_default_output_paths():
     assert cli_module._infer_pack_output_path(source_file) == tmp_path / "paper-tp.md"
     assert cli_module._infer_pack_output_path(source_dir) == tmp_path / "docs-tp.md"
     assert cli_module._infer_pack_output_path(source_file, str(tmp_path / "custom.md")) == tmp_path / "custom.md"
+
+
+def test_pack_uses_shared_embedding_cache_and_unique_run_directories():
+    tmp_path = _workspace_tmp()
+    source = tmp_path / "repo"
+    source.mkdir()
+    run_root = tmp_path / ".tokenpack" / "runs"
+
+    first_run = packing_module._pack_run_dir(source, run_root=run_root)
+    second_run = packing_module._pack_run_dir(source, run_root=run_root)
+
+    assert first_run != second_run
+    assert first_run.parent == run_root
+    assert second_run.parent == run_root
+    assert packing_module._pack_cache_path(index_out=None, run_root=run_root) == tmp_path / ".tokenpack" / "cache" / "embeddings.json"
+
+    custom_index = tmp_path / "custom" / "index.json"
+    assert packing_module._pack_cache_path(index_out=custom_index, run_root=run_root) == custom_index.with_suffix(".embeddings.json")
 
 
 def test_pack_auto_budget_defaults_and_clamps():

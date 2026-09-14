@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -133,6 +134,7 @@ def pack_source(
     run_dir = _pack_run_dir(source_path, run_root=run_root)
     index_path = Path(index_out) if index_out else run_dir / "index.json"
     selection_path = Path(selection_out) if selection_out else run_dir / "selection.json"
+    cache_path = _pack_cache_path(index_out=index_out, run_root=run_root)
 
     chunk_size = resolve_chunk_size_config(
         chunk_size_preset,
@@ -150,6 +152,7 @@ def pack_source(
         max_tokens=chunk_size.max_tokens,
         chunker_name="structure-aware",
         source_type=source_type,
+        cache_path=cache_path,
     )
     source_tokens = sum(max(0, chunk.token_count) for chunk in index.chunks)
     _emit_progress(progress, f"Indexed {len(index.chunks)} chunks / {_fmt_int(source_tokens)} source tokens.")
@@ -310,8 +313,14 @@ def _infer_pack_output_path(source: str | Path, out: str | None = None) -> Path:
 def _pack_run_dir(source: Path, run_root: str | Path = PACK_RUN_ROOT) -> Path:
     stem = source.name if source.is_dir() else source.stem
     safe_stem = re.sub(r"[^A-Za-z0-9_.-]+", "-", stem).strip("-") or "source"
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-    return Path(run_root) / f"{safe_stem}-{timestamp}"
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+    return Path(run_root) / f"{safe_stem}-{timestamp}-{uuid.uuid4().hex[:8]}"
+
+
+def _pack_cache_path(*, index_out: str | Path | None, run_root: str | Path) -> Path:
+    if index_out is not None:
+        return Path(index_out).with_suffix(".embeddings.json")
+    return Path(run_root).parent / "cache" / "embeddings.json"
 
 
 def _resolve_pack_budget(
