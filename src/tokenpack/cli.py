@@ -13,7 +13,7 @@ from tokenpack.doctor import collect_diagnostics
 from tokenpack.embeddings import DEFAULT_EMBEDDING_MODEL, make_embedder
 from tokenpack.export import export_selection
 from tokenpack.generation import answer_from_selection, save_answer
-from tokenpack.index import load_index
+from tokenpack.index import load_index, validate_index_embedder
 from tokenpack.packing import (
     AUTO_BUDGET_RATIO,
     AUTO_MAX_BUDGET,
@@ -240,6 +240,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "select":
         embedder = _make_cli_embedder(args, model_name)
         index = load_index(args.index)
+        validate_index_embedder(index, embedder)
         query_embedding = embedder.embed([args.query])[0]
         penalty = args.redundancy_penalty if args.strategy == "knapsack-redundancy" else 0.0
         scored = score_chunks(

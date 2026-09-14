@@ -14,10 +14,10 @@ from tokenpack.chunk_profiles import resolve_chunk_size_config
 from tokenpack.chunking import StructureAwareChunker
 from tokenpack.compression import CompressionConfig, compress_chunks
 from tokenpack.dataset import GoldRecord, load_gold_records, save_gold_records, validate_gold_records
-from tokenpack.embeddings import EmbeddingCache
+from tokenpack.embeddings import EmbeddingCache, cosine
 from tokenpack.export import render_context
 from tokenpack.generation import _default_ollama_model
-from tokenpack.index import ChunkIndex, load_index, save_index
+from tokenpack.index import ChunkIndex, load_index, save_index, validate_index_embedder
 from tokenpack.loaders import iter_supported_files, load_blocks, load_text_blocks
 from tokenpack.pipeline import ingest_path
 from tokenpack.models import Chunk, ScoredChunk, TextBlock
@@ -202,6 +202,21 @@ def test_embedding_cache_tolerates_pdf_surrogate_text():
     vectors = cache.get_or_embed(["bad \ud835 text"], embedder)
 
     assert len(vectors[0]) == 16
+
+
+def test_cosine_rejects_mismatched_embedding_dimensions():
+    with pytest.raises(ValueError, match="Embedding dimension mismatch"):
+        cosine([1.0, 0.0], [1.0, 0.0, 0.0])
+
+
+def test_index_rejects_query_embedder_from_different_model():
+    index = ChunkIndex(chunks=[], embeddings=[], model_name="index-model")
+    embedder = _StaticEmbedder({})
+
+    with pytest.raises(ValueError, match="Embedding model mismatch"):
+        validate_index_embedder(index, embedder)
+
+    validate_index_embedder(ChunkIndex(chunks=[], embeddings=[], model_name="unknown"), embedder)
 
 
 def test_index_save_tolerates_pdf_surrogate_text():
@@ -780,7 +795,7 @@ def test_reranker_blend_increases_high_reranked_chunk_value():
 def test_gold_benchmark_metrics_on_controlled_index():
     chunks = [_chunk("evidence", weight=2), _chunk("distractor", paragraph=1, weight=2)]
     embeddings = [[1.0, 0.0], [0.0, 1.0]]
-    index = ChunkIndex(chunks=chunks, embeddings=embeddings, model_name="test")
+    index = ChunkIndex(chunks=chunks, embeddings=embeddings, model_name="static")
     records = [GoldRecord(query="evidence", answer="answer", evidence_chunk_ids=["evidence"])]
 
     payload = run_gold_benchmark(

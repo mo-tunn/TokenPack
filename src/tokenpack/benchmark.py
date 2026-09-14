@@ -6,7 +6,7 @@ from pathlib import Path
 
 from tokenpack.dataset import GoldRecord, propose_gold_records
 from tokenpack.embeddings import Embedder, cosine
-from tokenpack.index import ChunkIndex
+from tokenpack.index import ChunkIndex, validate_index_embedder
 from tokenpack.models import ScoredChunk, SelectionResult
 from tokenpack.scoring import DEFAULT_SCORING_PROFILE, score_chunks
 from tokenpack.selectors import select_chunks
@@ -78,6 +78,7 @@ def run_gold_benchmark(
     redundancy_penalty: float = 0.35,
     scoring: str = DEFAULT_SCORING_PROFILE,
 ) -> dict:
+    validate_index_embedder(index, embedder)
     strategy_names = strategies or STRATEGIES
     budget_runs = [
         _run_gold_for_budget(

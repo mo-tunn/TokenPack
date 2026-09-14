@@ -4,6 +4,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from tokenpack.embeddings import Embedder
 from tokenpack.models import Chunk
 
 
@@ -43,4 +44,15 @@ def save_index(index: ChunkIndex, path: str | Path) -> None:
 def load_index(path: str | Path) -> ChunkIndex:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     return ChunkIndex.from_dict(payload)
+
+
+def validate_index_embedder(index: ChunkIndex, embedder: Embedder) -> None:
+    if index.model_name in {"", "unknown"}:
+        return
+    if index.model_name != embedder.model_name:
+        raise ValueError(
+            "Embedding model mismatch: "
+            f"index was built with '{index.model_name}', but query embedder is '{embedder.model_name}'. "
+            "Rebuild the index with the selected model or query it with the original model."
+        )
 

@@ -75,8 +75,11 @@ def normalize(vector: list[float]) -> list[float]:
 def cosine(left: list[float], right: list[float]) -> float:
     if not left or not right:
         return 0.0
-    limit = min(len(left), len(right))
-    return sum(left[index] * right[index] for index in range(limit))
+    if len(left) != len(right):
+        raise ValueError(
+            f"Embedding dimension mismatch: left has {len(left)} dimensions, right has {len(right)}."
+        )
+    return sum(left[index] * right[index] for index in range(len(left)))
 
 
 class EmbeddingCache:
