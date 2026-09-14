@@ -447,6 +447,24 @@ def test_evidence_hybrid_scoring_uses_query_and_structure_components():
     assert scored[0].score_components["structural_prior"] > scored[1].score_components["structural_prior"]
 
 
+def test_evidence_hybrid_lexical_signals_support_unicode_queries():
+    chunks = [
+        _chunk("turkish", text="Ödeme başarısız olduğunda kullanıcıya hata mesajı gösterilir."),
+        _chunk("other", paragraph=1, text="Unrelated cooking notes about bread and butter."),
+    ]
+    embeddings = [[1.0, 0.0], [1.0, 0.0]]
+
+    scored = score_chunks(
+        [1.0, 0.0],
+        chunks,
+        embeddings,
+        query_text="ödeme başarısız hata kullanıcı",
+    )
+
+    assert scored[0].score_components["bm25"] > scored[1].score_components["bm25"]
+    assert scored[0].score_components["query_coverage"] >= 0.75
+
+
 def test_production_scoring_rejects_experimental_profiles():
     chunks = [_chunk("alpha", text="alpha evidence")]
     embeddings = [[1.0, 0.0]]

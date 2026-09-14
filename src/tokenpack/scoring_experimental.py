@@ -64,8 +64,8 @@ SCORING_PROFILES = (
     *RELATED_WORK_BASELINE_SCORING_PROFILES,
     *EXPERIMENTAL_SCORING_PROFILES,
 )
-_TOKEN_RE = re.compile(r"[A-Za-z0-9_]+", flags=re.UNICODE)
-_CONTENT_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]{2,}", flags=re.UNICODE)
+_TOKEN_RE = re.compile(r"\w+", flags=re.UNICODE)
+_CONTENT_TOKEN_RE = re.compile(r"[^\W\d_]\w{2,}", flags=re.UNICODE)
 _ENTITY_RE = re.compile(
     r"\b(?:[A-Z][A-Za-z0-9-]{2,}|[A-Z]{2,})(?:\s+(?:[A-Z][A-Za-z0-9-]{2,}|[A-Z]{2,}))*\b",
     flags=re.UNICODE,
@@ -420,7 +420,7 @@ def _bm25_scores(query_text: str, chunks: list[Chunk], k1: float = 1.5, b: float
 
 
 def _tokenize(text: str) -> list[str]:
-    return [match.group(0).lower() for match in _TOKEN_RE.finditer(text)]
+    return [match.group(0).casefold() for match in _TOKEN_RE.finditer(text)]
 
 
 def _query_coverage(query_text: str, chunks: list[Chunk]) -> list[float]:
@@ -741,7 +741,7 @@ def _lexical_overlap(left: str, right: str) -> float:
 
 
 def _content_terms(text: str) -> set[str]:
-    return {match.group(0).lower() for match in _CONTENT_TOKEN_RE.finditer(text)}
+    return {match.group(0).casefold() for match in _CONTENT_TOKEN_RE.finditer(text)}
 
 
 def _important_query_terms(query_text: str) -> list[str]:
