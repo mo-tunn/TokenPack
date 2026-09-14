@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import uuid
 import math
 import re
@@ -203,6 +204,19 @@ def test_embedding_cache_tolerates_pdf_surrogate_text():
     vectors = cache.get_or_embed(["bad \ud835 text"], embedder)
 
     assert len(vectors[0]) == 16
+
+
+def test_embedding_cache_recovers_from_corrupt_json_and_writes_atomically():
+    tmp_path = _workspace_tmp()
+    path = tmp_path / "embeddings.json"
+    path.write_text("{broken", encoding="utf-8")
+    cache = EmbeddingCache(path)
+
+    vectors = cache.get_or_embed(["alpha beta"], _ToyEmbedder(dimensions=8))
+
+    assert len(vectors[0]) == 8
+    assert isinstance(json.loads(path.read_text(encoding="utf-8")), dict)
+    assert list(tmp_path.glob("*.tmp")) == []
 
 
 def test_cosine_rejects_mismatched_embedding_dimensions():

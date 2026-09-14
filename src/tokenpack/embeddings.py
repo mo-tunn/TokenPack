@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import os
+import uuid
 from pathlib import Path
 from typing import Protocol
 
@@ -89,8 +90,13 @@ class EmbeddingCache:
         self.path = Path(path)
         self._records: dict[str, list[float]] = {}
         if self.path.exists():
-            payload = json.loads(self.path.read_text(encoding="utf-8"))
-            self._records = {key: list(map(float, value)) for key, value in payload.items()}
+            try:
+                payload = json.loads(self.path.read_text(encoding="utf-8"))
+                if not isinstance(payload, dict):
+                    raise ValueError("Embedding cache payload must be a JSON object.")
+                self._records = {key: list(map(float, value)) for key, value in payload.items()}
+            except (json.JSONDecodeError, UnicodeDecodeError, TypeError, ValueError):
+                self._records = {}
 
     def get_or_embed(self, texts: list[str], embedder: Embedder) -> list[list[float]]:
         keys = [self._key(text, embedder.model_name) for text in texts]
@@ -108,7 +114,12 @@ class EmbeddingCache:
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(self._records), encoding="utf-8")
+        temporary = self.path.with_name(f".{self.path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+        try:
+            temporary.write_text(json.dumps(self._records), encoding="utf-8")
+            os.replace(temporary, self.path)
+        finally:
+            temporary.unlink(missing_ok=True)
 
     @staticmethod
     def _key(text: str, model_name: str) -> str:
