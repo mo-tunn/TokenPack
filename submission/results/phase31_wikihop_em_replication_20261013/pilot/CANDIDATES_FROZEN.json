@@ -1,0 +1,9 @@
+{
+  "n": 48,
+  "source_sha256": "dd6c54884f7486a2244bfce4710567505c59b300ac31eb888d2d33d041a6b5a2",
+  "task_sha256": "3666b40de39c924a9af3ba41db770fdca66018b5a0480829b804902f4c9f4c2a",
+  "gold_unopened": true,
+  "source_archive_sha256": "2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050",
+  "candidate_level": "original support passage atomic unit",
+  "token_cap_violations": 0
+}

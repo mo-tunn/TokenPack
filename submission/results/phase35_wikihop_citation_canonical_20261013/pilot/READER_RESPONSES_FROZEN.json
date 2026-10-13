@@ -1,0 +1,9 @@
+{
+  "n": 96,
+  "responses_sha256": "3914a14118ff35c859c48a2cd7409bff1c59261c60a4707023e5388ce7ce8780",
+  "task_sha256": "5dc832edc78b3a355c785eb1d0cbb84868e0f17b0ce77c338a8077fc03ee9ef7",
+  "pre_remote_sha256": "5a04febeb550f8cc4ee26d6a596ba00dc1de3209e502217e03edd5f437a210b0",
+  "actual_paid_reader_calls": 61,
+  "reuse": 35,
+  "gold_seen": false
+}

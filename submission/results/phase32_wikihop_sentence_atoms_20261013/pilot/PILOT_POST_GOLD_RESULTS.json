@@ -1,0 +1,751 @@
+{
+  "split": "pilot",
+  "decision": "PILOT_STOP_NO_VALIDATION",
+  "n": 48,
+  "paired_EM": {
+    "win": 2,
+    "loss": 2,
+    "net": 0,
+    "two_sided_exact_mcnemar_p": 1.0
+  },
+  "arms": {
+    "atomic-sentence-rank": {
+      "EM_correct": 9,
+      "EM_fraction": 0.1875,
+      "mean_tokens": 438.1875
+    },
+    "semantic-joint-citations": {
+      "EM_correct": 9,
+      "EM_fraction": 0.1875,
+      "mean_tokens": 438.2916666666667
+    }
+  },
+  "support_metric": null,
+  "gold_first_opened_after_reader_freeze": true,
+  "gold_sent_remote": false,
+  "actual_paid_verifier_calls": 48,
+  "actual_paid_reader_calls": 62,
+  "token_cap_violations": 0,
+  "per_case": [
+    {
+      "id": "WH_dev_3726",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 204
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 204
+      }
+    },
+    {
+      "id": "WH_dev_2471",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "legal suspense thriller",
+        "tokens": 319
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "legal suspense thriller",
+        "tokens": 319
+      }
+    },
+    {
+      "id": "WH_dev_2609",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "UEFA",
+        "tokens": 120
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "UEFA",
+        "tokens": 134
+      }
+    },
+    {
+      "id": "WH_dev_4674",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "modular forms and Galois representations",
+        "tokens": 321
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "mathematics",
+        "tokens": 311
+      }
+    },
+    {
+      "id": "WH_dev_1505",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Conservative Party",
+        "tokens": 238
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Conservative Party",
+        "tokens": 238
+      }
+    },
+    {
+      "id": "WH_dev_58",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Zürich Airport",
+        "tokens": 348
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Zürich Airport",
+        "tokens": 348
+      }
+    },
+    {
+      "id": "WH_dev_3486",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 213
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 212
+      }
+    },
+    {
+      "id": "WH_dev_3467",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Litopterna",
+        "tokens": 803
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Litopterna",
+        "tokens": 803
+      }
+    },
+    {
+      "id": "WH_dev_1188",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 853
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 853
+      }
+    },
+    {
+      "id": "WH_dev_3564",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Inner Mongolia",
+        "tokens": 653
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Inner Mongolia",
+        "tokens": 653
+      }
+    },
+    {
+      "id": "WH_dev_429",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 128
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 128
+      }
+    },
+    {
+      "id": "WH_dev_1308",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Netherlands",
+        "tokens": 174
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "The Netherlands",
+        "tokens": 174
+      }
+    },
+    {
+      "id": "WH_dev_353",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Tighnabruaich",
+        "tokens": 426
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Tighnabruaich",
+        "tokens": 415
+      }
+    },
+    {
+      "id": "WH_dev_1532",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "honorary society",
+        "tokens": 110
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "honorary society",
+        "tokens": 110
+      }
+    },
+    {
+      "id": "WH_dev_4875",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "1st and 2nd centuries",
+        "tokens": 376
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "1st and 2nd centuries",
+        "tokens": 376
+      }
+    },
+    {
+      "id": "WH_dev_2354",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Wyandotte",
+        "tokens": 839
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Wyandotte",
+        "tokens": 839
+      }
+    },
+    {
+      "id": "WH_dev_2901",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Melbourne",
+        "tokens": 1235
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Melbourne",
+        "tokens": 1235
+      }
+    },
+    {
+      "id": "WH_dev_3865",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "USN",
+        "tokens": 200
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "United States Navy",
+        "tokens": 198
+      }
+    },
+    {
+      "id": "WH_dev_283",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "MTM Records",
+        "tokens": 324
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "MTM Records",
+        "tokens": 324
+      }
+    },
+    {
+      "id": "WH_dev_3608",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "bass player",
+        "tokens": 180
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "bass player",
+        "tokens": 180
+      }
+    },
+    {
+      "id": "WH_dev_2473",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "constitutional monarchy",
+        "tokens": 477
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "constitutional monarchy",
+        "tokens": 477
+      }
+    },
+    {
+      "id": "WH_dev_2527",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Kosovo",
+        "tokens": 306
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Kosovo",
+        "tokens": 302
+      }
+    },
+    {
+      "id": "WH_dev_4682",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Canada",
+        "tokens": 273
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Canada",
+        "tokens": 273
+      }
+    },
+    {
+      "id": "WH_dev_792",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "administrative region",
+        "tokens": 523
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "administrative region",
+        "tokens": 523
+      }
+    },
+    {
+      "id": "WH_dev_3352",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Vietnam",
+        "tokens": 456
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Vietnam",
+        "tokens": 456
+      }
+    },
+    {
+      "id": "WH_dev_1447",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Creation Records",
+        "tokens": 240
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Creation Records",
+        "tokens": 240
+      }
+    },
+    {
+      "id": "WH_dev_613",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "comedy-drama",
+        "tokens": 578
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "comedy-drama",
+        "tokens": 578
+      }
+    },
+    {
+      "id": "WH_dev_1785",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "PlayStation 3",
+        "tokens": 268
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "PlayStation Store",
+        "tokens": 270
+      }
+    },
+    {
+      "id": "WH_dev_3082",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 241
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Raidió Teilifís Éireann",
+        "tokens": 246
+      }
+    },
+    {
+      "id": "WH_dev_3191",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Maldives",
+        "tokens": 133
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Maldives",
+        "tokens": 133
+      }
+    },
+    {
+      "id": "WH_dev_5056",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Argentina",
+        "tokens": 180
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Argentina",
+        "tokens": 188
+      }
+    },
+    {
+      "id": "WH_dev_3160",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "brain tumor",
+        "tokens": 2561
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "brain tumor",
+        "tokens": 2561
+      }
+    },
+    {
+      "id": "WH_dev_4918",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "word play",
+        "tokens": 421
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "word play",
+        "tokens": 419
+      }
+    },
+    {
+      "id": "WH_dev_3675",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "North Yorkshire",
+        "tokens": 670
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "North Yorkshire",
+        "tokens": 670
+      }
+    },
+    {
+      "id": "WH_dev_3921",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 398
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 398
+      }
+    },
+    {
+      "id": "WH_dev_22",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Sandviken",
+        "tokens": 452
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Sandviken",
+        "tokens": 457
+      }
+    },
+    {
+      "id": "WH_dev_3996",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 129
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 129
+      }
+    },
+    {
+      "id": "WH_dev_2981",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 562
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 562
+      }
+    },
+    {
+      "id": "WH_dev_4325",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 600
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 600
+      }
+    },
+    {
+      "id": "WH_dev_297",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Malvaceae",
+        "tokens": 504
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Malvaceae",
+        "tokens": 504
+      }
+    },
+    {
+      "id": "WH_dev_2549",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 260
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 260
+      }
+    },
+    {
+      "id": "WH_dev_1754",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "rugby football",
+        "tokens": 406
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "rugby football",
+        "tokens": 399
+      }
+    },
+    {
+      "id": "WH_dev_1936",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 701
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 701
+      }
+    },
+    {
+      "id": "WH_dev_4700",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 595
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 595
+      }
+    },
+    {
+      "id": "WH_dev_3055",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 185
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 185
+      }
+    },
+    {
+      "id": "WH_dev_1708",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Finland",
+        "tokens": 143
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Finland",
+        "tokens": 151
+      }
+    },
+    {
+      "id": "WH_dev_1950",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 326
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 326
+      }
+    },
+    {
+      "id": "WH_dev_4116",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 381
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 381
+      }
+    }
+  ]
+}

@@ -1,0 +1,751 @@
+{
+  "split": "pilot",
+  "decision": "PILOT_STOP_NO_VALIDATION",
+  "n": 48,
+  "paired_EM": {
+    "win": 0,
+    "loss": 1,
+    "net": -1,
+    "two_sided_exact_mcnemar_p": 1.0
+  },
+  "arms": {
+    "atomic-sentence-rank": {
+      "EM_correct": 8,
+      "EM_fraction": 0.16666666666666666,
+      "mean_tokens": 433.6458333333333
+    },
+    "semantic-joint-citations": {
+      "EM_correct": 7,
+      "EM_fraction": 0.14583333333333334,
+      "mean_tokens": 432.4375
+    }
+  },
+  "support_metric": null,
+  "gold_first_opened_after_reader_freeze": true,
+  "gold_sent_remote": false,
+  "actual_paid_verifier_calls": 48,
+  "actual_paid_reader_calls": 60,
+  "token_cap_violations": 0,
+  "per_case": [
+    {
+      "id": "WH_dev_3967",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "United States Army",
+        "tokens": 343
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "United States Army",
+        "tokens": 343
+      }
+    },
+    {
+      "id": "WH_dev_4932",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 804
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 856
+      }
+    },
+    {
+      "id": "WH_dev_3414",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Toronto",
+        "tokens": 525
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Toronto",
+        "tokens": 525
+      }
+    },
+    {
+      "id": "WH_dev_3630",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 0
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 0
+      }
+    },
+    {
+      "id": "WH_dev_5050",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "progressive rock",
+        "tokens": 1147
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "progressive rock",
+        "tokens": 1147
+      }
+    },
+    {
+      "id": "WH_dev_246",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Roman Catholic",
+        "tokens": 474
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Roman Catholic",
+        "tokens": 474
+      }
+    },
+    {
+      "id": "WH_dev_5014",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 357
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 357
+      }
+    },
+    {
+      "id": "WH_dev_1544",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Maltese First Division League",
+        "tokens": 44
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Maltese First Division League",
+        "tokens": 44
+      }
+    },
+    {
+      "id": "WH_dev_1806",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Harmonix",
+        "tokens": 820
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Harmonix",
+        "tokens": 820
+      }
+    },
+    {
+      "id": "WH_dev_988",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Islington",
+        "tokens": 163
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Islington",
+        "tokens": 163
+      }
+    },
+    {
+      "id": "WH_dev_3244",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Ireland",
+        "tokens": 161
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Ireland",
+        "tokens": 161
+      }
+    },
+    {
+      "id": "WH_dev_2323",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 28
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 28
+      }
+    },
+    {
+      "id": "WH_dev_2582",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 105
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 105
+      }
+    },
+    {
+      "id": "WH_dev_4217",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "fictional Japanese secret agent and detective",
+        "tokens": 262
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "fictional Japanese secret agent and detective",
+        "tokens": 262
+      }
+    },
+    {
+      "id": "WH_dev_321",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Utrecht",
+        "tokens": 70
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Utrecht",
+        "tokens": 70
+      }
+    },
+    {
+      "id": "WH_dev_962",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 96
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 96
+      }
+    },
+    {
+      "id": "WH_dev_3233",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 577
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "clan",
+        "tokens": 532
+      }
+    },
+    {
+      "id": "WH_dev_2975",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "stage stand",
+        "tokens": 553
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "stage stand",
+        "tokens": 553
+      }
+    },
+    {
+      "id": "WH_dev_2498",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "drum",
+        "tokens": 321
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "drum",
+        "tokens": 321
+      }
+    },
+    {
+      "id": "WH_dev_4520",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "India",
+        "tokens": 834
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "India",
+        "tokens": 834
+      }
+    },
+    {
+      "id": "WH_dev_1556",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Imperial Russia",
+        "tokens": 353
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Imperial Russia",
+        "tokens": 353
+      }
+    },
+    {
+      "id": "WH_dev_4907",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 698
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Antarctica",
+        "tokens": 695
+      }
+    },
+    {
+      "id": "WH_dev_1040",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Yemen",
+        "tokens": 782
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Yemen",
+        "tokens": 786
+      }
+    },
+    {
+      "id": "WH_dev_1228",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Hong Kong",
+        "tokens": 234
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Yuen Long District",
+        "tokens": 218
+      }
+    },
+    {
+      "id": "WH_dev_2202",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 843
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 843
+      }
+    },
+    {
+      "id": "WH_dev_3416",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 324
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 300
+      }
+    },
+    {
+      "id": "WH_dev_1247",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Athens",
+        "tokens": 457
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Athens",
+        "tokens": 457
+      }
+    },
+    {
+      "id": "WH_dev_1980",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Wanderer Books",
+        "tokens": 298
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Wanderer Books",
+        "tokens": 298
+      }
+    },
+    {
+      "id": "WH_dev_4166",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 92
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 92
+      }
+    },
+    {
+      "id": "WH_dev_904",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Awami League",
+        "tokens": 565
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Awami League",
+        "tokens": 565
+      }
+    },
+    {
+      "id": "WH_dev_2782",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Vitebsk",
+        "tokens": 228
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Belarus",
+        "tokens": 233
+      }
+    },
+    {
+      "id": "WH_dev_4803",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "singer",
+        "tokens": 223
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "singer",
+        "tokens": 144
+      }
+    },
+    {
+      "id": "WH_dev_4323",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "outer space adventure series",
+        "tokens": 759
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "outer space adventure series",
+        "tokens": 759
+      }
+    },
+    {
+      "id": "WH_dev_4370",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Academy Award",
+        "tokens": 440
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Academy Award",
+        "tokens": 440
+      }
+    },
+    {
+      "id": "WH_dev_4482",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 551
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Boston",
+        "tokens": 552
+      }
+    },
+    {
+      "id": "WH_dev_1634",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 472
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 472
+      }
+    },
+    {
+      "id": "WH_dev_5026",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "painting technique",
+        "tokens": 442
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "painting technique",
+        "tokens": 442
+      }
+    },
+    {
+      "id": "WH_dev_1517",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Malvern",
+        "tokens": 1151
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Malvern",
+        "tokens": 1151
+      }
+    },
+    {
+      "id": "WH_dev_1996",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Lustenau",
+        "tokens": 113
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Lustenau",
+        "tokens": 141
+      }
+    },
+    {
+      "id": "WH_dev_189",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Italy",
+        "tokens": 588
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Italy",
+        "tokens": 639
+      }
+    },
+    {
+      "id": "WH_dev_1928",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Gloucestershire",
+        "tokens": 267
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Gloucestershire",
+        "tokens": 267
+      }
+    },
+    {
+      "id": "WH_dev_3353",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Pittsburgh Steelers",
+        "tokens": 164
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Pittsburgh Steelers",
+        "tokens": 164
+      }
+    },
+    {
+      "id": "WH_dev_18",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Srikakulam district",
+        "tokens": 157
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Srikakulam district",
+        "tokens": 125
+      }
+    },
+    {
+      "id": "WH_dev_4289",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "bassist",
+        "tokens": 454
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "bassist",
+        "tokens": 454
+      }
+    },
+    {
+      "id": "WH_dev_530",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Kolkata 's St Xavier 's Collegiate School and Presidency College , and the Delhi School of Economics",
+        "tokens": 557
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "Kolkata 's St Xavier 's Collegiate School and Presidency College , and the Delhi School of Economics",
+        "tokens": 557
+      }
+    },
+    {
+      "id": "WH_dev_2654",
+      "atomic-sentence-rank": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Gold Base",
+        "tokens": 545
+      },
+      "semantic-joint-citations": {
+        "EM": 1,
+        "F1": 1.0,
+        "prediction": "Gold Base",
+        "tokens": 545
+      }
+    },
+    {
+      "id": "WH_dev_1153",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 1205
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "unknown",
+        "tokens": 1205
+      }
+    },
+    {
+      "id": "WH_dev_1794",
+      "atomic-sentence-rank": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "wicket-keeper",
+        "tokens": 169
+      },
+      "semantic-joint-citations": {
+        "EM": 0,
+        "F1": 0.0,
+        "prediction": "wicket-keeper",
+        "tokens": 169
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "tasks_sha256": "2cc06405ccfb8541d534e3f359756a3f3eb6b456251324dff172d5e977011794",
+  "candidate_sha256": "a10ab2f527386002e18dd6f6551bc496e5ca4f34a109178e250bcad5b25e2ca7",
+  "code_sha256": "4300f32b341368ea537a0d0ca0bb87f090d1e58c315e5763ffac06a9641156aa",
+  "model": "qwen3.8-27b-orcarouter-q4km",
+  "endpoint": "https://metekizilcik--tokenpack-qwen27b-longcontext-inference-server.modal.run",
+  "gold_loaded": false,
+  "max_paid_calls": 48
+}

@@ -1,0 +1,35 @@
+{
+  "study": "Phase34 WikiHop answer-guided selector pilot",
+  "benchmark": "QAngaroo WikiHop v1.1 official dev split",
+  "source_archive_sha256": "2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050",
+  "source_archive_bytes": 339843061,
+  "source_member": "qangaroo_v1.1/wikihop/dev.json",
+  "source_rows": 5129,
+  "source_license": "CC BY-SA 3.0",
+  "selection_seed": "TokenPack-phase34-WikiHop-answer-guided-selector-20261013-v1",
+  "excluded_prior_phase_ids": 432,
+  "pilot_n": 48,
+  "validation_n": 96,
+  "pilot_gate": {
+    "minimum_net_EM": 3,
+    "token_cap_violations": 0
+  },
+  "confirmatory_gate": {
+    "paired_two_sided_exact_mcnemar_alpha": 0.025,
+    "positive_net_EM_required": true,
+    "token_cap_violations": 0
+  },
+  "primary_metric": "normalized paired answer Exact Match",
+  "support_metric": null,
+  "support_metric_limitation": "Official WikiHop dev annotations expose relation patterns, not gold supporting source sentence indices.",
+  "control": "MiniLM sentence-atom rank with candidate-aware verifier and reader",
+  "treatment": "Phase28 semantic-joint-citations with candidate-aware verifier and reader",
+  "hypothesis": "Providing the benchmark candidate answer list to the verifier will reduce intermediate-entity citation choices and make semantic selection improve EM.",
+  "reader_change": "Both arms receive benchmark candidate answer strings; verifier also receives the same candidate list. No answer or annotation field is sent.",
+  "same_reader_and_token_cap": true,
+  "gold_answer_unopened_for_selection": true,
+  "gold_sent_remote": false,
+  "qasper_official_test_untouched": true,
+  "prior_phase_ids_untouched": true,
+  "code_sha256": "0e6c958d7af2badca2c58374f0c26a21f5aa90d5e6f89e82236e5018892bc01c"
+}

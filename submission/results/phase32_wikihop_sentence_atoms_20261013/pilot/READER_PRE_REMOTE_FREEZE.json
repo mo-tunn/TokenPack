@@ -1,0 +1,10 @@
+{
+  "split": "pilot",
+  "n": 96,
+  "tasks_sha256": "9d1da59366ca63c4a5f37823cbd04ed12939fd3750dab7a89bb6f47e73eba50b",
+  "contexts_sha256": "8ef3e8294e5dccd409b00cab0c2ce3cc1e5010b8cd76b901a48e4a249d997998",
+  "code_sha256": "608b1a009b799c91711bed46d61e135925d788ddc6849a5cfa7c4715e5398ff9",
+  "gold_loaded": false,
+  "gold_sent_remote": false,
+  "max_paid_calls": 96
+}

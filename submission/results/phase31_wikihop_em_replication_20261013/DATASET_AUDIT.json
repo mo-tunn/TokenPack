@@ -1,0 +1,11 @@
+{
+  "status": "REGISTERED_PRE_GOLD",
+  "archive_hash_valid": true,
+  "rows": 5129,
+  "pilot_n": 48,
+  "validation_n": 96,
+  "pilot_validation_disjoint": true,
+  "answer_loaded_for_selection": false,
+  "support_sentence_gold_available": false,
+  "decision": "EM_ONLY_EXTERNAL_REPLICATION_CANDIDATE"
+}

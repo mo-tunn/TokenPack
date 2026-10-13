@@ -1,0 +1,11 @@
+{
+  "n": 48,
+  "sha256": "427aeec6591543b9676ebee68c09fa091c870a753625c889566488462e4378cf",
+  "gold_unopened": true,
+  "stats": {
+    "n": 48,
+    "source_sets_changed": 12,
+    "token_cap_violations": 0,
+    "fallback": 19
+  }
+}

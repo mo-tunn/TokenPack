@@ -1,0 +1,12 @@
+{
+  "status": "CLOSED_FOR_WIKIHOP_GENERALIZATION",
+  "closed_at": "2026-10-13",
+  "final_phase": 35,
+  "phase35_pilot_net_em": 1,
+  "phase35_exact_mcnemar_p": 1.0,
+  "validation_started": false,
+  "reason": "Phases 31-35 did not meet the preregistered pilot gate of net EM >= 3.",
+  "primary_supported_claim": "Phase28 HotpotQA public validation replicated positive EM and full annotated-support coverage gains.",
+  "qasper_official_test_touched": false,
+  "prior_phase_archives_modified": false
+}

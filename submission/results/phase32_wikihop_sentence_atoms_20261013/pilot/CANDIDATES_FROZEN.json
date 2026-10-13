@@ -1,0 +1,9 @@
+{
+  "n": 48,
+  "source_sha256": "bc0e4ba602e098f102d9f89433c5e9cb636a9a57e0a8e65b5176a027a142512a",
+  "task_sha256": "1dae2f954951459e28ffdd424e72be3bc0133bf1a960ef4df63d7f10df9b4e61",
+  "gold_unopened": true,
+  "source_archive_sha256": "2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050",
+  "candidate_level": "sentence atom with original support article identity",
+  "token_cap_violations": 0
+}
