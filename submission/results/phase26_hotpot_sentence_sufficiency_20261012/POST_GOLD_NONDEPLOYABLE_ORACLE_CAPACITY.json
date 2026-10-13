@@ -1,0 +1,891 @@
+{
+  "n": 96,
+  "nondeployable_gold_aware_oracle": true,
+  "only_posthoc_after_reader_hash_freeze": true,
+  "same_original_sentence_renderer": true,
+  "no_gold_in_any_model": true,
+  "no_new_modal_or_reranker_calls": true,
+  "counts": {
+    "n": 96,
+    "gold_oracle_all_fit": 96,
+    "actual_gold_all_present": 60,
+    "gold_fits_but_not_selected": 36,
+    "gold_does_not_fit": 0,
+    "gold_fits_not_selected_reader_wrong": 25,
+    "gold_fits_not_selected_reader_correct": 11,
+    "gold_not_fit_reader_wrong": 0,
+    "gold_not_fit_reader_correct": 0
+  },
+  "mean_gold_only_bundle_tokens": 100.38541666666667,
+  "mean_real_budget": 327.46875,
+  "source_score_file_sha256": "538094838b5a1ddd2ad36b3427859119dd13ad294289502330366c1a61dd1615",
+  "source_context_sha256": "00185b2dae4a4c309d4b13f6c52e01619bda2e28a6326571e951a9f8499bae9e",
+  "no_validation_ids_read": true,
+  "caveat": "This is an unrealistic GOLD label oracle; support annotated sentence presence does NOT guarantee complete semantic entailment or reader accuracy.",
+  "per_case": [
+    {
+      "id": "5a7da4865542990b8f5039ed",
+      "needed_gold_token_count": 123,
+      "hard_budget": 490,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae32e1a55429928c423964e",
+      "needed_gold_token_count": 56,
+      "hard_budget": 252,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a48c45542994f819ef1b7",
+      "needed_gold_token_count": 108,
+      "hard_budget": 376,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae4869755429970de88d99a",
+      "needed_gold_token_count": 125,
+      "hard_budget": 304,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a073a5542990783324dfb",
+      "needed_gold_token_count": 164,
+      "hard_budget": 252,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae537e45542990ba0bbb235",
+      "needed_gold_token_count": 92,
+      "hard_budget": 326,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8242c155429940e5e1a81d",
+      "needed_gold_token_count": 55,
+      "hard_budget": 359,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a78dc4d55429970f5fffdb6",
+      "needed_gold_token_count": 87,
+      "hard_budget": 229,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7f697c5542992097ad2f59",
+      "needed_gold_token_count": 129,
+      "hard_budget": 418,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac2efd65542990b17b154c7",
+      "needed_gold_token_count": 72,
+      "hard_budget": 314,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae701b2554299572ea54680",
+      "needed_gold_token_count": 80,
+      "hard_budget": 431,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8769475542993e715abf2b",
+      "needed_gold_token_count": 119,
+      "hard_budget": 361,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8ee2855542995a26add550",
+      "needed_gold_token_count": 82,
+      "hard_budget": 330,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7fa55555429969796c1b0e",
+      "needed_gold_token_count": 83,
+      "hard_budget": 272,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae2d8fb55429928c42394fa",
+      "needed_gold_token_count": 58,
+      "hard_budget": 232,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a72f0e25542991f9a20c5cf",
+      "needed_gold_token_count": 108,
+      "hard_budget": 269,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac0e064554299012d1db64e",
+      "needed_gold_token_count": 70,
+      "hard_budget": 378,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab6b59f5542995eadef0065",
+      "needed_gold_token_count": 188,
+      "hard_budget": 442,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae0b82855429906c02daaff",
+      "needed_gold_token_count": 63,
+      "hard_budget": 374,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a77425542995eb53be83e",
+      "needed_gold_token_count": 136,
+      "hard_budget": 276,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab5c263554299488d4d9a18",
+      "needed_gold_token_count": 66,
+      "hard_budget": 190,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7380b955429908901be2d4",
+      "needed_gold_token_count": 67,
+      "hard_budget": 366,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae3ff575542995dadf242aa",
+      "needed_gold_token_count": 74,
+      "hard_budget": 248,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a05485542990783324def",
+      "needed_gold_token_count": 96,
+      "hard_budget": 247,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac258cc554299636651998e",
+      "needed_gold_token_count": 124,
+      "hard_budget": 273,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a835c9f5542992ef85e228a",
+      "needed_gold_token_count": 81,
+      "hard_budget": 361,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5adf099a5542992d7e9f927f",
+      "needed_gold_token_count": 140,
+      "hard_budget": 252,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a3a945542996a35c17147",
+      "needed_gold_token_count": 99,
+      "hard_budget": 332,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae0038655429925eb1afbe0",
+      "needed_gold_token_count": 67,
+      "hard_budget": 305,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a78f753554299078472776e",
+      "needed_gold_token_count": 92,
+      "hard_budget": 241,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7c988755429935c91b524d",
+      "needed_gold_token_count": 101,
+      "hard_budget": 319,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab8f3235542991b5579f084",
+      "needed_gold_token_count": 128,
+      "hard_budget": 306,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a84f5195542994c784dda9d",
+      "needed_gold_token_count": 79,
+      "hard_budget": 304,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7c9d2e55429935c91b5261",
+      "needed_gold_token_count": 89,
+      "hard_budget": 216,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac2ada255429967731025f9",
+      "needed_gold_token_count": 117,
+      "hard_budget": 276,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8ce851554299441c6b9f6c",
+      "needed_gold_token_count": 160,
+      "hard_budget": 344,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac325495542995ef918c12e",
+      "needed_gold_token_count": 68,
+      "hard_budget": 355,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5adca5a45542994d58a2f692",
+      "needed_gold_token_count": 158,
+      "hard_budget": 267,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae07ddb55429945ae95937b",
+      "needed_gold_token_count": 74,
+      "hard_budget": 396,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a76387d554299109176e6ba",
+      "needed_gold_token_count": 89,
+      "hard_budget": 298,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8f43555542992414482a21",
+      "needed_gold_token_count": 105,
+      "hard_budget": 278,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a87bc3f5542996432c57275",
+      "needed_gold_token_count": 65,
+      "hard_budget": 270,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a81141855429938b61422ad",
+      "needed_gold_token_count": 60,
+      "hard_budget": 352,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8f9cdb554299458435d69c",
+      "needed_gold_token_count": 84,
+      "hard_budget": 373,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab47e0a5542990594ba9c32",
+      "needed_gold_token_count": 72,
+      "hard_budget": 288,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab66e1355429954757d32b2",
+      "needed_gold_token_count": 77,
+      "hard_budget": 217,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae39e9c5542990afbd1e195",
+      "needed_gold_token_count": 67,
+      "hard_budget": 256,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab56b9b5542997d4ad1f113",
+      "needed_gold_token_count": 83,
+      "hard_budget": 352,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a827e8455429940e5e1a8dd",
+      "needed_gold_token_count": 95,
+      "hard_budget": 309,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a762d53554299109176e6a7",
+      "needed_gold_token_count": 98,
+      "hard_budget": 541,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5add870b5542995b365fab3c",
+      "needed_gold_token_count": 136,
+      "hard_budget": 310,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab29956554299194fa9342d",
+      "needed_gold_token_count": 60,
+      "hard_budget": 368,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ade6fcd55429975fa854ecf",
+      "needed_gold_token_count": 85,
+      "hard_budget": 342,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab46a0f5542990594ba9c1b",
+      "needed_gold_token_count": 59,
+      "hard_budget": 321,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae226bd5542994d89d5b379",
+      "needed_gold_token_count": 114,
+      "hard_budget": 436,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae165aa5542997b2ef7d1d1",
+      "needed_gold_token_count": 75,
+      "hard_budget": 240,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8b24f255429950cd6afc56",
+      "needed_gold_token_count": 104,
+      "hard_budget": 185,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a73522d5542994cef4bc541",
+      "needed_gold_token_count": 62,
+      "hard_budget": 415,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7fc6645542992e7d278d6e",
+      "needed_gold_token_count": 98,
+      "hard_budget": 313,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae1fb7a554299234fd04383",
+      "needed_gold_token_count": 139,
+      "hard_budget": 329,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae37ca55542992f92d822d5",
+      "needed_gold_token_count": 185,
+      "hard_budget": 345,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8ee4315542990e94052ba7",
+      "needed_gold_token_count": 128,
+      "hard_budget": 444,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7f0c4b5542993067513600",
+      "needed_gold_token_count": 92,
+      "hard_budget": 325,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a78d01d55429974737f78b3",
+      "needed_gold_token_count": 89,
+      "hard_budget": 438,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab2e3a15542992953946893",
+      "needed_gold_token_count": 64,
+      "hard_budget": 330,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae4b55455429913cc2044db",
+      "needed_gold_token_count": 224,
+      "hard_budget": 366,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5abbdc3f55429931dba145af",
+      "needed_gold_token_count": 84,
+      "hard_budget": 487,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5adcaa7f5542990d50227cdb",
+      "needed_gold_token_count": 112,
+      "hard_budget": 328,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5abdba405542993f32c2a023",
+      "needed_gold_token_count": 193,
+      "hard_budget": 284,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7c22bb554299683c1c62d3",
+      "needed_gold_token_count": 88,
+      "hard_budget": 229,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8398405542993344746050",
+      "needed_gold_token_count": 80,
+      "hard_budget": 273,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a8315c055429966c78a6b2d",
+      "needed_gold_token_count": 124,
+      "hard_budget": 291,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7c68575542996dd594b91c",
+      "needed_gold_token_count": 97,
+      "hard_budget": 359,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a83ab355542990548d0b218",
+      "needed_gold_token_count": 128,
+      "hard_budget": 275,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7220f055429971e9dc92ac",
+      "needed_gold_token_count": 84,
+      "hard_budget": 319,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a77c15f5542997042120b1c",
+      "needed_gold_token_count": 85,
+      "hard_budget": 189,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a86eee85542994775f60787",
+      "needed_gold_token_count": 154,
+      "hard_budget": 428,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a74bdce55429929fddd84e1",
+      "needed_gold_token_count": 112,
+      "hard_budget": 318,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a88451655429938390d3f12",
+      "needed_gold_token_count": 91,
+      "hard_budget": 402,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab2e9b4554299340b525565",
+      "needed_gold_token_count": 72,
+      "hard_budget": 384,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab64285554299637185c67c",
+      "needed_gold_token_count": 86,
+      "hard_budget": 350,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae0a74e554299603e41842f",
+      "needed_gold_token_count": 102,
+      "hard_budget": 329,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5adbfffb5542994650320c39",
+      "needed_gold_token_count": 112,
+      "hard_budget": 324,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a85e57a5542994c784ddbb1",
+      "needed_gold_token_count": 110,
+      "hard_budget": 272,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab828f25542992aa3b8c8a3",
+      "needed_gold_token_count": 68,
+      "hard_budget": 396,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae528e655429908b632652c",
+      "needed_gold_token_count": 77,
+      "hard_budget": 341,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5adf04915542995534e8c72f",
+      "needed_gold_token_count": 49,
+      "hard_budget": 288,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a85b2895542994c784ddb49",
+      "needed_gold_token_count": 114,
+      "hard_budget": 394,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ab531cc5542990594ba9d23",
+      "needed_gold_token_count": 92,
+      "hard_budget": 335,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5add405f5542992c1e3a2581",
+      "needed_gold_token_count": 116,
+      "hard_budget": 263,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a9068f85542990a98493623",
+      "needed_gold_token_count": 103,
+      "hard_budget": 487,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7c34905542996dd594b8d5",
+      "needed_gold_token_count": 164,
+      "hard_budget": 271,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ac24cea55429951e9e6853a",
+      "needed_gold_token_count": 134,
+      "hard_budget": 389,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae51b495542993aec5ec146",
+      "needed_gold_token_count": 136,
+      "hard_budget": 378,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5a7a7e9f5542994f819ef1f4",
+      "needed_gold_token_count": 64,
+      "hard_budget": 469,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": true,
+      "reader_EM": 1,
+      "oracle_is_not_deployable": true
+    },
+    {
+      "id": "5ae3dc205542992f92d823a1",
+      "needed_gold_token_count": 119,
+      "hard_budget": 261,
+      "gold_bundle_theoretically_fits": true,
+      "gold_fully_selected": false,
+      "reader_EM": 0,
+      "oracle_is_not_deployable": true
+    }
+  ]
+}

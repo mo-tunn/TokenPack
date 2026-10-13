@@ -1,0 +1,13 @@
+{
+  "n": 48,
+  "sha256": "0417186d4ac26fda4851be08b8be9f92f6696b24ee6d4ed12af42c2e746ebbf7",
+  "tasks_sha256": "3535c86849c8c2a19a1dd0046ff434458344b0f751d52e505ceffb24309abca0",
+  "pre_remote_sha256": "6ec8f8abb602444c3295ea746c485cbad5ebab326689f9e8b0b63452b56de387",
+  "parse_status_counts": {
+    "valid_cross_article_citations": 46,
+    "abstained": 1,
+    "single_article_not_chain": 1
+  },
+  "gold_unopened": true,
+  "source_citation_only_no_gold": true
+}

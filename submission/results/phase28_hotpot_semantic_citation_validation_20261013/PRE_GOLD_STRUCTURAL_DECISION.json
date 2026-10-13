@@ -1,0 +1,9 @@
+{
+  "decision": "VALIDATION_FULL_READER_EVALUATION_REQUIRED",
+  "n": 96,
+  "differing_sentence_sets": 36,
+  "no_structural_futility_abort_in_validation": true,
+  "both_co_primary_scored_after_reader_freeze": true,
+  "gold_unopened": true,
+  "context_sha256": "4fd37e01d5c008f6d2442e69f2eea9ead4a726a2c997cf4a21051170cbe9e75c"
+}

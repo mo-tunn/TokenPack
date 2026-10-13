@@ -1,0 +1,20 @@
+{
+  "n": 48,
+  "sha256": "c30afc22c9f0941d8ba2b3d28a41280efe43b862c6d96d4806fb0c13d8799784",
+  "protocol_sha256": "ed05164296da41eef4f9f4fb625a048fb378be8176ac9018fe6094d562010b26",
+  "stats": {
+    "n": 48,
+    "source_sentence_candidates": 1965,
+    "baseline_selected_sentences": 432,
+    "joint_selected_sentences": 431,
+    "matching_lexical_link_n": 37,
+    "contexts_changed": 4,
+    "cap_violations": 0,
+    "mean_baseline_tokens": 324.93750000000006,
+    "mean_joint_tokens": 325.08333333333337,
+    "mean_cap_tokens": 330.58333333333326,
+    "baseline_exact_faz8_mismatches": 0
+  },
+  "gold_unopened": true,
+  "paired_hard_caps_exact": true
+}

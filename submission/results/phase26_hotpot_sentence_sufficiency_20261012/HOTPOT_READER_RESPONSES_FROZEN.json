@@ -1,0 +1,9 @@
+{
+  "n": 96,
+  "responses_sha256": "3ece0d1f9086b10fa6dbff2cf61b60f2a6231b896acc5709853ef2ce27dc60f2",
+  "task_sha256": "7033783f1f0e10ce1ccbac9b46cd7e05103240e8de0f58e89b49ac88987c360e",
+  "pre_remote_sha256": "3faaf59d6af99faef3967f783dba8e0ba82b33c8553bfb17c480494701937740",
+  "empty_answers": 0,
+  "gold_unopened": true,
+  "single_unmodified_source_context": true
+}

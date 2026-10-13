@@ -1,0 +1,17 @@
+{
+  "n": 96,
+  "questions": 48,
+  "arms": [
+    "atomic-sentence-rank",
+    "semantic-joint-citations"
+  ],
+  "contexts_sha256": "44f33e3d8001c5056374d06ea4ef9c8598fec73ae61538d6057ef18ef724ab37",
+  "tasks_sha256": "ae5e6f70b35297dd3d411891b282bd110571944389593a347938212039ba48ff",
+  "reader_code_sha256": "25e571b2efc3307235c438759bf81cff9bf11444403ce25c7fdc75ed5cc9a01e",
+  "payload_sha256": "184f64c672d3e59fb5484d065ddacf5aae9cfd8b9d45ca2f8b3460ebcaf05001",
+  "relay_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "baseline_and_treatment_same_reader": true,
+  "no_answer_support_gold_loaded": true,
+  "reader_token_generation_budget_equal": true,
+  "max_paid_calls": 96
+}

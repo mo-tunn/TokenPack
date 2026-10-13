@@ -1,0 +1,26 @@
+{
+  "decision": "STOP_PRE_GOLD_STRUCTURAL_FUTILITY",
+  "n_pilot": 48,
+  "reserved_n_untouched": 96,
+  "baseline_contexts_same_selection": 44,
+  "contexts_with_modified_original_sentence_sets": 4,
+  "modified_ids": [
+    "5ac4a94a5542996feb3fe92b",
+    "5a7a37b85542996c55b2dd3f",
+    "5abc00ff5542993f40c73c41",
+    "5ab42ae95542991751b4d6c4"
+  ],
+  "maximum_possible_net_all_gold_support_gain": 4,
+  "minimum_required_net_all_gold_support_gain": 5,
+  "mechanistic_gate_mathematically_impossible": true,
+  "co_primary_reader_EM_gate_not_executed": true,
+  "no_reader_model_calls": true,
+  "gold_supporting_fact_labels_never_opened": true,
+  "gold_answers_never_opened": true,
+  "did_not_modify_or_retry_selection": true,
+  "exact_original_sentence_set_comparison": true,
+  "structural_report_pre_gold_sha256": "c30afc22c9f0941d8ba2b3d28a41280efe43b862c6d96d4806fb0c13d8799784",
+  "preregister_sha256": "ed05164296da41eef4f9f4fb625a048fb378be8176ac9018fe6094d562010b26",
+  "no_production_or_qasper_changes": true,
+  "interpretation": "This specific title-mention pair seed cannot pass the preset +5 NET full annotated support gate. No claims about answer EM or gold support are made."
+}

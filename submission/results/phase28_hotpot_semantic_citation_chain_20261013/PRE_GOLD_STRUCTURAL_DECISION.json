@@ -1,0 +1,30 @@
+{
+  "decision": "READER_COMPARISON_PERMITTED_NOT_YET_SCORED",
+  "modified_original_source_sets": 15,
+  "maximum_possible_net_full_gold_support_gain": 15,
+  "required_support_net_gain": 5,
+  "structural_support_gate_impossible": false,
+  "modified_case_ids": [
+    "5add3aaa5542992ae4cec500",
+    "5ae2fca555429928c423958a",
+    "5addd41b5542990dbb2f7e94",
+    "5ae7313c5542991e8301cbbc",
+    "5a8a5a1955429930ff3c0da7",
+    "5adea83b55429975fa854f53",
+    "5a728dc65542992359bc30ef",
+    "5a8febb555429916514e73e4",
+    "5a90b6985542990a984936c2",
+    "5ac3e22d5542997ea680c976",
+    "5a8b84905542997f31a41d5d",
+    "5ade811e5542992fa25da7a0",
+    "5abd6f0855429933744ab7d5",
+    "5adfd56655429925eb1afaac",
+    "5ade03c65542990dbb2f7f2e"
+  ],
+  "pilot_n": 48,
+  "reserved_96_untouched": true,
+  "gold_unopened": true,
+  "no_reader_calls_yet": true,
+  "context_source_sha256": "44f33e3d8001c5056374d06ea4ef9c8598fec73ae61538d6057ef18ef724ab37",
+  "no_question_selected_on_gold": true
+}

@@ -1,0 +1,12 @@
+{
+  "n": 192,
+  "question_n": 96,
+  "responses_sha256": "5cb1fa3d0d95f8c9c6a9b6c702c7b85d04c3a908f9b9084d2aa602e0ff2c4a66",
+  "task_sha256": "30f526dc555bd4012dc563c84594a7396c9bc629a17efabb250d17c7c094f2b0",
+  "pre_remote_sha256": "c577839842917e1a37695a89e38596a8cabad7eeda6ed5dc20d747f68ed33786",
+  "empty_predictions": 0,
+  "actual_paid_reader_calls": 132,
+  "identical_prompt_reuse_n": 60,
+  "no_gold_seen": true,
+  "only_predeclared_96_ids": true
+}

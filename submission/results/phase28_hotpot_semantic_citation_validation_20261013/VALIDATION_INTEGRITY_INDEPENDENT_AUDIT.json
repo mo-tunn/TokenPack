@@ -1,0 +1,36 @@
+{
+  "status": "PASS_INDEPENDENT_RECOMPUTATION",
+  "n": 96,
+  "pre_reserved_ids_exact": true,
+  "frozen_verifier_hash_valid": true,
+  "frozen_reader_hash_valid": true,
+  "source_core_unchanged_from_pilot": true,
+  "model_verifier_prompt_hashes_recomputed": 96,
+  "model_reader_prompt_hashes_recomputed": 192,
+  "same_prompt_reuse_audited": 60,
+  "real_reader_calls": 132,
+  "real_source_verifier_calls": 96,
+  "semantic_citations_no_gold_claim": true,
+  "max_cap_violations": 0,
+  "source_sentence_sets_changed": 36,
+  "independent_EM": {
+    "win": 13,
+    "loss": 0,
+    "net": 13,
+    "p_exact_two_sided": 0.000244140625
+  },
+  "independent_full_support": {
+    "win": 26,
+    "loss": 0,
+    "net": 26,
+    "p_exact_two_sided": 2.9802322387695312e-08
+  },
+  "alpha_each": 0.025,
+  "both_primary_confirmed": true,
+  "only_existing_public_validation_pilot_and_pre_reserve": true,
+  "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e",
+  "source_reader_sha256": "5cb1fa3d0d95f8c9c6a9b6c702c7b85d04c3a908f9b9084d2aa602e0ff2c4a66",
+  "source_context_sha256": "4fd37e01d5c008f6d2442e69f2eea9ead4a726a2c997cf4a21051170cbe9e75c",
+  "qasper_official_sealed_test_unopened": true,
+  "no_new_remote_model_calls": true
+}

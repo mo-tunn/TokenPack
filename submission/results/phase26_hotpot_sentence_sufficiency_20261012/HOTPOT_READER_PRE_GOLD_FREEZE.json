@@ -1,0 +1,12 @@
+{
+  "n": 96,
+  "source_context_sha256": "00185b2dae4a4c309d4b13f6c52e01619bda2e28a6326571e951a9f8499bae9e",
+  "tasks_sha256": "7033783f1f0e10ce1ccbac9b46cd7e05103240e8de0f58e89b49ac88987c360e",
+  "this_code_sha256": "8f0ccbd4f97a9d8341e1788bda534ed3abb0b634f8b55401ec25880dfbeeb636",
+  "payload_code_sha256": "184f64c672d3e59fb5484d065ddacf5aae9cfd8b9d45ca2f8b3460ebcaf05001",
+  "relay_code_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "same_unmodified_Phase7_direct_payload": true,
+  "full_relay_not_300_char": true,
+  "gold_sent_to_model": false,
+  "max_calls": 96
+}

@@ -1,0 +1,13 @@
+{
+  "failed_id": "5a7da4865542990b8f5039ed",
+  "failure": "TimeoutError",
+  "endpoint_stage": "health",
+  "successes_before_retry": 0,
+  "original_sha256": {
+    "error_before": "6a0586832a388d17ecaa8cd38a6502f399f407c0b39441c197e87584942cba1b",
+    "inflight_before": "5a4e0f665b50aa859f39db277c0dcd8aaeed44d92bc29efd6b3ec3c2ec5b4c1d"
+  },
+  "one_explicit_retry_allowed": true,
+  "if_health_fails_again": "STOP without resampling or gold access",
+  "gold_not_accessed": true
+}

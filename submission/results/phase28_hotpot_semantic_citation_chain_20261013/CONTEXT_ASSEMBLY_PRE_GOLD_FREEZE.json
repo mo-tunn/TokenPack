@@ -1,0 +1,10 @@
+{
+  "n": 48,
+  "protocol_sha256": "f848d67c52b6044ad9389baa05f949fa0b79b18847d57844f516f93b23d54bdd",
+  "candidate_sha256": "94b7f4901b7c04b7d5cc65442ce03c86f5a4858b6ab9229530e4a2fbb5af4da1",
+  "verifier_sha256": "0417186d4ac26fda4851be08b8be9f92f6696b24ee6d4ed12af42c2e746ebbf7",
+  "semantic_core_sha256": "34384d1e2664342bb72aae12e461c01eb14e63edd9b787253928f48b793b70cc",
+  "assembly_code_sha256": "0e9c9781032626240368a5726586e8962c5997c6cad0bb6dc16fb71e6b4c0e0b",
+  "gold_not_opened": true,
+  "same_budget_same_scoring": true
+}

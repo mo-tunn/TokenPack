@@ -1,0 +1,17 @@
+{
+  "n": 96,
+  "sha256": "00185b2dae4a4c309d4b13f6c52e01619bda2e28a6326571e951a9f8499bae9e",
+  "pre_gold_selection_sha256": "7eca5d239385fac89e66dee9d53dd0790f672d7f4103c4202c95c3ae53c6ace2",
+  "stats": {
+    "n": 96,
+    "source_sentences": 3895,
+    "selected_sentences": 828,
+    "cap_violations": 0,
+    "exact_selector_render_mismatches": 0,
+    "mean_cap": 327.4687499999999,
+    "mean_final_tokens": 322.15624999999994,
+    "any_empty": 0
+  },
+  "gold_unopened": true,
+  "source_gold_parquet_columns_never_read": true
+}

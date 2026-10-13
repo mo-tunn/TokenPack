@@ -1,0 +1,15 @@
+{
+  "n": 96,
+  "source_sha256": "48339d2d67901280644bd0ab40a99d6f1ae7d1e937e9d5ff754d475547b455bb",
+  "task_sha256": "dfdaf47f3a9f9660972908e4282db9d622db438da33abc54f3e8e8c8a4055ccf",
+  "pre_register_sha256": "321b6af6bc0d67ade6982380f17c23e3f27fc0d59f179024aa43e6398344f6b0",
+  "candidate_code_sha256": "a0c4ff9826d54b0c47fa0725096c7ca5ed47f2c2e51b6979952a7315673a7aac",
+  "original_gold_annotations_unopened": true,
+  "stats": {
+    "n": 96,
+    "original_candidate_sentences": 3926,
+    "qwen_candidate_sentences": 2343,
+    "mean_source_cap": 330.3333333333335,
+    "max_qwen_candidates": 27
+  }
+}

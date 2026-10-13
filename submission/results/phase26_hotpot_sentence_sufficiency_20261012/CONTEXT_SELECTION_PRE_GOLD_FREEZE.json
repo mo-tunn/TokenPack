@@ -1,0 +1,16 @@
+{
+  "dataset_sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+  "protocol_sha256": "9702a5fa0dbdbd67b30849cf70d91b25d046126e5cf689144cc22c64215a39eb",
+  "source_selector_sha256": "5affb91537772d220a5fefd114c6ed5755f8d9714bb3a3b0ca13405ee20271c9",
+  "new_context_code_sha256": "822828734c18056ca5eed35377dd94d4b048dffe3ae356872f5695db4f6da433",
+  "model_weights_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae",
+  "columns_read": [
+    "id",
+    "question",
+    "context.title",
+    "context.sentences"
+  ],
+  "gold_opened": false,
+  "n": 96,
+  "same_byte_render_as_Faz8_atomic_sentence_rank": true
+}
