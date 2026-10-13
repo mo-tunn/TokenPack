@@ -1,0 +1,28 @@
+{
+  "study": "Phase30B frozen semantic context reader ablation",
+  "n": 44,
+  "datasets": {
+    "HotpotQA_changed_contexts": 36,
+    "MuSiQue_changed_contexts": 8
+  },
+  "selector_frozen": "semantic-joint-citations",
+  "context_input_sha256": {
+    "HotpotQA_CONTEXTS_FROZEN": "9aa07859b3d7eec77454aa1b4905729907918bc82557991daaf9cf41a5d81f2a",
+    "MuSiQue_CONTEXTS_FROZEN": "c83c7d23a479f3c3f845e1b51064c29597aac2ac844442d1807e2827b1b4055e",
+    "HotpotQA_contexts": "4fd37e01d5c008f6d2442e69f2eea9ead4a726a2c997cf4a21051170cbe9e75c",
+    "MuSiQue_contexts": "b97fe149ed3633496815f779826f554805fbd9a114bdf3ed37223a60ce51ad39"
+  },
+  "tasks_sha256": "b177b89e0d5b464ce10b7cc10e948167d17875890ac3b2813610064ed6f9fe43",
+  "reader_code_sha256": "81cdf3364a99ae568e3f04f3c9b8842c6e62a336cd795fa5cb227b9266f34fd9",
+  "relay_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "model": "qwen3.8-27b-orcarouter-q4km",
+  "endpoint": "https://metekizilcik--tokenpack-qwen27b-longcontext-inference-server.modal.run",
+  "system_prompt_sha256": "0c40d7eade6efa744e27fc81bfebd139e9af57dcf10f9813a36b855ebc784842",
+  "baseline_reader_prompt": "Phase28/29 existing fixed short-answer prompt",
+  "new_reader_prompt": "reader-chain-v1; silent evidence connection, short answer only",
+  "same_temperature_top_k_top_p_seed_max_tokens": true,
+  "gold_loaded": false,
+  "gold_sent_remote": false,
+  "max_paid_calls": 44,
+  "exploratory_same_cases_as_frozen_phase28_phase29": true
+}

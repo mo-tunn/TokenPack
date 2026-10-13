@@ -1,0 +1,12 @@
+{
+  "split": "pilot",
+  "n": 96,
+  "question_n": 48,
+  "responses_sha256": "6c1cbc4f43026684efae4918a8106f5ce6b958e8dff10a4cc3ec496c5255e1c8",
+  "task_sha256": "e571750f59040287c3e60632bf1ae3465b03278249063cb00cb0c760db0ffd47",
+  "pre_remote_sha256": "320b648deb40a0c42a3cd394c58d8eb172a140dafbd34be4e5963c02dd2dfaed",
+  "empty_predictions": 0,
+  "actual_paid_reader_calls": 56,
+  "identical_prompt_reuse_n": 40,
+  "no_gold_seen": true
+}

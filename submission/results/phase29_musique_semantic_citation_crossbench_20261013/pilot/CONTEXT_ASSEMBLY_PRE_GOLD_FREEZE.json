@@ -1,0 +1,11 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "protocol_sha256": "644f7d4875dc98b6e8a429b57ba5371fd5ade784c43cad15a024b6d4490890a6",
+  "candidate_sha256": "7b4518019e21e8a31d547ad5185fa81dcd182dbbe49ce0e3353e55fc9e5ec080",
+  "verifier_sha256": "af373bf3c537f835eb431ed0fa4b6511171da5abd3a7da9a6bd9a260f344b3de",
+  "semantic_core_sha256": "34384d1e2664342bb72aae12e461c01eb14e63edd9b787253928f48b793b70cc",
+  "assembly_code_sha256": "3e68195d528546648c5d59d383850cb002cd2e8201e18b038b1f3ccd962b75e9",
+  "gold_not_opened": true,
+  "same_budget_same_scoring": true
+}

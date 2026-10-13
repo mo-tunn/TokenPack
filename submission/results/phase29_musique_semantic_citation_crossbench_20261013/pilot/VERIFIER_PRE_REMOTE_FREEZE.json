@@ -1,0 +1,14 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "task_sha256": "847e868774c94d0b42dd99aa612dcca5949cfb908b53fecd5ddbb0dc94813cbc",
+  "source_candidates_sha256": "7b4518019e21e8a31d547ad5185fa81dcd182dbbe49ce0e3353e55fc9e5ec080",
+  "verifier_code_sha256": "bfc81f393c861964af372acd6b52649cee3d786496857b9d8cb7ce406af484aa",
+  "semantic_core_sha256": "34384d1e2664342bb72aae12e461c01eb14e63edd9b787253928f48b793b70cc",
+  "relay_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "remote_model": "qwen3.8-27b-orcarouter-q4km",
+  "endpoint": "https://metekizilcik--tokenpack-qwen27b-longcontext-inference-server.modal.run",
+  "only_question_and_source_sentences_sent": true,
+  "gold_never_sent": true,
+  "max_real_calls": 48
+}

@@ -1,0 +1,23 @@
+{
+  "split": "pilot",
+  "decision": "READER_COMPARISON_PERMITTED_NOT_YET_SCORED",
+  "modified_original_source_sets": 8,
+  "maximum_possible_net_full_support_paragraph_coverage_gain": 8,
+  "required_support_net_gain": 5,
+  "structural_support_gate_impossible": false,
+  "modified_case_ids": [
+    "4hop1__46196_497223_15840_36002",
+    "3hop1__36497_73181_68042",
+    "4hop3__673447_132409_145082_35031",
+    "2hop__32254_84601",
+    "2hop__92051_827343",
+    "4hop3__668721_132409_146285_35031",
+    "3hop1__454441_55349_651302",
+    "3hop1__389955_132457_51423"
+  ],
+  "n": 48,
+  "reserved_confirmation_ids_untouched": true,
+  "gold_unopened": true,
+  "no_reader_calls_yet": true,
+  "context_source_sha256": "b97fe149ed3633496815f779826f554805fbd9a114bdf3ed37223a60ce51ad39"
+}

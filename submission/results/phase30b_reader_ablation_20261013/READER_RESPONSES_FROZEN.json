@@ -1,0 +1,12 @@
+{
+  "n": 44,
+  "question_n": 44,
+  "responses_sha256": "178df99190381282f4197ff0579173027449ccbcf99470713b2be714a3ee6a21",
+  "task_sha256": "b177b89e0d5b464ce10b7cc10e948167d17875890ac3b2813610064ed6f9fe43",
+  "pre_remote_sha256": "522482b584d60e1cb5f458f42415d9c3468a537330b72d7fafb731955f4c6a01",
+  "actual_paid_reader_calls": 44,
+  "identical_prompt_reuse_n": 0,
+  "empty_predictions": 0,
+  "gold_seen": false,
+  "selector_contexts_frozen": true
+}

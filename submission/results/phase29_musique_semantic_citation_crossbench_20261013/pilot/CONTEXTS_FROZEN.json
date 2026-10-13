@@ -1,0 +1,26 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "sha256": "b97fe149ed3633496815f779826f554805fbd9a114bdf3ed37223a60ce51ad39",
+  "pre_gold_assembly_sha256": "3af68d7ae01616d29d185c645424c8dc9e284b944f8c8e25069426b689ffb571",
+  "gold_unopened": true,
+  "same_hard_caps": true,
+  "stats": {
+    "n": 48,
+    "contexts_changed": 8,
+    "source_sentence_sets_changed": 8,
+    "valid_citation_judgements": 31,
+    "anchors_fitted": 31,
+    "fallback_count": 17,
+    "baseline_selected_sentences": 865,
+    "treatment_selected_sentences": 864,
+    "mean_baseline_tokens": 603.6666666666669,
+    "mean_treatment_tokens": 603.5208333333336,
+    "mean_cap": 606.2708333333334,
+    "token_cap_violations": 0,
+    "fallback_reasons": {
+      "fallback_abstained": 16,
+      "fallback_single_article_not_chain": 1
+    }
+  }
+}

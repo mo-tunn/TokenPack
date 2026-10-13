@@ -1,0 +1,18 @@
+{
+  "split": "pilot",
+  "n": 96,
+  "question_n": 48,
+  "arms": [
+    "atomic-sentence-rank",
+    "semantic-joint-citations"
+  ],
+  "contexts_sha256": "b97fe149ed3633496815f779826f554805fbd9a114bdf3ed37223a60ce51ad39",
+  "tasks_sha256": "e571750f59040287c3e60632bf1ae3465b03278249063cb00cb0c760db0ffd47",
+  "reader_code_sha256": "198381fd56722eb2d359d2e4ffa490a7b5a72e52a50f23f9ece5ee23e7e72e36",
+  "payload_sha256": "184f64c672d3e59fb5484d065ddacf5aae9cfd8b9d45ca2f8b3460ebcaf05001",
+  "relay_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "baseline_and_treatment_same_reader": true,
+  "no_answer_or_support_gold_loaded": true,
+  "reader_generation_budget_equal": true,
+  "max_paid_calls": 96
+}

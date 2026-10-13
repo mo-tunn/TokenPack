@@ -1,0 +1,1338 @@
+{
+  "split": "pilot",
+  "decision": "STOP_NO_VALIDATION",
+  "n": 48,
+  "same_question_matched_reader": true,
+  "gold_first_opened_after_reader_freeze": true,
+  "not_independent_hidden_test": true,
+  "all_selected_content_from_original_source_sentences": true,
+  "full_support_definition": "Every gold is_supporting paragraph idx has at least one selected source sentence; paragraph coverage is not sentence-level entailment.",
+  "paired_EM": {
+    "mean_delta": 0.041666666666666664,
+    "bootstrap95": [
+      0.0,
+      0.10416666666666667
+    ],
+    "win": 2,
+    "loss": 0,
+    "net": 2,
+    "two_sided_exact_mcnemar_p": 0.5
+  },
+  "paired_F1": {
+    "mean_delta": 0.02777777777777778,
+    "bootstrap95": [
+      -0.027777777777777776,
+      0.09722222222222222
+    ],
+    "win": 2,
+    "loss": 1,
+    "net": 1
+  },
+  "paired_full_support_paragraph_coverage": {
+    "mean_delta": 0.10416666666666667,
+    "bootstrap95": [
+      0.020833333333333332,
+      0.1875
+    ],
+    "win": 5,
+    "loss": 0,
+    "net": 5,
+    "two_sided_exact_mcnemar_p": 0.0625
+  },
+  "paired_support_paragraph_recall": {
+    "mean_delta": 0.05729166666666666,
+    "bootstrap95": [
+      0.022569444444444444,
+      0.09722222222222221
+    ],
+    "win": 8,
+    "loss": 0,
+    "net": 8
+  },
+  "arms": {
+    "atomic-sentence-rank": {
+      "EM_correct": 15,
+      "EM_fraction": 0.3125,
+      "full_gold_support_paragraph_questions": 21,
+      "full_gold_support_paragraph_fraction": 0.4375,
+      "mean_gold_support_paragraph_recall": 0.7604166666666666,
+      "mean_F1": 0.41250000000000003,
+      "mean_tokens": 603.6666666666666
+    },
+    "semantic-joint-citations": {
+      "EM_correct": 17,
+      "EM_fraction": 0.3541666666666667,
+      "full_gold_support_paragraph_questions": 26,
+      "full_gold_support_paragraph_fraction": 0.5416666666666666,
+      "mean_gold_support_paragraph_recall": 0.8177083333333334,
+      "mean_F1": 0.44027777777777777,
+      "mean_tokens": 603.5208333333334
+    }
+  },
+  "actual_paid_verifier_calls": 48,
+  "actual_paid_reader_calls": 56,
+  "same_prompt_reader_reuse": 40,
+  "source_sentence_sets_changed": 8,
+  "pilot_gate": {
+    "min_net_full_support": 5,
+    "min_net_EM": 3,
+    "passed": false
+  },
+  "confirmatory_gate": null,
+  "pilot_context_sha256": "b97fe149ed3633496815f779826f554805fbd9a114bdf3ed37223a60ce51ad39",
+  "reader_sha256": "6c1cbc4f43026684efae4918a8106f5ce6b958e8dff10a4cc3ec496c5255e1c8",
+  "reserved_96_were_pre_registered": true,
+  "no_gold_sent_remote": true,
+  "qasper_official_test_untouched": true,
+  "production_unchanged": true,
+  "per_case": [
+    {
+      "id": "4hop1__46196_497223_15840_36002",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 827,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 826,
+        "source_paragraph_count": 11
+      }
+    },
+    {
+      "id": "4hop1__159467_725495_49925_267352",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 702,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 702,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "4hop1__152028_141441_458768_33633",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 422,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 422,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "3hop1__587540_514761_594810",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 307,
+        "source_paragraph_count": 6
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 307,
+        "source_paragraph_count": 6
+      }
+    },
+    {
+      "id": "2hop__53175_548781",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.8,
+        "prediction_empty": false,
+        "actual_tokens": 708,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.8,
+        "prediction_empty": false,
+        "actual_tokens": 708,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "3hop1__36497_73181_68042",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.3333333333333333,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 826,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 823,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "2hop__650138_22402",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 755,
+        "source_paragraph_count": 13
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 755,
+        "source_paragraph_count": 13
+      }
+    },
+    {
+      "id": "2hop__495316_660579",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 476,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 476,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "4hop3__673447_132409_145082_35031",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 799,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 798,
+        "source_paragraph_count": 11
+      }
+    },
+    {
+      "id": "2hop__32254_84601",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 843,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 843,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "2hop__92051_827343",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 570,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 567,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "2hop__272714_113442",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 609,
+        "source_paragraph_count": 11
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 609,
+        "source_paragraph_count": 11
+      }
+    },
+    {
+      "id": "3hop1__107540_720914_27537",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 455,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 455,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "3hop1__857_846_7874",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 737,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 737,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "2hop__852657_155922",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 427,
+        "source_paragraph_count": 5
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 427,
+        "source_paragraph_count": 5
+      }
+    },
+    {
+      "id": "3hop1__765847_831637_91775",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 470,
+        "source_paragraph_count": 4
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 470,
+        "source_paragraph_count": 4
+      }
+    },
+    {
+      "id": "2hop__30384_30351",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 696,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 696,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "4hop3__668721_132409_146285_35031",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 827,
+        "source_paragraph_count": 12
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 829,
+        "source_paragraph_count": 12
+      }
+    },
+    {
+      "id": "4hop3__193820_466199_128875_72134",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 447,
+        "source_paragraph_count": 5
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 447,
+        "source_paragraph_count": 5
+      }
+    },
+    {
+      "id": "3hop1__241001_568433_51423",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.3333333333333333,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 484,
+        "source_paragraph_count": 6
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.3333333333333333,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 484,
+        "source_paragraph_count": 6
+      }
+    },
+    {
+      "id": "3hop1__106847_160713_77246",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 882,
+        "source_paragraph_count": 12
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 882,
+        "source_paragraph_count": 12
+      }
+    },
+    {
+      "id": "4hop2__161602_426860_88460_21062",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 506,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 506,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "2hop__5190_64006",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 692,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 692,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "4hop1__199881_378185_282674_759393",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 378,
+        "source_paragraph_count": 11
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 378,
+        "source_paragraph_count": 11
+      }
+    },
+    {
+      "id": "3hop1__243276_42197_18397",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 857,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 857,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "2hop__75781_512508",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 606,
+        "source_paragraph_count": 12
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 606,
+        "source_paragraph_count": 12
+      }
+    },
+    {
+      "id": "3hop2__132957_132798_40768",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 598,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 598,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "3hop2__132957_222979_40768",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 556,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 556,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "3hop2__88342_93066_90766",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 734,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 734,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "3hop1__108062_720914_27537",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 762,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 762,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "3hop2__93066_88342_90766",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 652,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 652,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "2hop__299142_347613",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 554,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 554,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "2hop__820739_250752",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 446,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 446,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "4hop1__444892_32392_823060_610794",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 656,
+        "source_paragraph_count": 12
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 656,
+        "source_paragraph_count": 12
+      }
+    },
+    {
+      "id": "2hop__815205_590407",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 557,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 557,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "2hop__69_59409",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 639,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 639,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "2hop__135336_461854",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 518,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 518,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "4hop3__152056_698586_1926_54362",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 529,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.5,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 529,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "3hop1__90327_78276_68042",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 696,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 696,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "2hop__6827_49664",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 564,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 564,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "3hop1__454441_55349_651302",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.3333333333333333,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 650,
+        "source_paragraph_count": 11
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 651,
+        "source_paragraph_count": 12
+      }
+    },
+    {
+      "id": "4hop1__525129_315334_131926_87157",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 565,
+        "source_paragraph_count": 10
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 4,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 565,
+        "source_paragraph_count": 10
+      }
+    },
+    {
+      "id": "3hop2__31398_2130_2232",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 477,
+        "source_paragraph_count": 9
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 477,
+        "source_paragraph_count": 9
+      }
+    },
+    {
+      "id": "4hop3__710473_354093_254885_76356",
+      "gold_supporting_paragraph_n": 4,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 390,
+        "source_paragraph_count": 7
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.75,
+        "gold_support_paragraph_hits": 3,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 390,
+        "source_paragraph_count": 7
+      }
+    },
+    {
+      "id": "2hop__40485_40501",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 628,
+        "source_paragraph_count": 8
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 628,
+        "source_paragraph_count": 8
+      }
+    },
+    {
+      "id": "2hop__754753_57816",
+      "gold_supporting_paragraph_n": 2,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 545,
+        "source_paragraph_count": 11
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 2,
+        "EM": 1,
+        "F1": 1.0,
+        "prediction_empty": false,
+        "actual_tokens": 545,
+        "source_paragraph_count": 11
+      }
+    },
+    {
+      "id": "3hop1__567955_503371_21711",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": false,
+      "source_paragraph_set_changed": false,
+      "atomic-sentence-rank": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 547,
+        "source_paragraph_count": 5
+      },
+      "semantic-joint-citations": {
+        "full_support": 1,
+        "support_recall": 1.0,
+        "gold_support_paragraph_hits": 3,
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "prediction_empty": false,
+        "actual_tokens": 547,
+        "source_paragraph_count": 5
+      }
+    },
+    {
+      "id": "3hop1__389955_132457_51423",
+      "gold_supporting_paragraph_n": 3,
+      "source_sentence_set_changed": true,
+      "source_paragraph_set_changed": true,
+      "atomic-sentence-rank": {
+        "full_support": 0,
+        "support_recall": 0.3333333333333333,
+        "gold_support_paragraph_hits": 1,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 405,
+        "source_paragraph_count": 6
+      },
+      "semantic-joint-citations": {
+        "full_support": 0,
+        "support_recall": 0.6666666666666666,
+        "gold_support_paragraph_hits": 2,
+        "EM": 0,
+        "F1": 0.0,
+        "prediction_empty": false,
+        "actual_tokens": 403,
+        "source_paragraph_count": 7
+      }
+    }
+  ]
+}

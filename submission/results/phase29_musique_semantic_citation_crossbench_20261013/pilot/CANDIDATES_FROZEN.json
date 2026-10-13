@@ -1,0 +1,17 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "source_sha256": "7b4518019e21e8a31d547ad5185fa81dcd182dbbe49ce0e3353e55fc9e5ec080",
+  "task_sha256": "847e868774c94d0b42dd99aa612dcca5949cfb908b53fecd5ddbb0dc94813cbc",
+  "prereg_sha256": "644f7d4875dc98b6e8a429b57ba5371fd5ade784c43cad15a024b6d4490890a6",
+  "candidate_code_sha256": "4d4541c250e6b08774cf14394150f82e69ae5c3738b698a866e38115437691be",
+  "source_projection_gold_unopened": true,
+  "stats": {
+    "n": 48,
+    "source_sentences": 3760,
+    "candidate_sentences_sent_to_verifier": 1534,
+    "mean_cap": 606.2708333333334,
+    "mean_source_tokens": 2426.5625,
+    "token_cap_violations": 0
+  }
+}

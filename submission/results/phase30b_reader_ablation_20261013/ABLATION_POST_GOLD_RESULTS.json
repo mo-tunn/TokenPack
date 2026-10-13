@@ -1,0 +1,762 @@
+{
+  "decision": "EXPLORATORY_READER_ABLATION_COMPLETE",
+  "n": 44,
+  "datasets": {
+    "HotpotQA": 36,
+    "MuSiQue": 8
+  },
+  "same_semantic_context": true,
+  "selector_unchanged": true,
+  "gold_first_opened_after_reader_freeze": true,
+  "not_independent_confirmatory_test": true,
+  "paired_EM": {
+    "mean_delta": -0.13636363636363635,
+    "bootstrap95": [
+      -0.25,
+      -0.045454545454545456
+    ],
+    "win": 0,
+    "loss": 6,
+    "net": -6,
+    "two_sided_exact_mcnemar_p": 0.03125
+  },
+  "paired_F1": {
+    "mean_delta": -0.1878689492325856,
+    "bootstrap95": [
+      -0.30637544273907913,
+      -0.08441558441558442
+    ],
+    "win": 0,
+    "loss": 9,
+    "net": -9,
+    "two_sided_exact_mcnemar_p": 0.00390625
+  },
+  "baseline_empty": 0,
+  "new_empty": 0,
+  "new_unknown_responses": 13,
+  "previously_correct_to_unknown": 6,
+  "actual_paid_reader_calls": 44,
+  "remote_calls": 44,
+  "context_inputs_sha256": "42e7355e473cadb21f8c02e20ab1c5a84f2986778558e60632183482e9c8fcd7",
+  "reader_sha256": "178df99190381282f4197ff0579173027449ccbcf99470713b2be714a3ee6a21",
+  "baseline_result_sha256": {
+    "HotpotQA": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e",
+    "MuSiQue": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+  },
+  "input_integrity": {
+    "task_hash_valid": true,
+    "response_hash_valid": true,
+    "protocol_hash_valid": true,
+    "context_hashes_valid": true,
+    "prompt_hashes_recomputed": 44,
+    "same_frozen_contexts_verified": true
+  },
+  "gold_sent_remote": false,
+  "qasper_official_test_untouched": true,
+  "per_case": [
+    {
+      "case_key": "HotpotQA/5abc219655429959677d6a1d",
+      "dataset": "HotpotQA",
+      "id": "5abc219655429959677d6a1d",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.5,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5ab322b1554299194fa93570",
+      "dataset": "HotpotQA",
+      "id": "5ab322b1554299194fa93570",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "magical English nanny"
+    },
+    {
+      "case_key": "HotpotQA/5a879adb5542996e4f30887f",
+      "dataset": "HotpotQA",
+      "id": "5a879adb5542996e4f30887f",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "U.S. Representative for Maryland's 8 congressional district"
+    },
+    {
+      "case_key": "HotpotQA/5ac2e97d554299657fa290c0",
+      "dataset": "HotpotQA",
+      "id": "5ac2e97d554299657fa290c0",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5ae69cfe55429908198fa65f",
+      "dataset": "HotpotQA",
+      "id": "5ae69cfe55429908198fa65f",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "Hong Kong-based Chow Tai Fook Enterprises"
+    },
+    {
+      "case_key": "HotpotQA/5a8347d65542996488c2e3f6",
+      "dataset": "HotpotQA",
+      "id": "5a8347d65542996488c2e3f6",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5a828a7b55429954d2e2eb69",
+      "dataset": "HotpotQA",
+      "id": "5a828a7b55429954d2e2eb69",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Big Ten Conference"
+    },
+    {
+      "case_key": "HotpotQA/5ab72b5855429928e1fe3828",
+      "dataset": "HotpotQA",
+      "id": "5ab72b5855429928e1fe3828",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "guitar feedback"
+    },
+    {
+      "case_key": "HotpotQA/5adf92f15542995534e8c7f3",
+      "dataset": "HotpotQA",
+      "id": "5adf92f15542995534e8c7f3",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.4444444444444445,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.4444444444444445,
+        "empty": 0
+      },
+      "answer": "blatantly unfair"
+    },
+    {
+      "case_key": "HotpotQA/5ae49f2c5542995ad6573dc1",
+      "dataset": "HotpotQA",
+      "id": "5ae49f2c5542995ad6573dc1",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Violet"
+    },
+    {
+      "case_key": "HotpotQA/5aba9db7554299232ef4a361",
+      "dataset": "HotpotQA",
+      "id": "5aba9db7554299232ef4a361",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.9090909090909091,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "being a member of the Kansas House of Representatives"
+    },
+    {
+      "case_key": "HotpotQA/5abac35055429901930fa8ae",
+      "dataset": "HotpotQA",
+      "id": "5abac35055429901930fa8ae",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Angel Parrish"
+    },
+    {
+      "case_key": "HotpotQA/5ab44cd555429942dd415f10",
+      "dataset": "HotpotQA",
+      "id": "5ab44cd555429942dd415f10",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Tigres UANL"
+    },
+    {
+      "case_key": "HotpotQA/5ae2bb545542992decbdcd88",
+      "dataset": "HotpotQA",
+      "id": "5ae2bb545542992decbdcd88",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "fortnightly"
+    },
+    {
+      "case_key": "HotpotQA/5a86141f5542996432c571a5",
+      "dataset": "HotpotQA",
+      "id": "5a86141f5542996432c571a5",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Harmony Korine"
+    },
+    {
+      "case_key": "HotpotQA/5a80a654554299485f598679",
+      "dataset": "HotpotQA",
+      "id": "5a80a654554299485f598679",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "A. E. Housman"
+    },
+    {
+      "case_key": "HotpotQA/5a8911dd554299515336129d",
+      "dataset": "HotpotQA",
+      "id": "5a8911dd554299515336129d",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Test"
+    },
+    {
+      "case_key": "HotpotQA/5ae4be5c5542995ad6573e3a",
+      "dataset": "HotpotQA",
+      "id": "5ae4be5c5542995ad6573e3a",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5a8a1a975542992e4fca8505",
+      "dataset": "HotpotQA",
+      "id": "5a8a1a975542992e4fca8505",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Preston County"
+    },
+    {
+      "case_key": "HotpotQA/5ab42b905542992339550040",
+      "dataset": "HotpotQA",
+      "id": "5ab42b905542992339550040",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5adf39ce5542995534e8c76d",
+      "dataset": "HotpotQA",
+      "id": "5adf39ce5542995534e8c76d",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Shakespeare performances"
+    },
+    {
+      "case_key": "HotpotQA/5ab3d69255429969a97a81c9",
+      "dataset": "HotpotQA",
+      "id": "5ab3d69255429969a97a81c9",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "USS Essex (CV-9)"
+    },
+    {
+      "case_key": "HotpotQA/5a8eb63455429917b4a5bdb7",
+      "dataset": "HotpotQA",
+      "id": "5a8eb63455429917b4a5bdb7",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "St. Vincent"
+    },
+    {
+      "case_key": "HotpotQA/5ab84f2c55429934fafe6d54",
+      "dataset": "HotpotQA",
+      "id": "5ab84f2c55429934fafe6d54",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Alice's Adventures in Wonderland"
+    },
+    {
+      "case_key": "HotpotQA/5ae1e8ab5542997283cd22ca",
+      "dataset": "HotpotQA",
+      "id": "5ae1e8ab5542997283cd22ca",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5abfdfcb5542997d642958fe",
+      "dataset": "HotpotQA",
+      "id": "5abfdfcb5542997d642958fe",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Mani"
+    },
+    {
+      "case_key": "HotpotQA/5abcf2b4554299700f9d7937",
+      "dataset": "HotpotQA",
+      "id": "5abcf2b4554299700f9d7937",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Giotto"
+    },
+    {
+      "case_key": "HotpotQA/5a8f54215542992414482a54",
+      "dataset": "HotpotQA",
+      "id": "5a8f54215542992414482a54",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "seventh generation"
+    },
+    {
+      "case_key": "HotpotQA/5ae0111e55429906c02daabc",
+      "dataset": "HotpotQA",
+      "id": "5ae0111e55429906c02daabc",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Oracle Corporation"
+    },
+    {
+      "case_key": "HotpotQA/5ab9631a55429970cfb8eaad",
+      "dataset": "HotpotQA",
+      "id": "5ab9631a55429970cfb8eaad",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Mark \"Chopper\" Read"
+    },
+    {
+      "case_key": "HotpotQA/5a848a685542997b5ce3feae",
+      "dataset": "HotpotQA",
+      "id": "5a848a685542997b5ce3feae",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8571428571428571,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5ae0616255429924de1b70ca",
+      "dataset": "HotpotQA",
+      "id": "5ae0616255429924de1b70ca",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5ae73c00554299572ea5478a",
+      "dataset": "HotpotQA",
+      "id": "5ae73c00554299572ea5478a",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "1856"
+    },
+    {
+      "case_key": "HotpotQA/5ac508205542994611c8b32e",
+      "dataset": "HotpotQA",
+      "id": "5ac508205542994611c8b32e",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.6666666666666666,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "empty": 0
+      },
+      "answer": "U.S. military"
+    },
+    {
+      "case_key": "HotpotQA/5a732ca45542992359bc325d",
+      "dataset": "HotpotQA",
+      "id": "5a732ca45542992359bc325d",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Sierra Leone Civil War"
+    },
+    {
+      "case_key": "HotpotQA/5ab7ccf455429928e1fe3910",
+      "dataset": "HotpotQA",
+      "id": "5ab7ccf455429928e1fe3910",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "5,042"
+    },
+    {
+      "case_key": "MuSiQue/4hop1__46196_497223_15840_36002",
+      "dataset": "MuSiQue",
+      "id": "4hop1__46196_497223_15840_36002",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "MuSiQue/3hop1__36497_73181_68042",
+      "dataset": "MuSiQue",
+      "id": "3hop1__36497_73181_68042",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "MuSiQue/4hop3__673447_132409_145082_35031",
+      "dataset": "MuSiQue",
+      "id": "4hop3__673447_132409_145082_35031",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "third"
+    },
+    {
+      "case_key": "MuSiQue/2hop__32254_84601",
+      "dataset": "MuSiQue",
+      "id": "2hop__32254_84601",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "August 30, 2007"
+    },
+    {
+      "case_key": "MuSiQue/2hop__92051_827343",
+      "dataset": "MuSiQue",
+      "id": "2hop__92051_827343",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "MuSiQue/4hop3__668721_132409_146285_35031",
+      "dataset": "MuSiQue",
+      "id": "4hop3__668721_132409_146285_35031",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "third"
+    },
+    {
+      "case_key": "MuSiQue/3hop1__454441_55349_651302",
+      "dataset": "MuSiQue",
+      "id": "3hop1__454441_55349_651302",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "MuSiQue/3hop1__389955_132457_51423",
+      "dataset": "MuSiQue",
+      "id": "3hop1__389955_132457_51423",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0,
+        "source_result_sha256": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "split": "pilot",
+  "n": 48,
+  "sha256": "af373bf3c537f835eb431ed0fa4b6511171da5abd3a7da9a6bd9a260f344b3de",
+  "tasks_sha256": "847e868774c94d0b42dd99aa612dcca5949cfb908b53fecd5ddbb0dc94813cbc",
+  "pre_remote_sha256": "d4a3a95fc9edcac5868811fcfa62fce550a5deb6a53c8a2762d610d3092eeba9",
+  "parse_status_counts": {
+    "valid_cross_article_citations": 31,
+    "abstained": 16,
+    "single_article_not_chain": 1
+  },
+  "gold_unopened": true,
+  "source_question_only": true,
+  "paid_calls": 48
+}

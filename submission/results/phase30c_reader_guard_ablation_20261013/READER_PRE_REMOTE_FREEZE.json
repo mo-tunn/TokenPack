@@ -1,0 +1,21 @@
+{
+  "study": "Phase30C fresh reader guard ablation",
+  "n": 44,
+  "selection_rule": "smallest SHA256(label|case_key) among unchanged source-sentence contexts",
+  "datasets": {
+    "HotpotQA": 36,
+    "MuSiQue": 8
+  },
+  "selector_frozen": "semantic-joint-citations",
+  "tasks_sha256": "cd3902eafea9addf38573ebdcd7f13dbf6ea7888e50d1ee25c1774e76ab9cc2e",
+  "reader_code_sha256": "0a79cdf640cf2d575a00873d33399ed756d9cfd6f15c802115eab92ee40b9382",
+  "relay_sha256": "f93f6bb9b47fe528188d01d08c7ee71ab9913ae0e67033919bef839dc44633bb",
+  "model": "qwen3.8-27b-orcarouter-q4km",
+  "endpoint": "https://metekizilcik--tokenpack-qwen27b-longcontext-inference-server.modal.run",
+  "system_prompt_sha256": "227b7dc8883621e692e48f68da1d1fc37d9033efcc02f12068084ebeac30800d",
+  "gold_loaded": false,
+  "gold_sent_remote": false,
+  "max_paid_calls": 44,
+  "same_cases_as_phase30b": false,
+  "exploratory_not_confirmatory": true
+}

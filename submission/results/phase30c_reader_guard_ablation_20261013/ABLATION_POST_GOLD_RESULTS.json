@@ -1,0 +1,708 @@
+{
+  "decision": "EXPLORATORY_READER_GUARD_COMPLETE",
+  "n": 44,
+  "datasets": {
+    "HotpotQA": 36,
+    "MuSiQue": 8
+  },
+  "same_semantic_context": true,
+  "selector_unchanged": true,
+  "gold_first_opened_after_reader_freeze": true,
+  "not_independent_confirmatory_test": true,
+  "paired_EM": {
+    "mean_delta": -0.022727272727272728,
+    "bootstrap95": [
+      -0.06818181818181818,
+      0.0
+    ],
+    "win": 0,
+    "loss": 1,
+    "net": -1,
+    "two_sided_exact_mcnemar_p": 1.0
+  },
+  "paired_F1": {
+    "mean_delta": 0.01363636363636364,
+    "bootstrap95": [
+      -0.013636363636363634,
+      0.05454545454545456
+    ],
+    "win": 1,
+    "loss": 1,
+    "net": 0,
+    "two_sided_exact_mcnemar_p": 1.0
+  },
+  "new_unknown": 1,
+  "previously_correct_to_unknown": 0,
+  "actual_paid_reader_calls": 44,
+  "remote_calls": 44,
+  "reader_sha256": "abb148151810c365df1401828b214812071c84bd3720d077516f43d7510d7c3e",
+  "task_sha256": "cd3902eafea9addf38573ebdcd7f13dbf6ea7888e50d1ee25c1774e76ab9cc2e",
+  "gold_sent_remote": false,
+  "baseline_result_sha256": {
+    "HotpotQA": "d9c25ce866e180ce8b0a2c77eddd3e0512bf1e77858609964d3cf2e3c4597d1e",
+    "MuSiQue": "8d4ce6b5f81512f93d966f31304464c09cd0ef9dabaa88534c47f026ee167a99"
+  },
+  "prompt_hashes_recomputed": 44,
+  "per_case": [
+    {
+      "case_key": "HotpotQA/5ab9625e55429970cfb8eaa9",
+      "dataset": "HotpotQA",
+      "id": "5ab9625e55429970cfb8eaa9",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Hennepin County"
+    },
+    {
+      "case_key": "HotpotQA/5ab7c6995542993667794005",
+      "dataset": "HotpotQA",
+      "id": "5ab7c6995542993667794005",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Six Feet Under"
+    },
+    {
+      "case_key": "HotpotQA/5a7ddd565542997cc2c474b2",
+      "dataset": "HotpotQA",
+      "id": "5a7ddd565542997cc2c474b2",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Mary O'Connell"
+    },
+    {
+      "case_key": "HotpotQA/5a7d97205542990b8f5039c7",
+      "dataset": "HotpotQA",
+      "id": "5a7d97205542990b8f5039c7",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "Ralph Stanley"
+    },
+    {
+      "case_key": "HotpotQA/5a81e8ea5542995ce29dcc73",
+      "dataset": "HotpotQA",
+      "id": "5a81e8ea5542995ce29dcc73",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "Akosua Busia"
+    },
+    {
+      "case_key": "HotpotQA/5ae14b5c55429920d52343aa",
+      "dataset": "HotpotQA",
+      "id": "5ae14b5c55429920d52343aa",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Anderson Silva"
+    },
+    {
+      "case_key": "HotpotQA/5ab9812d554299753720f821",
+      "dataset": "HotpotQA",
+      "id": "5ab9812d554299753720f821",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "No"
+    },
+    {
+      "case_key": "HotpotQA/5a81dbfc55429903bc27b9f2",
+      "dataset": "HotpotQA",
+      "id": "5a81dbfc55429903bc27b9f2",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Johnny Cage"
+    },
+    {
+      "case_key": "HotpotQA/5adc0f8d55429947ff1738ef",
+      "dataset": "HotpotQA",
+      "id": "5adc0f8d55429947ff1738ef",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Parsifal"
+    },
+    {
+      "case_key": "HotpotQA/5ae32c935542990afbd1e0bd",
+      "dataset": "HotpotQA",
+      "id": "5ae32c935542990afbd1e0bd",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Sylvia Pankhurst"
+    },
+    {
+      "case_key": "HotpotQA/5ab67f0055429953192ad2d8",
+      "dataset": "HotpotQA",
+      "id": "5ab67f0055429953192ad2d8",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "extended play record"
+    },
+    {
+      "case_key": "HotpotQA/5abf8e135542990832d3a14f",
+      "dataset": "HotpotQA",
+      "id": "5abf8e135542990832d3a14f",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Daniel Ricciardo"
+    },
+    {
+      "case_key": "HotpotQA/5a727e1b5542991f9a20c497",
+      "dataset": "HotpotQA",
+      "id": "5a727e1b5542991f9a20c497",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Shake It Off"
+    },
+    {
+      "case_key": "HotpotQA/5a84b6ed5542994c784dda18",
+      "dataset": "HotpotQA",
+      "id": "5a84b6ed5542994c784dda18",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Yes"
+    },
+    {
+      "case_key": "HotpotQA/5ab2b95c5542991669774072",
+      "dataset": "HotpotQA",
+      "id": "5ab2b95c5542991669774072",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Australia"
+    },
+    {
+      "case_key": "HotpotQA/5a8ce9ed554299585d9e3764",
+      "dataset": "HotpotQA",
+      "id": "5a8ce9ed554299585d9e3764",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Miranda Lambert"
+    },
+    {
+      "case_key": "HotpotQA/5adce12e5542990d50227d4f",
+      "dataset": "HotpotQA",
+      "id": "5adce12e5542990d50227d4f",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Adelaide"
+    },
+    {
+      "case_key": "HotpotQA/5abf877c5542990832d3a147",
+      "dataset": "HotpotQA",
+      "id": "5abf877c5542990832d3a147",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Yes"
+    },
+    {
+      "case_key": "HotpotQA/5ac3e68b5542997ea680c98b",
+      "dataset": "HotpotQA",
+      "id": "5ac3e68b5542997ea680c98b",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Wheel of Fortune"
+    },
+    {
+      "case_key": "HotpotQA/5ae46c9d5542996836b02c9d",
+      "dataset": "HotpotQA",
+      "id": "5ae46c9d5542996836b02c9d",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.6666666666666666
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "empty": 0
+      },
+      "answer": "Nobel Prize in Physics"
+    },
+    {
+      "case_key": "HotpotQA/5a837d9a554299123d8c213e",
+      "dataset": "HotpotQA",
+      "id": "5a837d9a554299123d8c213e",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "Lucas Grabeel"
+    },
+    {
+      "case_key": "HotpotQA/5ae61dce5542992663a4f262",
+      "dataset": "HotpotQA",
+      "id": "5ae61dce5542992663a4f262",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "FBI Special Agent Clarice Starling"
+    },
+    {
+      "case_key": "HotpotQA/5a7e3b585542995ed0d166df",
+      "dataset": "HotpotQA",
+      "id": "5a7e3b585542995ed0d166df",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Pete's Dragon"
+    },
+    {
+      "case_key": "HotpotQA/5a88364c5542994846c1ce2e",
+      "dataset": "HotpotQA",
+      "id": "5a88364c5542994846c1ce2e",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Yes"
+    },
+    {
+      "case_key": "HotpotQA/5ac0b8395542996f0d89cc21",
+      "dataset": "HotpotQA",
+      "id": "5ac0b8395542996f0d89cc21",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "German"
+    },
+    {
+      "case_key": "HotpotQA/5a7723ce55429966f1a36c9f",
+      "dataset": "HotpotQA",
+      "id": "5a7723ce55429966f1a36c9f",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Gareth Barry"
+    },
+    {
+      "case_key": "HotpotQA/5a7da9ae5542995f4f4022b1",
+      "dataset": "HotpotQA",
+      "id": "5a7da9ae5542995f4f4022b1",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Downfall"
+    },
+    {
+      "case_key": "HotpotQA/5ac4deff554299076e296e26",
+      "dataset": "HotpotQA",
+      "id": "5ac4deff554299076e296e26",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "No"
+    },
+    {
+      "case_key": "HotpotQA/5ab40e1c5542996a3a969f00",
+      "dataset": "HotpotQA",
+      "id": "5ab40e1c5542996a3a969f00",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "1988"
+    },
+    {
+      "case_key": "HotpotQA/5adfd2f255429925eb1afaa5",
+      "dataset": "HotpotQA",
+      "id": "5adfd2f255429925eb1afaa5",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "unknown"
+    },
+    {
+      "case_key": "HotpotQA/5ab5ceb65542997d4ad1f1e2",
+      "dataset": "HotpotQA",
+      "id": "5ab5ceb65542997d4ad1f1e2",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "cooking"
+    },
+    {
+      "case_key": "HotpotQA/5a8ce15d554299653c1aa12f",
+      "dataset": "HotpotQA",
+      "id": "5a8ce15d554299653c1aa12f",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "yes"
+    },
+    {
+      "case_key": "HotpotQA/5a8c5d3f554299585d9e3675",
+      "dataset": "HotpotQA",
+      "id": "5a8c5d3f554299585d9e3675",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Swervedriver"
+    },
+    {
+      "case_key": "HotpotQA/5ab47cd75542991751b4d78d",
+      "dataset": "HotpotQA",
+      "id": "5ab47cd75542991751b4d78d",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "2002"
+    },
+    {
+      "case_key": "HotpotQA/5a85dfcc5542994775f60673",
+      "dataset": "HotpotQA",
+      "id": "5a85dfcc5542994775f60673",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.6666666666666666
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "empty": 0
+      },
+      "answer": "Yunho"
+    },
+    {
+      "case_key": "HotpotQA/5a7222b155429971e9dc92c4",
+      "dataset": "HotpotQA",
+      "id": "5a7222b155429971e9dc92c4",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "The Happiest Millionaire"
+    },
+    {
+      "case_key": "MuSiQue/2hop__6827_49664",
+      "dataset": "MuSiQue",
+      "id": "2hop__6827_49664",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.6666666666666666
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.6666666666666666,
+        "empty": 0
+      },
+      "answer": "Bank of America"
+    },
+    {
+      "case_key": "MuSiQue/3hop2__93066_88342_90766",
+      "dataset": "MuSiQue",
+      "id": "3hop2__93066_88342_90766",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "2017"
+    },
+    {
+      "case_key": "MuSiQue/2hop__30384_30351",
+      "dataset": "MuSiQue",
+      "id": "2hop__30384_30351",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Lionel Robbins"
+    },
+    {
+      "case_key": "MuSiQue/2hop__53175_548781",
+      "dataset": "MuSiQue",
+      "id": "2hop__53175_548781",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.8
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.8,
+        "empty": 0
+      },
+      "answer": "Plymouth Notch, Vermont"
+    },
+    {
+      "case_key": "MuSiQue/4hop1__159467_725495_49925_267352",
+      "dataset": "MuSiQue",
+      "id": "4hop1__159467_725495_49925_267352",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Latter Day Saint movement"
+    },
+    {
+      "case_key": "MuSiQue/2hop__852657_155922",
+      "dataset": "MuSiQue",
+      "id": "2hop__852657_155922",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "Sydney Harbour"
+    },
+    {
+      "case_key": "MuSiQue/2hop__135336_461854",
+      "dataset": "MuSiQue",
+      "id": "2hop__135336_461854",
+      "baseline": {
+        "EM": 0.0,
+        "F1": 0.0
+      },
+      "new": {
+        "EM": 0,
+        "F1": 0.0,
+        "empty": 0
+      },
+      "answer": "Herbert Leigh Holman"
+    },
+    {
+      "case_key": "MuSiQue/2hop__754753_57816",
+      "dataset": "MuSiQue",
+      "id": "2hop__754753_57816",
+      "baseline": {
+        "EM": 1.0,
+        "F1": 1.0
+      },
+      "new": {
+        "EM": 1,
+        "F1": 1.0,
+        "empty": 0
+      },
+      "answer": "100"
+    }
+  ]
+}
