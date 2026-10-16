@@ -1,20 +1,17 @@
 \begin{table}[htbp]
-\caption{Exploratory 83-case LongBench v2 Multiple-Choice Pilot with Qwen/Qwen2.5-14B-Instruct. TP-HG denotes TokenPack hybrid-greedy; LLL denotes LongLLMLingua context-level filtering; -50 denotes an approximately 50\% source-token selection budget. Rel. vs Full is descriptive and is not a statistically powered significance claim.}
+\caption{Metric-v2 exploratory 83-case pilot. Parse failures count as incorrect. TP-HG versus full context: +6.02 percentage points; 37/83 versus 32/83. Equal totals do not establish equivalence.}
 \label{tab:longbench-generation}
-\centering
-\tiny
+\centering\scriptsize
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{lrrrrr}
 \toprule
-\rowcolor{tablehead}
-Method & Runs & Correct & Acc. & Rel. vs Full & Avg. Ctx. & Saving \\
+Method & Planned & Correct & Accuracy & Context & Saving \\
 \midrule
-Full context & 83 & 32/83 & 0.386 & -- & 17646 & 0.000 \\
-Prod-RAG-50 & 83 & 34/83 & 0.410 & +6.2\% & 8720 & 0.506 \\
-\rowcolor{tokenpackhighlight}\textbf{TP-HG-50} & \textbf{83} & \textbf{37/83} & \textbf{0.446} & \textbf{+15.6\%} & \textbf{8731} & \textbf{0.506} \\
-LLL-0.50 & 83 & 30/82 & 0.366 & -5.1\% & 8570 & 0.511 \\
-\rowcolor{tokenpackhighlight}\textbf{TP-HG-50 + LLL-0.50} & \textbf{83} & \textbf{37/83} & \textbf{0.446} & \textbf{+15.6\%} & \textbf{4468} & \textbf{0.746} \\
+Full context & 83 & 32/83 & 0.386 & 17646 & 0.000 \\
+Prod-RAG-50 & 83 & 34/83 & 0.410 & 8720 & 0.506 \\
+TP-HG-50 & 83 & 37/83 & 0.446 & 8731 & 0.506 \\
+LLL-0.50 & 83 & 30/83 & 0.361 & 8570 & 0.511 \\
+TP-HG-50 + LLL-0.50 & 83 & 37/83 & 0.446 & 4468 & 0.746 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}}
 \end{table}

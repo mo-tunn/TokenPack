@@ -1,18 +1,15 @@
-\begin{table}[!t]
-\caption{QASPER Compression Comparison at Approximately Matched 50\% Token Saving. LLM2 denotes LLMLingua-2.}
+\begin{table}[htbp]
+\caption{Metric-v2 lexical proxies on 200 QASPER questions (77 papers). Coverage threshold is not complete semantic evidence. Historical text unavailable for span reanalysis.}
 \label{tab:qasper-compression-comparison}
-\centering
-\scriptsize
+\centering\scriptsize
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lrrrrr@{}}
+\begin{tabular}{lrrrr}
 \toprule
-\rowcolor{tablehead}
-Method & Saving & Evidence Recall & Complete & Answer Overlap F1 & Sec. \\
+Method & Saving & Lexical coverage & Coverage $\geq .80$ & Answer-context F1 \\
 \midrule
-Only LLM2-0.50 & 50.6\% & 0.713 & 0.120 & 0.010 & 7.04 \\
-\rowcolor{tokenpackhighlight}Only TokenPack & 51.1\% & 0.934 & 0.870 & 0.013 & 0.00 \\
-\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.50 & 75.9\% & 0.632 & 0.035 & 0.018 & 3.59 \\
+Only LLM2-0.50 & 50.6\% & 0.713 & 0.120 & 0.010 \\
+Only TokenPack & 51.1\% & 0.934 & 0.870 & 0.013 \\
+TokenPack + LLM2-0.50 & 75.9\% & 0.632 & 0.035 & 0.018 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}}
 \end{table}

@@ -72,3 +72,8 @@ python -m modal run submission/longbench_eval/app.py::build_and_run --output-dir
 ## Submission Note
 
 For ZIP or GitHub submission, include the repository root with `src`, `tests`, `pyproject.toml`, `README.md`, and the `submission` folder.
+
+
+## Metric-v2 measurement correction
+
+The canonical corrected analysis is `submission/results/metric_v2/canonical/`; reproduce offline with `python -m submission.evaluation.reanalyze`. Shared evaluation code lives in `submission/evaluation/`. The protocol and compatibility notes are in `docs/research/`. Historical run files and the archived PDF are unchanged; four LaTeX tables can be regenerated using `--update-paper-tables`. New accuracy uses task-manifest denominators, QASPER scalar evidence scores are lexical proxies, and historical latency is a recorded stage sum rather than end-to-end product time.

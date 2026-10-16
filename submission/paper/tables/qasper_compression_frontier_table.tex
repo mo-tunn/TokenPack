@@ -1,21 +1,17 @@
-\begin{table}[!t]
-\caption{Compression Frontier on QASPER (All Rows Use 200 Questions). LLM2 denotes LLMLingua-2.}
+\begin{table}[htbp]
+\caption{Metric-v2 lexical proxies on 200 QASPER questions (77 papers). Coverage threshold is not complete semantic evidence. Historical text unavailable for span reanalysis.}
 \label{tab:qasper-compression-frontier}
-\centering
-\scriptsize
+\centering\scriptsize
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lrrrr@{}}
+\begin{tabular}{lrrrr}
 \toprule
-\rowcolor{tablehead}
-Method & Saving & Evidence Recall & Answer Overlap F1 & Run \\
+Method & Saving & Lexical coverage & Coverage $\geq .80$ & Answer-context F1 \\
 \midrule
-Only LLM2-0.50 & 50.6\% & 0.713 & 0.010 & current-200q \\
-\rowcolor{tokenpackhighlight}Only TokenPack & 51.1\% & 0.934 & 0.013 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.85 & 58.4\% & 0.851 & 0.014 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.75 & 63.5\% & 0.792 & 0.015 & current-200q \\
-\rowcolor{tokenpackhighlight}TokenPack + LLM2-0.50 & 75.9\% & 0.632 & 0.018 & current-200q \\
+Only LLM2-0.50 & 50.6\% & 0.713 & 0.120 & 0.010 \\
+Only TokenPack & 51.1\% & 0.934 & 0.870 & 0.013 \\
+TokenPack + LLM2-0.50 & 75.9\% & 0.632 & 0.035 & 0.018 \\
+TokenPack + LLM2-0.75 & 63.5\% & 0.792 & 0.635 & 0.015 \\
+TokenPack + LLM2-0.85 & 58.4\% & 0.851 & 0.800 & 0.014 \\
 \bottomrule
-\end{tabular}%
-}
-{\footnotesize Run notes: all rows are refreshed \textit{current-200q} runs on the same 200-question split.}
+\end{tabular}}
 \end{table}

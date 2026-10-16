@@ -16,6 +16,9 @@ dist/
 # Local research/source PDFs and downloaded paper metadata can be large and/or copyrighted.
 resources/
 
+# Private LongBench v2 stratified pilot source rows include gold answers.
+/submission/results/longbench_v2_stratified60_luna_medium/
+
 # Python/tool caches.
 .mypy_cache/
 .ruff_cache/
