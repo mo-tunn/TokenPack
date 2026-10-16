@@ -10,25 +10,27 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "src"
 EXPERIMENTS = ROOT / "submission" / "experiments"
-for path in (SRC, EXPERIMENTS):
+for path in (ROOT, SRC, EXPERIMENTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
+
+from submission.evaluation.evidence import rename_legacy_metrics
 
 from qasper_selector_eval import _load_qasper_rows, _questions_from_qasper_row  # noqa: E402
 
 
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results" / "qasper_compression_report"
 DEFAULT_CURRENT_SUMMARY = (
-    ROOT / "submission" / "results" / "qasper_compression_eval_200q_rate050_full" / "qasper_compression_eval_summary.csv"
+    ROOT / "submission" / "results" / "qasper_compression_eval_200q_hybrid_greedy_rate050_full" / "qasper_compression_eval_summary.csv"
 )
 DEFAULT_CURRENT_RAW = (
-    ROOT / "submission" / "results" / "qasper_compression_eval_200q_rate050_full" / "qasper_compression_eval_raw.csv"
+    ROOT / "submission" / "results" / "qasper_compression_eval_200q_hybrid_greedy_rate050_full" / "qasper_compression_eval_raw.csv"
 )
 DEFAULT_CURRENT_FRONTIER_SUMMARY = (
     ROOT
     / "submission"
     / "results"
-    / "qasper_compression_eval_200q_rates075_085_current"
+    / "qasper_compression_eval_200q_hybrid_greedy_rates075_085"
     / "qasper_compression_eval_summary.csv"
 )
 DEFAULT_LEGACY_SUMMARIES = [
@@ -46,9 +48,9 @@ class ReportRow:
     selection_strategy: str
     compression_rate: str
     token_saving: float
-    evidence_recall: float
-    complete_evidence_rate: float | None
-    answer_token_f1: float
+    lexical_evidence_coverage: float
+    lexical_coverage_ge_080_rate: float | None
+    answer_context_token_overlap_f1: float
     avg_seconds: float
     source_tag: str
 
@@ -88,7 +90,7 @@ def main() -> int:
             "TokenPack + LLMLingua-2 rate=0.50",
         }
     ]
-    frontier_rows = sorted(report_rows, key=lambda row: (row.token_saving, row.evidence_recall))
+    frontier_rows = sorted(report_rows, key=lambda row: (row.token_saving, row.lexical_evidence_coverage))
     question_lookup = _load_question_lookup(Path(args.data_file)) if Path(args.data_file).exists() else {}
     wins = _pairwise_wins(current_raw_rows)
     top_cases = _largest_recall_gaps(current_raw_rows, question_lookup, limit=args.top_cases)
@@ -118,7 +120,7 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
     with path.open("r", encoding="utf-8", newline="") as handle:
-        return list(csv.DictReader(handle))
+        return [rename_legacy_metrics(row) for row in csv.DictReader(handle)]
 
 
 def _build_report_rows(
@@ -152,9 +154,9 @@ def _build_report_rows(
                 selection_strategy=row["strategy"],
                 compression_rate=f"{rate:.2f}",
                 token_saving=float(row["total_saving_vs_full"]),
-                evidence_recall=float(row["compressed_evidence_recall"]),
-                complete_evidence_rate=None,
-                answer_token_f1=float(row["compressed_answer_token_f1"]),
+                lexical_evidence_coverage=float(row["compressed_lexical_evidence_coverage"]),
+                lexical_coverage_ge_080_rate=None,
+                answer_context_token_overlap_f1=float(row["compressed_answer_context_token_overlap_f1"]),
                 avg_seconds=float(row["avg_compression_seconds"]),
                 source_tag="earlier-200q rerun",
             )
@@ -179,10 +181,10 @@ def _current_report_row(row: dict[str, str]) -> ReportRow | None:
         selection_strategy=row["selection_strategy"],
         compression_rate=row["compression_rate"],
         token_saving=float(row["total_saving_vs_full"]),
-        evidence_recall=float(row["final_evidence_recall"]),
-        complete_evidence_rate=float(row["final_complete_evidence_rate"]),
-        answer_token_f1=float(row["final_answer_token_f1"]),
-        avg_seconds=float(row["avg_total_seconds"]),
+        lexical_evidence_coverage=float(row["final_lexical_evidence_coverage"]),
+        lexical_coverage_ge_080_rate=float(row["final_lexical_coverage_ge_080_rate"]),
+        answer_context_token_overlap_f1=float(row["final_answer_context_token_overlap_f1"]),
+        avg_seconds=float(row["avg_recorded_selection_compression_seconds"]),
         source_tag="current-200q",
     )
 
@@ -195,9 +197,9 @@ def _write_csv_report(rows: list[ReportRow], path: Path) -> None:
         "selection_strategy",
         "compression_rate",
         "token_saving",
-        "evidence_recall",
-        "complete_evidence_rate",
-        "answer_token_f1",
+        "lexical_evidence_coverage",
+        "lexical_coverage_ge_080_rate",
+        "answer_context_token_overlap_f1",
         "avg_seconds",
         "source_tag",
     ]
@@ -214,9 +216,9 @@ def _write_csv_report(rows: list[ReportRow], path: Path) -> None:
                     "selection_strategy": row.selection_strategy,
                     "compression_rate": row.compression_rate,
                     "token_saving": row.token_saving,
-                    "evidence_recall": row.evidence_recall,
-                    "complete_evidence_rate": row.complete_evidence_rate if row.complete_evidence_rate is not None else "",
-                    "answer_token_f1": row.answer_token_f1,
+                    "lexical_evidence_coverage": row.lexical_evidence_coverage,
+                    "lexical_coverage_ge_080_rate": row.lexical_coverage_ge_080_rate if row.lexical_coverage_ge_080_rate is not None else "",
+                    "answer_context_token_overlap_f1": row.answer_context_token_overlap_f1,
                     "avg_seconds": row.avg_seconds,
                     "source_tag": row.source_tag,
                 }
@@ -244,7 +246,7 @@ def _comparison_table_tex(rows: list[ReportRow]) -> str:
         r"\resizebox{\columnwidth}{!}{%",
         r"\begin{tabular}{lrrrrr}",
         r"\hline",
-        r"Method & Saving & Evidence Recall & Complete & Answer Overlap F1 & Sec. \\",
+        r"Method & Saving & Lexical Coverage & Coverage $\geq 0.80$ & Answer Overlap F1 & Sec. \\",
         r"\hline",
     ]
     for row in ordered:
@@ -253,9 +255,9 @@ def _comparison_table_tex(rows: list[ReportRow]) -> str:
                 [
                     _latex_text(_display_method(row.method)),
                     f"{100.0 * row.token_saving:.1f}\\%",
-                    f"{row.evidence_recall:.3f}",
-                    f"{row.complete_evidence_rate:.3f}" if row.complete_evidence_rate is not None else "--",
-                    f"{row.answer_token_f1:.3f}",
+                    f"{row.lexical_evidence_coverage:.3f}",
+                    f"{row.lexical_coverage_ge_080_rate:.3f}" if row.lexical_coverage_ge_080_rate is not None else "--",
+                    f"{row.answer_context_token_overlap_f1:.3f}",
                     f"{row.avg_seconds:.2f}",
                 ]
             )
@@ -282,7 +284,7 @@ def _frontier_table_tex(rows: list[ReportRow]) -> str:
         r"\resizebox{\columnwidth}{!}{%",
         r"\begin{tabular}{lrrrr}",
         r"\hline",
-        r"Method & Saving & Evidence Recall & Answer Overlap F1 & Run \\",
+        r"Method & Saving & Lexical Coverage & Answer Overlap F1 & Run \\",
         r"\hline",
     ]
     for row in rows:
@@ -291,8 +293,8 @@ def _frontier_table_tex(rows: list[ReportRow]) -> str:
                 [
                     _latex_text(_display_method(row.method)),
                     f"{100.0 * row.token_saving:.1f}\\%",
-                    f"{row.evidence_recall:.3f}",
-                    f"{row.answer_token_f1:.3f}",
+                    f"{row.lexical_evidence_coverage:.3f}",
+                    f"{row.answer_context_token_overlap_f1:.3f}",
                     _latex_text(row.source_tag),
                 ]
             )
@@ -328,16 +330,16 @@ def _pairwise_wins(rows: list[dict[str, str]]) -> dict[str, float]:
         combo = bundle.get("tokenpack+llmlingua2")
         if tokenpack and only_llm:
             same_saving_total += 1
-            tokenpack_recall = float(tokenpack["final_evidence_recall"])
-            llm_recall = float(only_llm["final_evidence_recall"])
+            tokenpack_recall = float(tokenpack["final_lexical_evidence_coverage"])
+            llm_recall = float(only_llm["final_lexical_evidence_coverage"])
             if tokenpack_recall > llm_recall:
                 same_saving_tokenpack_better += 1
             elif llm_recall > tokenpack_recall:
                 same_saving_llm_better += 1
         if combo and only_llm:
             higher_saving_total += 1
-            combo_recall = float(combo["final_evidence_recall"])
-            llm_recall = float(only_llm["final_evidence_recall"])
+            combo_recall = float(combo["final_lexical_evidence_coverage"])
+            llm_recall = float(only_llm["final_lexical_evidence_coverage"])
             if combo_recall > llm_recall:
                 higher_saving_combo_better += 1
             elif llm_recall > combo_recall:
@@ -382,9 +384,9 @@ def _largest_recall_gaps(
         combo = bundle.get("tokenpack+llmlingua2")
         if not tokenpack or not only_llm or not combo:
             continue
-        tokenpack_recall = float(tokenpack["final_evidence_recall"])
-        llm_recall = float(only_llm["final_evidence_recall"])
-        combo_recall = float(combo["final_evidence_recall"])
+        tokenpack_recall = float(tokenpack["final_lexical_evidence_coverage"])
+        llm_recall = float(only_llm["final_lexical_evidence_coverage"])
+        combo_recall = float(combo["final_lexical_evidence_coverage"])
         lookup = question_lookup.get(key, {})
         ranked.append(
             {
@@ -416,12 +418,12 @@ def _error_analysis_markdown(wins: dict[str, float], top_cases: list[dict[str, A
         "",
         (
             f"- Same-saving comparison (`Only TokenPack` vs `Only LLMLingua-2`, {int(wins['same_saving_total'])} questions): "
-            f"TokenPack higher evidence recall on {100.0 * wins['same_saving_tokenpack_better_rate']:.1f}% of questions; "
+            f"TokenPack higher lexical evidence coverage on {100.0 * wins['same_saving_tokenpack_better_rate']:.1f}% of questions; "
             f"LLMLingua-2 higher on {100.0 * wins['same_saving_llm_better_rate']:.1f}%."
         ),
         (
             f"- Higher-saving comparison (`TokenPack + LLMLingua-2` vs `Only LLMLingua-2`, {int(wins['higher_saving_total'])} questions): "
-            f"selection-first pipeline higher evidence recall on {100.0 * wins['higher_saving_combo_better_rate']:.1f}% of questions; "
+            f"selection-first pipeline higher lexical evidence coverage on {100.0 * wins['higher_saving_combo_better_rate']:.1f}% of questions; "
             f"LLMLingua-2 higher on {100.0 * wins['higher_saving_llm_better_rate']:.1f}%."
         ),
         "",

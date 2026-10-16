@@ -70,11 +70,13 @@ def test_summarize_rows_accuracy() -> None:
         {"method": "tokenpack-50", "status": "completed", "prediction": "B", "correct": False, "source_tokens": 10, "context_tokens": 5, "token_saving_vs_full": 0.5},
     ]
 
-    summary = summarize_rows(rows)
+    for index, row in enumerate(rows):
+        row["case_id"] = str(index)
+    summary = summarize_rows(rows, expected=rows)
     tokenpack = next(row for row in summary if row["method"] == "tokenpack-50")
 
     assert tokenpack["answered"] == 2
-    assert tokenpack["accuracy"] == 0.5
+    assert tokenpack["accuracy_all_planned"] == 0.5
 
 
 def test_summarize_grounded_rows_metrics() -> None:
@@ -117,11 +119,13 @@ def test_summarize_grounded_rows_metrics() -> None:
         },
     ]
 
-    summary = summarize_grounded_rows(rows)
+    for index, row in enumerate(rows):
+        row["case_id"] = str(index)
+    summary = summarize_grounded_rows(rows, expected=rows)
     tokenpack = next(row for row in summary if row["method"] == "tokenpack-50")
 
-    assert tokenpack["accuracy"] == 1.0
-    assert tokenpack["grounded_accuracy"] == 0.5
+    assert tokenpack["accuracy_all_planned"] == 1.0
+    assert tokenpack["verified_correct_supported_all_planned"] == 0.5
     assert tokenpack["hallucination_rate"] == 0.0
     assert tokenpack["unsupported_claim_rate"] == 0.0
     assert tokenpack["strict_grounding_failure_rate"] == 0.5

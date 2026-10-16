@@ -4,12 +4,18 @@ import argparse
 import csv
 import json
 import re
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from submission.evaluation.core import indexed, prepare
+from submission.evaluation.reporting import summarize_longbench
+
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results" / "longbench_v2_modal_error_analysis"
 DEFAULT_RUNS = {
     "evidence-hybrid": ROOT / "submission" / "results" / "longbench_v2_modal_pilot30",
@@ -105,38 +111,18 @@ def main() -> int:
 def _load_run(path: Path) -> dict[str, Any]:
     results = _read_jsonl(path / "longbench_generation_results.jsonl")
     tasks = _read_jsonl(path / "longbench_generation_tasks.jsonl")
-    return {
-        "path": path,
-        "results": {
-            (str(row.get("case_id")), str(row.get("method"))): row
-            for row in results
-        },
-        "tasks": {
-            (str(row.get("case_id")), str(row.get("method"))): row
-            for row in tasks
-        },
-    }
+    prepare(results, tasks)
+    return {"path": path, "results": indexed(results), "tasks": indexed(tasks)}
 
 
-def _build_profile_rows(loaded: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
+def _build_profile_rows(loaded):
+    rows = []
     for label, run in loaded.items():
-        by_method: dict[str, list[dict[str, Any]]] = {method: [] for method in METHODS}
-        for (_case_id, method), row in run["results"].items():
-            if method in by_method:
-                by_method[method].append(row)
-        for method in METHODS:
-            method_rows = by_method[method]
-            rows.append(
-                {
-                    "profile": label,
-                    "method": method,
-                    "runs": len(method_rows),
-                    "accuracy": _mean(1.0 if row.get("correct") is True else 0.0 for row in method_rows),
-                    "avg_context_tokens": _mean(row.get("context_tokens") for row in method_rows),
-                    "avg_saving": _mean(row.get("token_saving_vs_full") for row in method_rows),
-                }
-            )
+        for summary in summarize_longbench(list(run["results"].values()), list(run["tasks"].values())):
+            rows.append({"profile": label, "method": summary["method"], "runs": summary["runs"],
+                         "accuracy_all_planned": summary["accuracy_all_planned"],
+                         "avg_context_tokens": summary["avg_context_tokens"],
+                         "avg_saving": summary["avg_token_saving_vs_full"]})
     return rows
 
 
@@ -242,7 +228,7 @@ def _write_report(
     for row in profile_rows:
         lines.append(
             f"| {row['profile']} | {row['method']} | {int(row['runs'])} | "
-            f"{float(row['accuracy']):.3f} | {float(row['avg_context_tokens']):.0f} | {float(row['avg_saving']):.3f} |"
+            f"{float(row['accuracy_all_planned']):.3f} | {float(row['avg_context_tokens']):.0f} | {float(row['avg_saving']):.3f} |"
         )
 
     outcome_counts = Counter(str(row["outcome"]) for row in case_rows)

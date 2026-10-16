@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
+import time
+import hashlib
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, Iterable
@@ -20,12 +23,16 @@ from eval_utils import pairwise_rows, read_jsonl, summarize_rows, write_csv, wri
 from tokenpack.chunking import StructureAwareChunker  # noqa: E402
 from tokenpack.compression import CompressionConfig, compress_chunks  # noqa: E402
 from tokenpack.embeddings import make_embedder  # noqa: E402
+from tokenpack.evidence_grouping import fit_render_to_token_budget, render_source_evidence_groups  # noqa: E402
+from tokenpack.evidence_neighbors import select_neighbor_augmented  # noqa: E402
 from tokenpack.models import Chunk, ScoredChunk, TextBlock  # noqa: E402
 from tokenpack.reranking import CrossEncoderReranker, apply_reranker  # noqa: E402
 from tokenpack.scoring import SCORING_PROFILES, score_chunks  # noqa: E402
 from tokenpack.selectors import select_chunks  # noqa: E402
 from tokenpack.tokenization import TokenCounter  # noqa: E402
 
+
+from submission.evaluation.timing import timing_record
 
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results" / "longbench_v2_pilot"
 DEFAULT_WORK_DIR = ROOT / ".tokenpack" / "longbench_v2_pilot"
@@ -73,6 +80,14 @@ def main() -> int:
         default="budget-top-k",
     )
     parser.add_argument("--candidate-pool", type=int, default=300)
+    parser.add_argument(
+        "--phase2-ablation", action="store_true",
+        help="Build four opt-in 50%% budget evidence-neighbor/grouping diagnostic arms; never alters tokenpack-50.",
+    )
+    parser.add_argument(
+        "--phase2-neighbor-fraction", type=float, default=0.15,
+        help="Fraction of chunk-token budget reserved for genuine source-adjacent evidence.",
+    )
     parser.add_argument("--target-tokens", type=int, default=650)
     parser.add_argument("--min-tokens", type=int, default=120)
     parser.add_argument("--max-tokens", type=int, default=900)
@@ -96,6 +111,18 @@ def main() -> int:
         help="Build selector/scoring diagnostic methods: similarity-knapsack, hybrid-greedy, and hybrid-knapsack.",
     )
     parser.add_argument("--skip-compression", action="store_true", help="Build only full-context and TokenPack tasks.")
+    parser.add_argument(
+        "--fast-pilot", action="store_true",
+        help="Build 5 no-GPT2 methods: full, production-rag-50, tokenpack-50, head-tail-50, tokenpack-25. Requires --skip-compression.",
+    )
+    parser.add_argument(
+        "--rag25-only", action="store_true",
+        help="Build just the exact production-rag-25 method, selecting directly from the full ranked candidate pool at 25% budget.",
+    )
+    parser.add_argument(
+        "--checkpoint-dir", default="",
+        help="Write/reuse one verified checkpoint per completed case; allows interruption-safe resume.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--run-modal", action="store_true")
     parser.add_argument("--shard-size", type=int, default=80)
@@ -152,6 +179,28 @@ def main() -> int:
 
 def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     _apply_default_args(args)
+    if args.phase2_ablation and (
+        not args.skip_compression or args.fast_pilot or args.rag25_only
+        or args.diagnostic_selectors or args.cascade_frontier
+        or args.selection_strategy != "budget-top-k"
+        or args.context_order != "score"
+        or abs(args.budget_ratio - 0.5) > 1e-9
+    ):
+        raise ValueError(
+            "--phase2-ablation requires --skip-compression, standard budget-top-k, "
+            "--context-order score, --budget-ratio 0.50 and no conflicting ablation switches."
+        )
+    if args.fast_pilot and (not args.skip_compression or args.diagnostic_selectors or args.cascade_frontier):
+        raise ValueError("--fast-pilot requires --skip-compression and cannot be combined with other ablations")
+    if args.rag25_only and (
+        not args.skip_compression or args.fast_pilot or args.diagnostic_selectors
+        or args.cascade_frontier or args.reranker != "none"
+    ):
+        raise ValueError("--rag25-only requires --skip-compression, --reranker none and no other ablations")
+    checkpoint_dir = Path(args.checkpoint_dir) if args.checkpoint_dir else None
+    if checkpoint_dir is not None:
+        checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    config_signature = _checkpoint_config_signature(args)
     token_counter = TokenCounter()
     embedder = make_embedder(
         model_name=args.embedding_model,
@@ -170,6 +219,33 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             break
         scanned += 1
         case = _normalize_row(row)
+        # Include question, choices and hidden gold as well as the document:
+        # cached contexts must never be reused for a changed benchmark case.
+        source_hash = hashlib.sha256(
+            json.dumps(case, ensure_ascii=False, sort_keys=True).encode("utf-8")
+        ).hexdigest()
+        checkpoint_path = (
+            checkpoint_dir / (hashlib.sha256(case["case_id"].encode("utf-8")).hexdigest() + ".json")
+            if checkpoint_dir is not None else None
+        )
+        if checkpoint_path is not None and checkpoint_path.exists():
+            cached = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            if (cached.get("config_signature") != config_signature
+                    or cached.get("source_sha256") != source_hash
+                    or cached.get("case_id") != case["case_id"]):
+                raise ValueError("Checkpoint differs from this source or method configuration; refusing unsafe reuse.")
+            expected_methods = (
+                8 if args.phase2_ablation else
+                1 if args.rag25_only else
+                5 if args.fast_pilot else
+                3 if args.skip_compression else 5
+            )
+            if len(cached["tasks"]) != expected_methods:
+                raise ValueError("Checkpoint contains an incorrect number of methods.")
+            tasks.extend(cached["tasks"])
+            selected_cases += 1
+            print(f"[{selected_cases}/{args.limit}] CACHE HIT {case['case_id']}", flush=True)
+            continue
         source_tokens = token_counter.count(case["context"])
         if source_tokens < args.source_min_tokens:
             skipped_too_short += 1
@@ -178,6 +254,13 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             skipped_too_long += 1
             continue
 
+        document_started = time.perf_counter()
+        render_timings = {}
+        def timed_render(fn, *values, **kwargs):
+            start = time.perf_counter()
+            text = fn(*values, **kwargs)
+            render_timings[id(text)] = time.perf_counter() - start
+            return text
         chunks = _chunk_context(
             case_id=case["case_id"],
             context=case["context"],
@@ -193,7 +276,11 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             continue
         query = _selection_query(case)
         chunk_embeddings = embedder.embed([chunk.text for chunk in chunks])
+        document_seconds = time.perf_counter() - document_started
+        query_started = time.perf_counter()
         query_embedding = embedder.embed([query])[0]
+        query_seconds = time.perf_counter() - query_started
+        scoring_started = time.perf_counter()
         scored = score_chunks(
             query_embedding,
             chunks,
@@ -210,6 +297,7 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                 candidate_pool=args.reranker_candidate_pool,
                 weight=args.reranker_weight,
             )
+        scoring_seconds = time.perf_counter() - scoring_started
         budget_tokens = max(1, int(source_tokens * args.budget_ratio))
         selection = select_chunks(
             scored,
@@ -252,17 +340,17 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
             )
             diagnostic_contexts = {
                 "similarity-knapsack-50": (
-                    _render_similarity_context(similarity_knapsack.selected),
+                    timed_render(_render_similarity_context, similarity_knapsack.selected),
                     similarity_knapsack.used_tokens,
                     {"selection_seconds": similarity_knapsack.elapsed_seconds, "compression_seconds": 0.0},
                 ),
                 "hybrid-greedy-50": (
-                    _render_selected_context(hybrid_greedy.selected, order=args.context_order),
+                    timed_render(_render_selected_context, hybrid_greedy.selected, order=args.context_order),
                     hybrid_greedy.used_tokens,
                     {"selection_seconds": hybrid_greedy.elapsed_seconds, "compression_seconds": 0.0},
                 ),
                 "hybrid-knapsack-50": (
-                    _render_selected_context(hybrid_knapsack.selected, order=args.context_order),
+                    timed_render(_render_selected_context, hybrid_knapsack.selected, order=args.context_order),
                     hybrid_knapsack.used_tokens,
                     {"selection_seconds": hybrid_knapsack.elapsed_seconds, "compression_seconds": 0.0},
                 ),
@@ -276,18 +364,118 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                 {"selection_seconds": 0.0, "compression_seconds": 0.0},
             ),
             "production-rag-50": (
-                _render_production_rag_context(production_rag.selected),
+                timed_render(_render_production_rag_context, production_rag.selected),
                 production_rag.used_tokens,
                 {"selection_seconds": production_rag.elapsed_seconds, "compression_seconds": 0.0},
             ),
         }
+        if args.rag25_only:
+            quarter_budget = max(1, int(source_tokens * 0.25))
+            rag_25 = select_chunks(
+                scored, strategy="production-rag", budget=quarter_budget,
+                candidate_pool=args.candidate_pool, coverage_query=query,
+            )
+            contexts = {
+                "production-rag-25": (
+                    timed_render(_render_production_rag_context, rag_25.selected),
+                    rag_25.used_tokens,
+                    {"selection_seconds": rag_25.elapsed_seconds, "compression_seconds": 0.0,
+                     "budget_tokens": quarter_budget},
+                )
+            }
         if args.diagnostic_selectors:
             contexts.update(diagnostic_contexts)
-        else:
+        elif not args.rag25_only:
             contexts["tokenpack-50"] = (
-                _render_selected_context(selection.selected, order=args.context_order),
+                timed_render(_render_selected_context, selection.selected, order=args.context_order),
                 selection.used_tokens,
                 {"selection_seconds": selection.elapsed_seconds, "compression_seconds": 0.0},
+            )
+        if args.phase2_ablation:
+            # Factorial 2x2: current selection vs source-neighbour augmentation,
+            # current score-order output vs provenance/adjacency grouping.
+            # All four NEW arms strictly count rendered headers inside the budget.
+            # Original "tokenpack-50" and "production-rag-50" are untouched.
+            # A fifth arm budget-matches Production RAG for a fairer comparison.
+            rag_render_started = time.perf_counter()
+            rag_rendered, rag_retained, rag_dropped = fit_render_to_token_budget(
+                production_rag.selected,
+                render=_render_production_rag_context,
+                token_counter=token_counter,
+                budget=budget_tokens,
+                drop_priority=lambda item: item.raw_similarity,
+            )
+            render_timings[id(rag_rendered)] = time.perf_counter() - rag_render_started
+            contexts["production-rag-50-p2-budgeted"] = (
+                rag_rendered,
+                sum(item.weight for item in rag_retained),
+                {
+                    "selection_seconds": production_rag.elapsed_seconds,
+                    "compression_seconds": 0.0,
+                    "phase2_ablation": True,
+                    "phase2_neighbor": False,
+                    "phase2_grouped": False,
+                    "phase2_seed_chunk_count": len(production_rag.selected),
+                    "phase2_kept_chunk_count": len(rag_retained),
+                    "phase2_trimmed_header_overhead": rag_dropped,
+                    "phase2_neighbor_fraction": 0.0,
+                },
+            )
+            neighbor_selection = select_neighbor_augmented(
+                scored,
+                budget_tokens,
+                candidate_pool=args.candidate_pool,
+                neighbor_fraction=args.phase2_neighbor_fraction,
+            )
+            phase2_arms = (
+                ("tokenpack-50-p2-control", selection.selected, False, selection.elapsed_seconds),
+                ("tokenpack-50-p2-grouped", selection.selected, True, selection.elapsed_seconds),
+                ("tokenpack-50-p2-neighbor", neighbor_selection.selected, False, neighbor_selection.elapsed_seconds),
+                ("tokenpack-50-p2-neighbor-grouped", neighbor_selection.selected, True, neighbor_selection.elapsed_seconds),
+            )
+            for name, selected_items, grouped, selection_time in phase2_arms:
+                render_started = time.perf_counter()
+                rendered, retained, dropped = _phase2_render_budgeted(
+                    selected_items,
+                    grouped=grouped,
+                    token_counter=token_counter,
+                    budget_tokens=budget_tokens,
+                )
+                render_timings[id(rendered)] = time.perf_counter() - render_started
+                contexts[name] = (
+                    rendered,
+                    sum(item.weight for item in retained),
+                    {
+                        "selection_seconds": selection_time,
+                        "compression_seconds": 0.0,
+                        "phase2_ablation": True,
+                        "phase2_neighbor": "neighbor" in name,
+                        "phase2_grouped": grouped,
+                        "phase2_seed_chunk_count": len(selected_items),
+                        "phase2_kept_chunk_count": len(retained),
+                        "phase2_trimmed_header_overhead": dropped,
+                        "phase2_neighbor_fraction": args.phase2_neighbor_fraction,
+                    },
+                )
+        if args.fast_pilot:
+            quarter_budget = max(1, int(source_tokens * 0.25))
+            quarter_selection = select_chunks(
+                scored, strategy=args.selection_strategy, budget=quarter_budget,
+                candidate_pool=args.candidate_pool, coverage_query=query,
+            )
+            contexts["tokenpack-25"] = (
+                timed_render(_render_selected_context, quarter_selection.selected, order=args.context_order),
+                quarter_selection.used_tokens,
+                {"selection_seconds": quarter_selection.elapsed_seconds,
+                 "compression_seconds": 0.0, "budget_tokens": quarter_budget},
+            )
+            head_tail = timed_render(
+                _render_head_tail_context, case["context"],
+                budget_tokens, token_counter,
+            )
+            contexts["head-tail-50"] = (
+                head_tail, token_counter.count(head_tail),
+                {"selection_seconds": 0.0, "compression_seconds": 0.0},
             )
 
         if not args.skip_compression:
@@ -362,8 +550,29 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                     },
                 )
 
+        case_tasks: list[dict[str, Any]] = []
         for method, (context, context_tokens, metadata) in contexts.items():
-            tasks.append(
+            full = method == "full-context"
+            compression_only = method.startswith("only-")
+            compressed = "llmlingua" in method
+            skipped = []
+            if full:
+                skipped.extend(("document_preparation", "query_embedding", "scoring", "selection", "render", "compression"))
+            elif compression_only:
+                skipped.extend(("query_embedding", "scoring", "selection"))
+            if not compressed and not full:
+                skipped.append("compression")
+            timing = timing_record(document_preparation=document_seconds,
+                                   query_embedding=query_seconds, scoring=scoring_seconds,
+                                   selection=metadata.get("selection_seconds"),
+                                   render=render_timings.get(id(context)),
+                                   compression=metadata.get("compression_seconds"),
+                                   skipped=skipped, document_id=case["case_id"])
+            # Compressed rendering is included in compressor timing, not measured twice.
+            if compressed:
+                timing["stages"]["render"] = {"status": "included_in_compression", "seconds": None}
+            actual_context_tokens = token_counter.count(context)
+            case_tasks.append(
                 {
                     "task_id": f"{case['case_id']}::{method}",
                     "case_id": case["case_id"],
@@ -380,18 +589,42 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                     "answer": case["answer"],
                     "context": context,
                     "source_tokens": source_tokens,
-                    "context_tokens": context_tokens,
+                    "context_tokens": actual_context_tokens,
+                    "selected_content_tokens": context_tokens,
+                    "prompt_tokens": None,
+                    "schema_version": "2", "metric_version": "2.0",
+                    "timing": timing,
+                    "context_tokenizer": token_counter.encoding_name if token_counter._encoding is not None else "regex",
+                    "tokenizer_revision": "unknown",
                     "budget_tokens": budget_tokens,
-                    "token_saving_vs_full": 1.0 - context_tokens / max(1, source_tokens),
+                    "token_saving_vs_full": 1.0 - actual_context_tokens / max(1, source_tokens),
                     **metadata,
                 }
             )
+        tasks.extend(case_tasks)
         selected_cases += 1
+        if checkpoint_path is not None:
+            payload = {
+                "case_id": case["case_id"], "source_sha256": source_hash,
+                "config_signature": config_signature, "tasks": case_tasks,
+            }
+            temporary = checkpoint_path.with_suffix(".writing")
+            with temporary.open("w", encoding="utf-8") as stream:
+                json.dump(payload, stream, ensure_ascii=False, separators=(",", ":"))
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, checkpoint_path)
+        print(f"[{selected_cases}/{args.limit}] READY {case['case_id']} "
+              f"methods={len(case_tasks)} source_tokens={source_tokens}", flush=True)
 
     by_method: dict[str, list[dict[str, Any]]] = {}
     for task in tasks:
         by_method.setdefault(str(task["method"]), []).append(task)
     report = {
+        "schema_version": "2", "metric_version": "2.0",
+        "resolved_config": vars(args),
+        "config_hash": hashlib.sha256(json.dumps(vars(args), sort_keys=True, default=str).encode()).hexdigest(),
+        "model_revision": "unknown",
         "tasks": len(tasks),
         "cases": selected_cases,
         "scanned": scanned,
@@ -404,11 +637,16 @@ def build_tasks(args: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
         "context_order": args.context_order,
         "production_rag_baseline": True,
         "diagnostic_selectors": bool(args.diagnostic_selectors),
+        "phase2_ablation": bool(args.phase2_ablation),
+        "phase2_neighbor_fraction": args.phase2_neighbor_fraction,
         "reranker": args.reranker,
         "reranker_model": args.reranker_model,
         "reranker_candidate_pool": args.reranker_candidate_pool,
         "reranker_weight": args.reranker_weight,
         "cascade_frontier": args.cascade_frontier,
+        "fast_pilot": args.fast_pilot,
+        "rag25_only": args.rag25_only,
+        "checkpoint_dir": str(checkpoint_dir) if checkpoint_dir else None,
         "per_method": {
             method: {
                 "tasks": len(rows),
@@ -473,6 +711,9 @@ def _selection_query(case: dict[str, str]) -> str:
 
 def _apply_default_args(args: argparse.Namespace) -> None:
     defaults = {
+        "fast_pilot": False,
+        "rag25_only": False,
+        "checkpoint_dir": "",
         "context_order": "score",
         "reranker": "none",
         "reranker_model": "BAAI/bge-reranker-base",
@@ -486,10 +727,43 @@ def _apply_default_args(args: argparse.Namespace) -> None:
         "compression_allow_download": False,
         "embedding_allow_download": False,
         "diagnostic_selectors": False,
+        "phase2_ablation": False,
+        "phase2_neighbor_fraction": 0.15,
     }
     for name, value in defaults.items():
         if not hasattr(args, name):
             setattr(args, name, value)
+
+
+def _checkpoint_config_signature(args: argparse.Namespace) -> str:
+    # Paths, reporting switches and limits do not change a case's context.
+    ignored = {
+        "data_file", "output_dir", "work_dir", "tasks_jsonl", "results_jsonl",
+        "checkpoint_dir", "limit", "max_scanned", "dry_run", "run_modal",
+        "shard_size", "batch_size", "latency_mode",
+    }
+    material = {k: v for k, v in vars(args).items() if k not in ignored}
+    if not getattr(args, "phase2_ablation", False):
+        # Preserve the old default checkpoint hash for pre-Phase-2 runs.
+        # Experimental flags become material only when the ablation is enabled.
+        material.pop("phase2_ablation", None)
+        material.pop("phase2_neighbor_fraction", None)
+    return hashlib.sha256(json.dumps(material, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _render_head_tail_context(context: str, budget: int, token_counter: TokenCounter) -> str:
+    if token_counter._encoding is None:
+        raise ValueError("Head/tail benchmark requires exact cl100k tokenizer, not regex fallback")
+    token_ids = token_counter._encoding.encode(context, disallowed_special=())
+    if len(token_ids) <= budget:
+        return context
+    front = budget // 2
+    rear = budget - front
+    return (
+        token_counter._encoding.decode(token_ids[:front])
+        + "\n\n[HEAD/TAIL REFERENCE: SOURCE MIDDLE OMITTED]\n\n"
+        + token_counter._encoding.decode(token_ids[-rear:])
+    )
 
 
 def _make_reranker(args: argparse.Namespace):
@@ -574,6 +848,20 @@ def _render_selected_context(items: list[ScoredChunk], *, order: str = "score") 
             parts.append(_render_ordered_chunks(remaining, label="Chunk").strip())
         return "\n\n".join(part for part in parts if part).strip() + "\n"
     raise ValueError(f"Unknown context order: {order}")
+
+
+def _phase2_render_budgeted(
+    items: list[ScoredChunk], *,
+    grouped: bool, token_counter: TokenCounter, budget_tokens: int,
+) -> tuple[str, list[ScoredChunk], int]:
+    """Budget INCLUDING markup; never silently truncate a source chunk."""
+    renderer = (
+        render_source_evidence_groups if grouped
+        else lambda kept: _render_selected_context(kept, order="score")
+    )
+    return fit_render_to_token_budget(
+        items, render=renderer, token_counter=token_counter, budget=budget_tokens,
+    )
 
 
 def _render_production_rag_context(items: list[ScoredChunk]) -> str:
@@ -743,9 +1031,11 @@ def _make_compressor_backend(args: argparse.Namespace):
 
 def _summarize_results(results_jsonl: Path, output_dir: Path) -> None:
     rows = read_jsonl(results_jsonl)
-    summary = summarize_rows(rows)
-    pairwise = pairwise_rows(rows)
-    pairwise_vs_production_rag = pairwise_rows(rows, baseline="production-rag-50")
+    tasks_path = results_jsonl.parent / "longbench_generation_tasks.jsonl"
+    expected = read_jsonl(tasks_path) if tasks_path.exists() else None
+    summary = summarize_rows(rows, expected=expected)
+    pairwise = pairwise_rows(rows, expected=expected)
+    pairwise_vs_production_rag = pairwise_rows(rows, baseline="production-rag-50", expected=expected)
     write_csv(summary, output_dir / "longbench_generation_summary.csv")
     write_csv(pairwise, output_dir / "longbench_generation_pairwise.csv")
     write_csv(pairwise_vs_production_rag, output_dir / "longbench_generation_pairwise_vs_production_rag.csv")
@@ -754,31 +1044,9 @@ def _summarize_results(results_jsonl: Path, output_dir: Path) -> None:
     print(f"Wrote summary assets to {output_dir}")
 
 
-def _write_readout(summary: list[dict[str, Any]], pairwise: list[dict[str, Any]], path: Path) -> None:
-    lines = [
-        "# LongBench v2 Pilot Readout",
-        "",
-        "| Method | Runs | Accuracy | Avg context toks | Saving | Prep s | LLM s | Total s | P90 s | Speedup | Parse fail |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    for row in summary:
-        lines.append(
-            f"| {row['method']} | {int(row['runs'])} | {float(row['accuracy']):.3f} | "
-            f"{float(row['avg_context_tokens']):.0f} | {float(row['avg_token_saving_vs_full']):.3f} | "
-            f"{float(row.get('avg_preprocessing_seconds', 0.0)):.3f} | "
-            f"{float(row.get('avg_answer_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('avg_total_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('p90_total_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('speedup_vs_full', 0.0)):.2f}x | "
-            f"{float(row['parse_failure_rate']):.3f} |"
-        )
-    lines.extend(["", "## Pairwise vs LongLLMLingua", "", "| Method | Compared | Win | Tie | Loss |", "|---|---:|---:|---:|---:|"])
-    for row in pairwise:
-        lines.append(
-            f"| {row['method']} | {int(row['compared'])} | {int(row['wins'])} | "
-            f"{int(row['ties'])} | {int(row['losses'])} |"
-        )
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+def _write_readout(summary, pairwise, path):
+    from submission.evaluation.reporting import write_readout
+    write_readout(summary, pairwise, path)
 
 
 def _write_ablation_readouts(

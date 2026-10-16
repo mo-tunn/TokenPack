@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
+import hashlib
 import statistics
 import sys
 import time
@@ -12,7 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "src"
 EXPERIMENTS = ROOT / "submission" / "experiments"
-for path in (SRC, EXPERIMENTS):
+for path in (ROOT, SRC, EXPERIMENTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
@@ -36,6 +38,9 @@ from tokenpack.scoring import SCORING_PROFILES, score_chunks  # noqa: E402
 from tokenpack.selectors import select_chunks  # noqa: E402
 from tokenpack.tokenization import TokenCounter  # noqa: E402
 
+
+from submission.evaluation.evidence import evidence_metrics, rename_legacy_metrics, normalize
+from submission.evaluation.timing import timing_record
 
 DEFAULT_OUTPUT_DIR = ROOT / "submission" / "results" / "qasper_compression_eval"
 DEFAULT_WORK_DIR = ROOT / ".tokenpack" / "qasper_compression_eval"
@@ -136,6 +141,9 @@ def main() -> int:
     compressor_pool = _CompressorPool(args)
 
     raw_rows: list[dict[str, Any]] = []
+    exclusion_counts = {}
+    resolved_config = {**vars(args), "resolved_chunk_size": {"target": chunk_size.target_tokens, "min": chunk_size.min_tokens, "max": chunk_size.max_tokens}}
+    config_hash = hashlib.sha256(json.dumps(resolved_config, sort_keys=True).encode()).hexdigest()
     processed_papers = 0
     processed_questions = 0
 
@@ -143,8 +151,9 @@ def main() -> int:
         if processed_papers >= args.max_papers or processed_questions >= args.max_questions:
             break
         paper_id = str(row.get("id") or row.get("paper_id") or processed_papers)
+        document_started = time.perf_counter()
         blocks = _blocks_from_qasper_row(row, document_index=processed_papers, token_counter=token_counter)
-        questions = _questions_from_qasper_row(row)
+        questions = _questions_from_qasper_row(row, exclusion_counts)
         if not blocks or not questions:
             continue
         index = _build_index(
@@ -160,8 +169,12 @@ def main() -> int:
             token_counter=token_counter,
         )
         ordered_chunks = sorted(index.chunks, key=lambda chunk: chunk.order_key)
+        document_seconds = time.perf_counter() - document_started
+        source_text = normalize(" ".join(block.text for block in blocks))
         source_tokens = sum(chunk.token_count for chunk in ordered_chunks)
+        render_started = time.perf_counter()
         full_context_text = " ".join(chunk.text for chunk in ordered_chunks)
+        full_render_seconds = time.perf_counter() - render_started
         full_context_evidence_cache: dict[str, float] = {}
         full_context_answer_f1_cache: dict[str, float] = {}
         budgets = _parse_budgets(args.budgets, args.budget_ratios, source_tokens)
@@ -173,7 +186,11 @@ def main() -> int:
             processed_questions += 1
             full_context_evidence_cache[question.question_id] = _evidence_recall(question.evidence_texts, full_context_text)
             full_context_answer_f1_cache[question.question_id] = _token_f1(full_context_text, question.answer)
+            first_result = len(raw_rows)
+            query_started = time.perf_counter()
             query_embedding = embedder.embed([question.question])[0]
+            query_seconds = time.perf_counter() - query_started
+            scoring_started = time.perf_counter()
             scored = score_chunks(
                 query_embedding,
                 index.chunks,
@@ -182,7 +199,14 @@ def main() -> int:
                 query_text=question.question,
                 redundancy_candidate_pool=args.candidate_pool,
             )
+            scoring_seconds = time.perf_counter() - scoring_started
             selection_cache = _selection_cache(scored, budgets, selection_strategies, args.candidate_pool)
+
+            rendered_selections = {}
+            for key, chosen in selection_cache.items():
+                render_started = time.perf_counter()
+                text = " ".join(item.chunk.text for item in chosen.selected)
+                rendered_selections[key] = (text, time.perf_counter() - render_started)
 
             for pipeline in pipelines:
                 if pipeline == "only-tokenpack":
@@ -200,8 +224,10 @@ def main() -> int:
                                     source_tokens=source_tokens,
                                     selected_tokens=selection.used_tokens,
                                     final_tokens=selection.used_tokens,
-                                    selected_text=" ".join(item.chunk.text for item in selection.selected),
-                                    final_text=" ".join(item.chunk.text for item in selection.selected),
+                                    selected_segments=[item.chunk.text for item in selection.selected],
+                                    source_text=source_text,
+                                    selected_text=rendered_selections[(selection_strategy, budget_spec.label)][0],
+                                    final_text=rendered_selections[(selection_strategy, budget_spec.label)][0],
                                     selection_seconds=selection.elapsed_seconds,
                                     compression_seconds=0.0,
                                 )
@@ -230,6 +256,8 @@ def main() -> int:
                                 source_tokens=source_tokens,
                                 selected_tokens=source_tokens,
                                 final_tokens=compressed.compressed_tokens,
+                                selected_segments=[chunk.text for chunk in ordered_chunks],
+                                source_text=source_text,
                                 selected_text=full_context_text,
                                 final_text=compressed.compressed_prompt,
                                 selection_seconds=0.0,
@@ -244,7 +272,7 @@ def main() -> int:
                         for selection_strategy in selection_strategies:
                             selection = selection_cache[(selection_strategy, budget_spec.label)]
                             selected_chunks = [item.chunk for item in selection.selected]
-                            selected_text = " ".join(chunk.text for chunk in selected_chunks)
+                            selected_text = rendered_selections[(selection_strategy, budget_spec.label)][0]
                             for compression_setting in _variant_settings(compression_settings, variant):
                                 compressed, compression_seconds = _compress_context(
                                     chunks=selected_chunks,
@@ -265,6 +293,8 @@ def main() -> int:
                                         source_tokens=source_tokens,
                                         selected_tokens=selection.used_tokens,
                                         final_tokens=compressed.compressed_tokens,
+                                        selected_segments=[chunk.text for chunk in selected_chunks],
+                                        source_text=source_text,
                                         selected_text=selected_text,
                                         final_text=compressed.compressed_prompt,
                                         selection_seconds=selection.elapsed_seconds,
@@ -275,6 +305,23 @@ def main() -> int:
 
                 raise ValueError(f"Unsupported pipeline: {pipeline}")
 
+            for result in raw_rows[first_result:]:
+                result["_record"]["config_hash"] = config_hash
+                result["_record"]["tokenizer"] = {"name": token_counter.encoding_name if token_counter._encoding is not None else "regex", "revision": "unknown", "scope": "context_not_generator_prompt"}
+                selected_render_seconds = (full_render_seconds if result["selection_strategy"] == "full-document" else rendered_selections[(result["selection_strategy"], result["budget"])][1])
+                result["_record"]["timing"] = timing_record(
+                    document_preparation=document_seconds, query_embedding=query_seconds,
+                    scoring=scoring_seconds, selection=result["selection_seconds"], render=selected_render_seconds,
+                    compression=result["compression_seconds"], document_id=paper_id,
+                    skipped=("compression", "generation") if result["compression_variant"] == "none" else ("generation",))
+                result["_record"]["timing"]["render_scope"] = "selected_text_only; final_compressed_render_in_compression"
+                if result["pipeline"].startswith("only-llmlingua") or result["pipeline"].startswith("only-longllmlingua"):
+                    for name in ("query_embedding", "scoring", "selection"):
+                        result["_record"]["timing"]["stages"][name] = {"status": "skipped", "seconds": 0.0}
+
+    records = [row.pop("_record") for row in raw_rows]
+    (output_dir / "qasper_evaluation_records.jsonl").write_text("".join(json.dumps(record, ensure_ascii=False) + "\n" for record in records), encoding="utf-8")
+    (output_dir / "evaluation_manifest.json").write_text(json.dumps({"schema_version": "2", "metric_version": "2.0", "config": resolved_config, "config_hash": config_hash, "exclusions": exclusion_counts, "model_revision": "unknown", "record_count": len(records), "dataset_sha256": hashlib.sha256(Path(args.data_file).read_bytes()).hexdigest() if args.data_file else "unknown", "dataset_source": args.data_file or f"qasper:{args.split}", "records_sha256": hashlib.sha256((output_dir / "qasper_evaluation_records.jsonl").read_bytes()).hexdigest()}, indent=2), encoding="utf-8")
     summary_rows = _summarize(raw_rows, processed_papers=processed_papers, processed_questions=processed_questions)
     raw_path = output_dir / "qasper_compression_eval_raw.csv"
     summary_path = output_dir / "qasper_compression_eval_summary.csv"
@@ -360,11 +407,13 @@ def _build_result_row(
     final_text: str,
     selection_seconds: float,
     compression_seconds: float,
+    selected_segments: list[str] | None = None,
+    source_text: str | None = None,
 ) -> dict[str, Any]:
-    selected_evidence_recall = _evidence_recall(question.evidence_texts, selected_text)
-    final_evidence_recall = _evidence_recall(question.evidence_texts, final_text)
-    selected_answer_token_f1 = _token_f1(selected_text, question.answer)
-    final_answer_token_f1 = _token_f1(final_text, question.answer)
+    selected_lexical_evidence_coverage = _evidence_recall(question.evidence_texts, selected_text)
+    final_lexical_evidence_coverage = _evidence_recall(question.evidence_texts, final_text)
+    selected_answer_context_token_overlap_f1 = _token_f1(selected_text, question.answer)
+    final_answer_context_token_overlap_f1 = _token_f1(final_text, question.answer)
     total_seconds = selection_seconds + compression_seconds
     compression_variant = compression_setting.variant if compression_setting else "none"
     compression_mode = compression_setting.mode if compression_setting else "none"
@@ -376,7 +425,7 @@ def _build_result_row(
     )
     budget_label = budget_spec.label if budget_spec else ""
     budget_tokens = budget_spec.tokens if budget_spec else ""
-    return {
+    result = {
         "paper_id": paper_id,
         "question_id": question.question_id,
         "pipeline": pipeline,
@@ -394,22 +443,66 @@ def _build_result_row(
         "selection_saving_vs_full": 1.0 - selected_tokens / max(1, source_tokens),
         "compression_saving_vs_selected": 1.0 - final_tokens / max(1, selected_tokens),
         "total_saving_vs_full": 1.0 - final_tokens / max(1, source_tokens),
-        "selected_evidence_recall": selected_evidence_recall,
-        "final_evidence_recall": final_evidence_recall,
-        "evidence_recall_delta_after_compression": final_evidence_recall - selected_evidence_recall,
-        "selected_complete_evidence": 1.0 if selected_evidence_recall >= 0.80 else 0.0,
-        "final_complete_evidence": 1.0 if final_evidence_recall >= 0.80 else 0.0,
-        "selected_answer_token_f1": selected_answer_token_f1,
-        "final_answer_token_f1": final_answer_token_f1,
-        "answer_token_f1_delta_after_compression": final_answer_token_f1 - selected_answer_token_f1,
-        "compression_helped_evidence": 1.0 if final_evidence_recall > selected_evidence_recall else 0.0,
-        "compression_hurt_evidence": 1.0 if final_evidence_recall < selected_evidence_recall else 0.0,
-        "compression_helped_answer_token_f1": 1.0 if final_answer_token_f1 > selected_answer_token_f1 else 0.0,
-        "compression_hurt_answer_token_f1": 1.0 if final_answer_token_f1 < selected_answer_token_f1 else 0.0,
+        "selected_lexical_evidence_coverage": selected_lexical_evidence_coverage,
+        "final_lexical_evidence_coverage": final_lexical_evidence_coverage,
+        "lexical_evidence_coverage_delta_after_compression": final_lexical_evidence_coverage - selected_lexical_evidence_coverage,
+        "selected_lexical_coverage_ge_080": 1.0 if selected_lexical_evidence_coverage >= 0.80 else 0.0,
+        "final_lexical_coverage_ge_080": 1.0 if final_lexical_evidence_coverage >= 0.80 else 0.0,
+        "selected_answer_context_token_overlap_f1": selected_answer_context_token_overlap_f1,
+        "final_answer_context_token_overlap_f1": final_answer_context_token_overlap_f1,
+        "answer_context_token_overlap_f1_delta_after_compression": final_answer_context_token_overlap_f1 - selected_answer_context_token_overlap_f1,
+        "compression_helped_lexical_coverage": 1.0 if final_lexical_evidence_coverage > selected_lexical_evidence_coverage else 0.0,
+        "compression_hurt_lexical_coverage": 1.0 if final_lexical_evidence_coverage < selected_lexical_evidence_coverage else 0.0,
+        "compression_helped_answer_context_token_overlap_f1": 1.0 if final_answer_context_token_overlap_f1 > selected_answer_context_token_overlap_f1 else 0.0,
+        "compression_hurt_answer_context_token_overlap_f1": 1.0 if final_answer_context_token_overlap_f1 < selected_answer_context_token_overlap_f1 else 0.0,
         "selection_seconds": selection_seconds,
         "compression_seconds": compression_seconds,
-        "total_seconds": total_seconds,
+        "recorded_selection_compression_seconds": total_seconds,
     }
+
+    groups = question.evidence_groups or [question.evidence_texts]
+    # No boundary metadata: do not treat concatenated text as a reliable segment.
+    gold_spans = _map_spans(source_text, groups, paper_id)
+    selected_spans = _map_spans(source_text, [selected_segments], paper_id) if selected_segments is not None else None
+    selected_spans = selected_spans[0] if selected_spans is not None else None
+    selected_metrics = evidence_metrics(groups, selected_segments, source_spans=gold_spans, selected_spans=selected_spans)
+    final_segments = selected_segments if compression_setting is None else [final_text]
+    final_metrics = evidence_metrics(groups, final_segments, source_spans=gold_spans,
+                                     selected_spans=selected_spans if compression_setting is None else None)
+    result = rename_legacy_metrics(result)
+    result.update({"schema_version": "2", "metric_version": "2.0"})
+    for prefix, metrics in (("selected", selected_metrics), ("final", final_metrics)):
+        for key in ("verbatim_evidence_recall", "complete_evidence_set_retained", "source_span_coverage", "evidence_status"):
+            result[f"{prefix}_{key}"] = metrics[key]
+    result["_record"] = {"schema_version": "2", "metric_version": "2.0", "paper_id": paper_id,
+                         "question_id": question.question_id, "cluster_id": paper_id,
+                         "case_id": f"{paper_id}::{question.question_id}", "method": result["setting_label"],
+                         "normalized_source_sha256": hashlib.sha256(normalize(source_text).encode()).hexdigest() if source_text is not None else None,
+                         "setting_label": result["setting_label"], "annotation_groups": groups,
+                         "selected_text": selected_text, "final_text": final_text,
+                         "selected_segments": selected_segments, "final_segments": final_segments,
+                         "gold_source_spans": gold_spans, "selected_source_spans": selected_spans,
+                         "source_mapping": "unique_exact_match_in_normalized_source",
+                         "selected_metrics": selected_metrics, "final_metrics": final_metrics,
+                         "scalar_metrics": dict(result)}
+    return result
+
+
+def _map_spans(source, groups, source_id):
+    if source is None:
+        return None
+    source = normalize(source)
+    output = []
+    for group in groups:
+        spans = []
+        for text in group:
+            text = normalize(text)
+            if not text or source.count(text) != 1:
+                return None
+            start = source.index(text)
+            spans.append([source_id, start, start + len(text)])
+        output.append(spans)
+    return output
 
 
 def _setting_label(
@@ -547,37 +640,46 @@ def _summarize(
                 "processed_papers": processed_papers,
                 "processed_questions": processed_questions,
                 "runs": len(group_rows),
+                "schema_version": "2", "metric_version": "2.0",
                 "avg_source_tokens": _avg(group_rows, "source_tokens"),
                 "avg_selected_tokens": _avg(group_rows, "selected_tokens"),
                 "avg_final_tokens": _avg(group_rows, "final_tokens"),
                 "selection_saving_vs_full": _avg(group_rows, "selection_saving_vs_full"),
                 "compression_saving_vs_selected": _avg(group_rows, "compression_saving_vs_selected"),
                 "total_saving_vs_full": _avg(group_rows, "total_saving_vs_full"),
-                "selected_evidence_recall": _avg(group_rows, "selected_evidence_recall"),
-                "final_evidence_recall": _avg(group_rows, "final_evidence_recall"),
-                "evidence_recall_delta_after_compression": _avg(
-                    group_rows, "evidence_recall_delta_after_compression"
+                "selected_lexical_evidence_coverage": _avg(group_rows, "selected_lexical_evidence_coverage"),
+                "final_lexical_evidence_coverage": _avg(group_rows, "final_lexical_evidence_coverage"),
+                "lexical_evidence_coverage_delta_after_compression": _avg(
+                    group_rows, "lexical_evidence_coverage_delta_after_compression"
                 ),
-                "selected_complete_evidence_rate": _avg(group_rows, "selected_complete_evidence"),
-                "final_complete_evidence_rate": _avg(group_rows, "final_complete_evidence"),
-                "selected_answer_token_f1": _avg(group_rows, "selected_answer_token_f1"),
-                "final_answer_token_f1": _avg(group_rows, "final_answer_token_f1"),
-                "answer_token_f1_delta_after_compression": _avg(
-                    group_rows, "answer_token_f1_delta_after_compression"
+                "selected_lexical_coverage_ge_080_rate": _avg(group_rows, "selected_lexical_coverage_ge_080"),
+                "final_lexical_coverage_ge_080_rate": _avg(group_rows, "final_lexical_coverage_ge_080"),
+                "selected_answer_context_token_overlap_f1": _avg(group_rows, "selected_answer_context_token_overlap_f1"),
+                "final_answer_context_token_overlap_f1": _avg(group_rows, "final_answer_context_token_overlap_f1"),
+                "answer_context_token_overlap_f1_delta_after_compression": _avg(
+                    group_rows, "answer_context_token_overlap_f1_delta_after_compression"
                 ),
-                "compression_helped_evidence_rate": _avg(group_rows, "compression_helped_evidence"),
-                "compression_hurt_evidence_rate": _avg(group_rows, "compression_hurt_evidence"),
-                "compression_helped_answer_token_f1_rate": _avg(
-                    group_rows, "compression_helped_answer_token_f1"
+                "compression_helped_lexical_coverage_rate": _avg(group_rows, "compression_helped_lexical_coverage"),
+                "compression_hurt_lexical_coverage_rate": _avg(group_rows, "compression_hurt_lexical_coverage"),
+                "compression_helped_answer_context_token_overlap_f1_rate": _avg(
+                    group_rows, "compression_helped_answer_context_token_overlap_f1"
                 ),
-                "compression_hurt_answer_token_f1_rate": _avg(
-                    group_rows, "compression_hurt_answer_token_f1"
+                "compression_hurt_answer_context_token_overlap_f1_rate": _avg(
+                    group_rows, "compression_hurt_answer_context_token_overlap_f1"
                 ),
                 "avg_selection_seconds": _avg(group_rows, "selection_seconds"),
                 "avg_compression_seconds": _avg(group_rows, "compression_seconds"),
-                "avg_total_seconds": _avg(group_rows, "total_seconds"),
+                "avg_recorded_selection_compression_seconds": _avg(group_rows, "recorded_selection_compression_seconds"),
             }
         )
+    for item in summary:
+        group = [row for row in rows if row["setting_label"] == item["setting_label"]]
+        for prefix in ("selected", "final"):
+            for metric in ("verbatim_evidence_recall", "complete_evidence_set_retained", "source_span_coverage"):
+                key = f"{prefix}_{metric}"
+                values = [row.get(key) for row in group if row.get(key) is not None]
+                item[key] = statistics.fmean(values) if values else None
+                item[key + "_evaluable"] = len(values)
     return summary
 
 

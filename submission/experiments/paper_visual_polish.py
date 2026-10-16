@@ -112,7 +112,15 @@ def write_visual_summary(compression_csv: Path, longbench_csv: Path, output_path
 
 def _load_csv_rows(csv_path: Path) -> list[dict[str, str]]:
     with csv_path.open("r", encoding="utf-8", newline="") as handle:
-        return list(csv.DictReader(handle))
+        rows = list(csv.DictReader(handle))
+        for row in rows:
+            row["plot_accuracy"] = row.get("accuracy_all_planned", row.get("accuracy", ""))
+            row["plot_denominator"] = "all_planned" if "accuracy_all_planned" in row else "historical_legacy"
+            # Plot-local compatibility does not relabel historical accuracy as all-planned.
+            for old, new in (("avg_total_latency_seconds", "avg_recorded_stage_total_seconds"), ("speedup_vs_full", "recorded_stage_speedup_vs_full"), ("evidence_recall", "lexical_evidence_coverage")):
+                if new not in row and old in row:
+                    row[new] = row[old]
+        return rows
 
 
 def _method_row(rows: list[dict[str, str]], method: str) -> dict[str, str]:
@@ -135,7 +143,7 @@ def _draw_longbench_operating_points(ax: plt.Axes, rows: list[dict[str, str]]) -
         if int(row["runs"]) == 0:
             continue
         x = float(row["avg_context_tokens"]) / 1000.0
-        y = float(row["accuracy"])
+        y = float(row["plot_accuracy"])
         is_tp = label.startswith("TP")
         ax.scatter(
             [x],
@@ -159,7 +167,7 @@ def _draw_longbench_operating_points(ax: plt.Axes, rows: list[dict[str, str]]) -
         weight="bold",
     )
     ax.set_xlabel("Avg. context tokens (k)", fontsize=7.0)
-    ax.set_ylabel("MC accuracy", fontsize=7.0)
+    ax.set_ylabel("MC accuracy (see source denominator)", fontsize=7.0)
     ax.set_xlim(3.5, 18.8)
     ax.set_ylim(0.345, 0.47)
     ax.tick_params(axis="both", labelsize=6.5)
@@ -175,7 +183,7 @@ def _draw_qasper_evidence_bars(ax: plt.Axes, rows: list[dict[str, str]]) -> None
         ("TP+LLM2\n58%", next(row for row in rows if row["method"].startswith("TokenPack + LLMLingua-2 rate=0.85")), BLUE),
     ]
     labels = [item[0] for item in selected]
-    values = [float(item[1]["evidence_recall"]) for item in selected]
+    values = [float(item[1]["lexical_evidence_coverage"]) for item in selected]
     colors = [item[2] for item in selected]
     ax.set_title("QASPER: evidence kept", color=NAVY, fontsize=8.7, weight="bold", pad=6)
     bars = ax.bar(labels, values, color=colors, width=0.62)
@@ -191,7 +199,7 @@ def _draw_qasper_evidence_bars(ax: plt.Axes, rows: list[dict[str, str]]) -> None
         weight="bold",
     )
     ax.set_ylim(0.55, 1.0)
-    ax.set_ylabel("Evidence recall", fontsize=7.0)
+    ax.set_ylabel("Lexical coverage", fontsize=7.0)
     ax.tick_params(axis="x", labelsize=6.5)
     ax.tick_params(axis="y", labelsize=6.5)
     ax.grid(True, axis="y", color="#e5e7eb", linewidth=0.75)
@@ -209,7 +217,7 @@ def _draw_latency_bars(ax: plt.Axes, rows: list[dict[str, str]]) -> None:
         ("TP+LLL", _method_row(rows, "tokenpack-50+longllmlingua-rate050"), "#0f766e"),
     ]
     labels = [item[0] for item in selected]
-    values = [float(item[1]["avg_total_latency_seconds"]) for item in selected]
+    values = [float(item[1]["avg_recorded_stage_total_seconds"]) for item in selected]
     colors = [item[2] for item in selected]
     ax.set_title("Hot-model latency", color=NAVY, fontsize=8.7, weight="bold", pad=6)
     bars = ax.bar(labels, values, color=colors, width=0.62)
@@ -266,12 +274,12 @@ def _draw_scaling_accuracy(ax: plt.Axes, windows: list[tuple[str, list[dict[str,
     centers = list(range(len(windows)))
     offsets = [(-1.5 + index) * width for index in range(len(methods))]
     for offset, (label, method, color) in zip(offsets, methods, strict=True):
-        values = [float(_method_row(rows, method)["accuracy"]) for _, rows in windows]
+        values = [float(_method_row(rows, method)["plot_accuracy"]) for _, rows in windows]
         bars = ax.bar([center + offset for center in centers], values, width=width, label=label, color=color)
         for bar, (_, rows) in zip(bars, windows, strict=True):
             row = _method_row(rows, method)
             runs = int(row["runs"])
-            correct = int(round(float(row["accuracy"]) * runs))
+            correct = int(round(float(row["plot_accuracy"]) * runs))
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
                 bar.get_height() + 0.014,
@@ -283,7 +291,7 @@ def _draw_scaling_accuracy(ax: plt.Axes, windows: list[tuple[str, list[dict[str,
                 weight="bold" if label == "TP-HG" else "normal",
             )
     ax.set_title("Accuracy by source window", color=NAVY, fontsize=8.7, weight="bold", pad=6)
-    ax.set_ylabel("MC accuracy", fontsize=7.0)
+    ax.set_ylabel("MC accuracy (see source denominator)", fontsize=7.0)
     ax.set_xticks(centers, [label for label, _ in windows])
     ax.set_ylim(0.24, 0.56)
     ax.grid(True, axis="y", color="#e5e7eb", linewidth=0.75)
@@ -308,7 +316,7 @@ def _draw_scaling_context(ax: plt.Axes, windows: list[tuple[str, list[dict[str, 
             if method == "full-context":
                 text = "1.0x"
             else:
-                text = f"{float(row['speedup_vs_full']):.1f}x"
+                text = f"{float(row['recorded_stage_speedup_vs_full']):.1f}x"
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
                 bar.get_height() + 1.5,
@@ -319,7 +327,7 @@ def _draw_scaling_context(ax: plt.Axes, windows: list[tuple[str, list[dict[str, 
                 color=DARK,
                 weight="bold",
             )
-    ax.set_title("Context size and latency speedup", color=NAVY, fontsize=8.7, weight="bold", pad=6)
+    ax.set_title("Context size and recorded stage speedup", color=NAVY, fontsize=8.7, weight="bold", pad=6)
     ax.set_ylabel("Avg. context tokens (k)", fontsize=7.0)
     ax.set_xticks(centers, [label for label, _ in windows])
     ax.set_ylim(0, 88)
@@ -398,11 +406,11 @@ def _draw_frontier(ax: plt.Axes, rows: list[dict[str, str]]) -> None:
     only_llm = next(row for row in rows if row["method"].startswith("Only LLMLingua-2"))
 
     x_tp = [100.0 * float(row["token_saving"]) for row in tokenpack_rows]
-    y_tp = [float(row["evidence_recall"]) for row in tokenpack_rows]
+    y_tp = [float(row["lexical_evidence_coverage"]) for row in tokenpack_rows]
     ax.plot(x_tp, y_tp, color=BLUE, linewidth=1.8, marker="o", markersize=4.5, label="TP + LLMLingua-2")
     ax.scatter(
         [100.0 * float(only_tp["token_saving"])],
-        [float(only_tp["evidence_recall"])],
+        [float(only_tp["lexical_evidence_coverage"])],
         color=NAVY,
         marker="D",
         s=38,
@@ -411,7 +419,7 @@ def _draw_frontier(ax: plt.Axes, rows: list[dict[str, str]]) -> None:
     )
     ax.scatter(
         [100.0 * float(only_llm["token_saving"])],
-        [float(only_llm["evidence_recall"])],
+        [float(only_llm["lexical_evidence_coverage"])],
         color=ORANGE,
         marker="s",
         s=36,
@@ -422,11 +430,11 @@ def _draw_frontier(ax: plt.Axes, rows: list[dict[str, str]]) -> None:
     for row in tokenpack_rows:
         rate = float(row["compression_rate"])
         x = 100.0 * float(row["token_saving"])
-        y = float(row["evidence_recall"])
+        y = float(row["lexical_evidence_coverage"])
         ax.annotate(f"{rate:.2f}", (x, y), textcoords="offset points", xytext=(4, -9), fontsize=6.4, color=GRAY)
 
     ax.set_xlabel("Token saving (%)", fontsize=7.3)
-    ax.set_ylabel("Evidence recall", fontsize=7.3)
+    ax.set_ylabel("Lexical coverage", fontsize=7.3)
     ax.tick_params(axis="both", labelsize=6.8)
     ax.set_xlim(48, 78)
     ax.set_ylim(0.56, 0.96)

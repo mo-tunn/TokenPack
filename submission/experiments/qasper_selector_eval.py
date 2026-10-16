@@ -7,7 +7,7 @@ import math
 import re
 import sys
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -45,6 +45,7 @@ class QasperQuestion:
     question: str
     answer: str
     evidence_texts: list[str]
+    evidence_groups: list[list[str]] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -163,9 +164,9 @@ def main() -> int:
                         {
                             "budget_sort": budget_spec.sort_key,
                             "avg_budget_tokens": 0.0,
-                            "evidence_recall": 0.0,
-                            "complete_evidence_rate": 0.0,
-                            "answer_token_f1": 0.0,
+                            "lexical_evidence_coverage": 0.0,
+                            "lexical_coverage_ge_080_rate": 0.0,
+                            "answer_context_token_overlap_f1": 0.0,
                             "avg_used_tokens": 0.0,
                             "budget_utilization": 0.0,
                             "over_budget_rate": 0.0,
@@ -243,7 +244,10 @@ def _blocks_from_qasper_row(row: dict[str, Any], document_index: int, token_coun
     return blocks
 
 
-def _questions_from_qasper_row(row: dict[str, Any]) -> list[QasperQuestion]:
+def _questions_from_qasper_row(row: dict[str, Any], exclusion_counts: dict[str, int] | None = None) -> list[QasperQuestion]:
+    def excluded(reason):
+        if exclusion_counts is not None:
+            exclusion_counts[reason] = exclusion_counts.get(reason, 0) + 1
     qas = row.get("qas") or {}
     questions = _as_list(qas.get("question"))
     question_ids = _as_list(qas.get("question_id")) or [str(index) for index in range(len(questions))]
@@ -253,9 +257,11 @@ def _questions_from_qasper_row(row: dict[str, Any]) -> list[QasperQuestion]:
         answers_payload = answers_by_question[index] if index < len(answers_by_question) else {}
         answers = _as_list(answers_payload.get("answer")) if isinstance(answers_payload, dict) else []
         if not answers:
+            excluded("missing_annotations")
             continue
         chosen = _choose_answer(answers)
         if chosen is None:
+            excluded("unanswerable" if all(a.get("unanswerable") is True for a in answers) else "no_valid_evidence")
             continue
         evidence_texts = [_clean_text(item) for item in _as_list(chosen.get("evidence")) if _clean_text(item)]
         if not evidence_texts:
@@ -265,9 +271,11 @@ def _questions_from_qasper_row(row: dict[str, Any]) -> list[QasperQuestion]:
                 if _clean_text(item)
             ]
         if not evidence_texts:
+            excluded("no_valid_evidence")
             continue
         answer_text = _answer_text(chosen)
         if not answer_text:
+            excluded("missing_answer")
             continue
         records.append(
             QasperQuestion(
@@ -277,6 +285,8 @@ def _questions_from_qasper_row(row: dict[str, Any]) -> list[QasperQuestion]:
                 question=str(question),
                 answer=answer_text,
                 evidence_texts=evidence_texts,
+                evidence_groups=[group for answer in answers if answer.get("unanswerable") is not True
+                                 if (group := [_clean_text(item) for item in _as_list(answer.get("evidence") or answer.get("highlighted_evidence")) if _clean_text(item)])],
             )
         )
     return records
@@ -363,9 +373,9 @@ def _evaluate_question(
     selected_text = " ".join(item.chunk.text for item in result.selected)
     evidence_recall = _evidence_recall(qasper_question.evidence_texts, selected_text)
     return {
-        "evidence_recall": evidence_recall,
-        "complete_evidence_rate": 1.0 if evidence_recall >= 0.80 else 0.0,
-        "answer_token_f1": _token_f1(selected_text, qasper_question.answer),
+        "lexical_evidence_coverage": evidence_recall,
+        "lexical_coverage_ge_080_rate": 1.0 if evidence_recall >= 0.80 else 0.0,
+        "answer_context_token_overlap_f1": _token_f1(selected_text, qasper_question.answer),
         "avg_used_tokens": float(result.used_tokens),
         "budget_utilization": result.used_tokens / max(1, budget),
         "over_budget_rate": 1.0 if result.used_tokens > budget else 0.0,
@@ -487,9 +497,9 @@ def _summarize(
                 "processed_papers": processed_papers,
                 "processed_questions": processed_questions,
                 "runs": int(values["runs"]),
-                "evidence_recall": values["evidence_recall"] / runs,
-                "complete_evidence_rate": values["complete_evidence_rate"] / runs,
-                "answer_token_f1": values["answer_token_f1"] / runs,
+                "lexical_evidence_coverage": values["lexical_evidence_coverage"] / runs,
+                "lexical_coverage_ge_080_rate": values["lexical_coverage_ge_080_rate"] / runs,
+                "answer_context_token_overlap_f1": values["answer_context_token_overlap_f1"] / runs,
                 "avg_used_tokens": values["avg_used_tokens"] / runs,
                 "budget_utilization": values["budget_utilization"] / runs,
                 "over_budget_rate": values["over_budget_rate"] / runs,
@@ -510,9 +520,9 @@ def _write_csv(rows: list[dict[str, object]], path: Path) -> None:
         "processed_papers",
         "processed_questions",
         "runs",
-        "evidence_recall",
-        "complete_evidence_rate",
-        "answer_token_f1",
+        "lexical_evidence_coverage",
+        "lexical_coverage_ge_080_rate",
+        "answer_context_token_overlap_f1",
         "avg_used_tokens",
         "budget_utilization",
         "over_budget_rate",
@@ -536,7 +546,7 @@ def _write_latex(rows: list[dict[str, object]], path: Path) -> None:
         r"\resizebox{\columnwidth}{!}{%",
         r"\begin{tabular}{llrrrrrr}",
         r"\hline",
-        r"Selector & Budget & Avg Tok. & Evidence Recall & Complete & Answer Overlap F1 & Value & Lat. \\",
+        r"Selector & Budget & Avg Tok. & Lexical Coverage & Complete & Answer Overlap F1 & Value & Lat. \\",
         r"\hline",
     ]
     for row in rows:
@@ -546,9 +556,9 @@ def _write_latex(rows: list[dict[str, object]], path: Path) -> None:
                     _latex_text(str(row["strategy"])),
                     _latex_text(str(row["budget"])),
                     _fmt(row["avg_budget_tokens"]),
-                    _fmt(row["evidence_recall"]),
-                    _fmt(row["complete_evidence_rate"]),
-                    _fmt(row["answer_token_f1"]),
+                    _fmt(row["lexical_evidence_coverage"]),
+                    _fmt(row["lexical_coverage_ge_080_rate"]),
+                    _fmt(row["answer_context_token_overlap_f1"]),
                     _fmt(row["avg_total_value"]),
                     _fmt(row["latency_seconds"]),
                 ]

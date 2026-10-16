@@ -3,9 +3,16 @@ from __future__ import annotations
 import csv
 import json
 import re
+import sys
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from submission.evaluation.reporting import summarize_longbench, pairwise_longbench
 
 
 METHODS = [
@@ -132,37 +139,19 @@ def parse_grounded_answer(text: str) -> dict[str, str]:
 
 
 def parse_grounding_judge(text: str) -> dict[str, Any]:
-    payload = _parse_json_object(text)
-    if not payload:
-        salvaged = _salvage_json_fields(
-            text,
-            ("supported_answer", "supported_rationale", "unsupported_claims", "evidence_quote_supports_answer", "explanation"),
-        )
-        if salvaged:
-            return {
-                "judge_parse_failure": False,
-                "supported_answer": _as_bool(salvaged.get("supported_answer")),
-                "supported_rationale": _as_bool(salvaged.get("supported_rationale")),
-                "unsupported_claims": _as_bool(salvaged.get("unsupported_claims")),
-                "evidence_quote_supports_answer": _as_bool(salvaged.get("evidence_quote_supports_answer")),
-                "judge_explanation": salvaged.get("explanation", "").strip(),
-            }
-        return {
-            "judge_parse_failure": True,
-            "supported_answer": False,
-            "supported_rationale": False,
-            "unsupported_claims": True,
-            "evidence_quote_supports_answer": False,
-            "judge_explanation": "",
-        }
-    return {
-        "judge_parse_failure": False,
-        "supported_answer": _as_bool(payload.get("supported_answer")),
-        "supported_rationale": _as_bool(payload.get("supported_rationale")),
-        "unsupported_claims": _as_bool(payload.get("unsupported_claims")),
-        "evidence_quote_supports_answer": _as_bool(payload.get("evidence_quote_supports_answer")),
-        "judge_explanation": str(payload.get("explanation") or "").strip(),
-    }
+    keys = ("supported_answer", "supported_rationale", "unsupported_claims", "evidence_quote_supports_answer")
+    payload = _parse_json_object(text) or _salvage_json_fields(text, (*keys, "explanation"))
+    def boolean(value):
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str) and value.strip().lower() in {"true", "false"}:
+            return value.strip().lower() == "true"
+        return None
+    values = {key: boolean(payload.get(key)) for key in keys}
+    failure = any(value is None for value in values.values())
+    return {"judge_parse_failure": failure,
+            **({key: None for key in keys} if failure else values),
+            "judge_explanation": str(payload.get("explanation") or "")}
 
 
 def quote_found_in_context(quote: str, context: str) -> bool:
@@ -172,164 +161,20 @@ def quote_found_in_context(quote: str, context: str) -> bool:
     return cleaned_quote.lower() in _normalize_space(context).lower()
 
 
-def summarize_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    grouped: dict[str, list[dict[str, Any]]] = {}
-    for row in rows:
-        grouped.setdefault(str(row.get("method")), []).append(row)
-    full_total_latency = _mean(_row_total_latency(row) for row in grouped.get("full-context", []))
-    summary: list[dict[str, Any]] = []
-    for method in METHODS:
-        group = grouped.get(method, [])
-        completed = [row for row in group if row.get("status") == "completed"]
-        answered = [row for row in completed if row.get("prediction")]
-        total_latencies = [_row_total_latency(row) for row in completed]
-        avg_total_latency = _mean(total_latencies)
-        summary.append(
-            {
-                "method": method,
-                "runs": len(group),
-                "completed": len(completed),
-                "answered": len(answered),
-                "accuracy": _mean(1.0 if row.get("correct") is True else 0.0 for row in answered),
-                "avg_source_tokens": _mean(row.get("source_tokens") for row in group),
-                "avg_context_tokens": _mean(row.get("context_tokens") for row in group),
-                "avg_token_saving_vs_full": _mean(row.get("token_saving_vs_full") for row in group),
-                "avg_preprocessing_seconds": _mean(_row_preprocessing_latency(row) for row in completed),
-                "avg_answer_latency_seconds": _mean(row.get("answer_latency_seconds") for row in completed),
-                "avg_total_latency_seconds": avg_total_latency,
-                "p50_total_latency_seconds": _percentile(total_latencies, 0.50),
-                "p90_total_latency_seconds": _percentile(total_latencies, 0.90),
-                "speedup_vs_full": full_total_latency / avg_total_latency if avg_total_latency > 0 else 0.0,
-                "parse_failure_rate": 1.0 - (len(answered) / len(completed)) if completed else 0.0,
-            }
-        )
-    return summary
+def summarize_rows(rows, expected=None):
+    return summarize_longbench(rows, expected, METHODS)
 
 
-def summarize_grounded_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    grouped: dict[str, list[dict[str, Any]]] = {}
-    for row in rows:
-        grouped.setdefault(str(row.get("method")), []).append(row)
-    summary: list[dict[str, Any]] = []
-    for method in METHODS:
-        group = grouped.get(method, [])
-        completed = [row for row in group if row.get("status") == "completed"]
-        answered = [row for row in completed if row.get("prediction")]
-        correct = [row for row in answered if row.get("correct") is True]
-        grounded = [row for row in answered if row.get("grounded") is True]
-        hallucinated = [row for row in answered if _is_hallucinated(row)]
-        unsupported_claims = [row for row in answered if row.get("unsupported_claims") is True]
-        strict_ungrounded = [row for row in answered if _has_strict_grounding_failure(row)]
-        summary.append(
-            {
-                "method": method,
-                "runs": len(group),
-                "completed": len(completed),
-                "answered": len(answered),
-                "accuracy": _mean(1.0 if row.get("correct") is True else 0.0 for row in answered),
-                "grounded_accuracy": _mean(
-                    1.0 if row.get("correct") is True and row.get("grounded") is True else 0.0 for row in answered
-                ),
-                "grounding_rate": len(grounded) / len(answered) if answered else 0.0,
-                "hallucination_rate": len(hallucinated) / len(answered) if answered else 0.0,
-                "unsupported_claim_rate": len(unsupported_claims) / len(answered) if answered else 0.0,
-                "strict_grounding_failure_rate": len(strict_ungrounded) / len(answered) if answered else 0.0,
-                "answer_supported_rate": _mean(1.0 if row.get("supported_answer") is True else 0.0 for row in answered),
-                "rationale_supported_rate": _mean(1.0 if row.get("supported_rationale") is True else 0.0 for row in answered),
-                "quote_supports_answer_rate": _mean(
-                    1.0 if row.get("evidence_quote_supports_answer") is True else 0.0 for row in answered
-                ),
-                "quote_found_rate": _mean(1.0 if row.get("quote_found") is True else 0.0 for row in answered),
-                "quote_missing_rate": _mean(1.0 if row.get("quote_found") is not True else 0.0 for row in answered),
-                "correct_but_unsupported_rate": (
-                    sum(1 for row in correct if row.get("grounded") is not True) / len(correct) if correct else 0.0
-                ),
-                "judge_parse_failure_rate": _mean(1.0 if row.get("judge_parse_failure") is True else 0.0 for row in completed),
-                "avg_source_tokens": _mean(row.get("source_tokens") for row in group),
-                "avg_context_tokens": _mean(row.get("context_tokens") for row in group),
-                "avg_token_saving_vs_full": _mean(row.get("token_saving_vs_full") for row in group),
-                "parse_failure_rate": 1.0 - (len(answered) / len(completed)) if completed else 0.0,
-            }
-        )
-    return summary
+def summarize_grounded_rows(rows, expected=None):
+    return summarize_longbench(rows, expected, METHODS)
 
 
-def pairwise_rows(rows: list[dict[str, Any]], baseline: str = "only-longllmlingua-rate050") -> list[dict[str, Any]]:
-    by_case_method = {
-        (str(row.get("case_id")), str(row.get("method"))): row
-        for row in rows
-        if row.get("status") == "completed" and row.get("prediction")
-    }
-    compared_methods = [method for method in METHODS if method != baseline]
-    output: list[dict[str, Any]] = []
-    for method in compared_methods:
-        wins = ties = losses = compared = 0
-        for (case_id, row_method), row in by_case_method.items():
-            if row_method != method:
-                continue
-            baseline_row = by_case_method.get((case_id, baseline))
-            if baseline_row is None:
-                continue
-            compared += 1
-            left = 1 if row.get("correct") is True else 0
-            right = 1 if baseline_row.get("correct") is True else 0
-            if left > right:
-                wins += 1
-            elif left < right:
-                losses += 1
-            else:
-                ties += 1
-        output.append(
-            {
-                "method": method,
-                "baseline": baseline,
-                "compared": compared,
-                "wins": wins,
-                "ties": ties,
-                "losses": losses,
-                "win_rate": wins / compared if compared else 0.0,
-            }
-        )
-    return output
+def pairwise_rows(rows, baseline="only-longllmlingua-rate050", expected=None):
+    return pairwise_longbench(rows, baseline, expected)
 
 
-def pairwise_grounded_rows(rows: list[dict[str, Any]], baseline: str = "only-longllmlingua-rate050") -> list[dict[str, Any]]:
-    by_case_method = {
-        (str(row.get("case_id")), str(row.get("method"))): row
-        for row in rows
-        if row.get("status") == "completed" and row.get("prediction")
-    }
-    compared_methods = [method for method in METHODS if method != baseline]
-    output: list[dict[str, Any]] = []
-    for method in compared_methods:
-        wins = ties = losses = compared = 0
-        for (case_id, row_method), row in by_case_method.items():
-            if row_method != method:
-                continue
-            baseline_row = by_case_method.get((case_id, baseline))
-            if baseline_row is None:
-                continue
-            compared += 1
-            left = 1 if row.get("correct") is True and row.get("grounded") is True else 0
-            right = 1 if baseline_row.get("correct") is True and baseline_row.get("grounded") is True else 0
-            if left > right:
-                wins += 1
-            elif left < right:
-                losses += 1
-            else:
-                ties += 1
-        output.append(
-            {
-                "method": method,
-                "baseline": baseline,
-                "compared": compared,
-                "wins": wins,
-                "ties": ties,
-                "losses": losses,
-                "win_rate": wins / compared if compared else 0.0,
-            }
-        )
-    return output
+def pairwise_grounded_rows(rows, baseline="only-longllmlingua-rate050", expected=None):
+    return pairwise_longbench(rows, baseline, expected, grounded=True)
 
 
 def _mean(values: Iterable[Any]) -> float:

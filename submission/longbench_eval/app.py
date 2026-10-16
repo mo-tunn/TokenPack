@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import copy
 import sys
 import time
 from pathlib import Path
@@ -62,6 +63,7 @@ image = (
     )
     .add_local_dir(str(THIS_DIR), remote_path="/root/submission/longbench_eval")
     .add_local_dir(str(SRC_DIR), remote_path="/root/src")
+    .add_local_dir(str(THIS_DIR.parent / "evaluation"), remote_path="/root/submission/evaluation")
 )
 
 volume = modal.Volume.from_name("tokenpack-longbench-eval", create_if_missing=True)
@@ -138,12 +140,18 @@ def run_eval_shard(
 
     rows: list[dict[str, Any]] = []
     for task, raw, answer_latency in zip(tasks, outputs, answer_latencies):
+        timing = copy.deepcopy(task.get("timing"))
+        if timing:
+            timing["stages"]["generation"] = {"status": "measured", "seconds": answer_latency}
+            timing["generation_mode"] = "per_request_hot" if latency_mode else "batch_average_not_request_latency"
         prediction = parse_choice(raw)
         gold = str(task.get("answer") or "").strip().upper()
-        preprocessing_seconds = float(task.get("selection_seconds") or 0.0) + float(task.get("compression_seconds") or 0.0)
+        preprocessing_seconds = (float(task["selection_seconds"]) + float(task["compression_seconds"])
+                                 if task.get("selection_seconds") is not None and task.get("compression_seconds") is not None else None)
         rows.append(
             {
                 **{key: value for key, value in task.items() if key != "context"},
+                "schema_version": "2", "metric_version": "2.0",
                 "status": "completed",
                 "model_id": model_id,
                 "raw_answer": raw,
@@ -151,7 +159,12 @@ def run_eval_shard(
                 "correct": bool(prediction and prediction == gold),
                 "answer_latency_seconds": answer_latency,
                 "preprocessing_seconds": preprocessing_seconds,
-                "total_latency_seconds": preprocessing_seconds + answer_latency,
+                "recorded_stage_total_seconds": preprocessing_seconds + answer_latency if preprocessing_seconds is not None else None,
+                "latency_scope": "selection_compression_generation_only_not_end_to_end",
+                "timing": timing,
+                "prompt_tokens": len(llm.get_tokenizer().encode(render_mc_prompt(task))),
+                "prompt_tokenizer": model_id,
+                "prompt_tokenizer_revision": "unknown",
                 "latency_mode": latency_mode,
             }
         )
@@ -200,6 +213,10 @@ def run_grounded_eval_shard(
 
     rows: list[dict[str, Any]] = []
     for task, raw_answer in zip(tasks, raw_answers):
+        timing = copy.deepcopy(task.get("timing"))
+        if timing:
+            timing["stages"]["generation"] = {"status": "measured", "seconds": answer_elapsed / max(1, len(tasks))}
+            timing["generation_mode"] = "batch_average_not_request_latency"
         parsed = parse_grounded_answer(raw_answer)
         prediction = parsed["prediction"]
         gold = str(task.get("answer") or "").strip().upper()
@@ -207,6 +224,7 @@ def run_grounded_eval_shard(
         rows.append(
             {
                 **{key: value for key, value in task.items() if key != "context"},
+                "schema_version": "2", "metric_version": "2.0",
                 "status": "completed",
                 "model_id": model_id,
                 "raw_answer": raw_answer,
@@ -216,6 +234,10 @@ def run_grounded_eval_shard(
                 "quote_found": quote_found,
                 "correct": bool(prediction and prediction == gold),
                 "answer_latency_seconds": answer_elapsed / max(1, len(tasks)),
+                "timing": timing,
+                "prompt_tokens": len(llm.get_tokenizer().encode(render_grounded_prompt(task))),
+                "prompt_tokenizer": model_id, "prompt_tokenizer_revision": "unknown",
+                "latency_scope": "generation_batch_average_not_end_to_end",
             }
         )
 
@@ -245,6 +267,10 @@ def run_grounded_eval_shard(
             or row.get("supported_rationale") is not True
             or row.get("evidence_quote_supports_answer") is not True
         )
+        if row.get("judge_parse_failure") is True:
+            row["grounded"] = None
+            row["hallucinated"] = None
+            row["strict_grounding_failure"] = None
         row["judge_latency_seconds"] = judge_elapsed / max(1, len(rows))
 
     REMOTE_SHARD_DIR.mkdir(parents=True, exist_ok=True)
@@ -343,8 +369,8 @@ def grounded_from_tasks(
 
     results_path = output_path / "longbench_grounded_results.jsonl"
     write_jsonl(all_rows, results_path)
-    summary = summarize_grounded_rows(all_rows)
-    pairwise = pairwise_grounded_rows(all_rows)
+    summary = summarize_grounded_rows(all_rows, expected=tasks)
+    pairwise = pairwise_grounded_rows(all_rows, expected=tasks)
     write_csv(summary, output_path / "longbench_grounded_summary.csv")
     write_csv(pairwise, output_path / "longbench_grounded_pairwise.csv")
     _write_grounded_readout(summary, pairwise, output_path / "longbench_grounded_readout.md")
@@ -445,9 +471,9 @@ def build_and_run(
 
     results_path = output_path / "longbench_generation_results.jsonl"
     write_jsonl(all_rows, results_path)
-    summary = summarize_rows(all_rows)
-    pairwise = pairwise_rows(all_rows)
-    pairwise_vs_production_rag = pairwise_rows(all_rows, baseline="production-rag-50")
+    summary = summarize_rows(all_rows, expected=tasks)
+    pairwise = pairwise_rows(all_rows, expected=tasks)
+    pairwise_vs_production_rag = pairwise_rows(all_rows, baseline="production-rag-50", expected=tasks)
     write_csv(summary, output_path / "longbench_generation_summary.csv")
     write_csv(pairwise, output_path / "longbench_generation_pairwise.csv")
     write_csv(pairwise_vs_production_rag, output_path / "longbench_generation_pairwise_vs_production_rag.csv")
@@ -536,75 +562,11 @@ def _first_output(output: Any) -> str:
     return str(getattr(generations[0], "text", "")).strip()
 
 
-def _write_readout(summary: list[dict[str, Any]], pairwise: list[dict[str, Any]], path: Path) -> None:
-    lines = [
-        "# LongBench v2 Modal Pilot Readout",
-        "",
-        "| Method | Runs | Accuracy | Avg context toks | Saving | Prep s | LLM s | Total s | P90 s | Speedup | Parse fail |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    for row in summary:
-        lines.append(
-            f"| {row['method']} | {int(row['runs'])} | {float(row['accuracy']):.3f} | "
-            f"{float(row['avg_context_tokens']):.0f} | {float(row['avg_token_saving_vs_full']):.3f} | "
-            f"{float(row.get('avg_preprocessing_seconds', 0.0)):.3f} | "
-            f"{float(row.get('avg_answer_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('avg_total_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('p90_total_latency_seconds', 0.0)):.3f} | "
-            f"{float(row.get('speedup_vs_full', 0.0)):.2f}x | "
-            f"{float(row['parse_failure_rate']):.3f} |"
-        )
-    lines.extend(["", "## Pairwise vs LongLLMLingua", "", "| Method | Compared | Win | Tie | Loss |", "|---|---:|---:|---:|---:|"])
-    for row in pairwise:
-        lines.append(
-            f"| {row['method']} | {int(row['compared'])} | {int(row['wins'])} | "
-            f"{int(row['ties'])} | {int(row['losses'])} |"
-        )
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+def _write_readout(summary, pairwise, path):
+    from submission.evaluation.reporting import write_readout
+    write_readout(summary, pairwise, path)
 
 
-def _write_grounded_readout(summary: list[dict[str, Any]], pairwise: list[dict[str, Any]], path: Path) -> None:
-    lines = [
-        "# LongBench v2 Grounded Readout",
-        "",
-        "| Method | Runs | Acc. | Grounded acc. | Halluc. claims | Quote found | Correct unsupported | Saving |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    for row in summary:
-        lines.append(
-            f"| {row['method']} | {int(row['runs'])} | {float(row['accuracy']):.3f} | "
-            f"{float(row['grounded_accuracy']):.3f} | {float(row['hallucination_rate']):.3f} | "
-            f"{float(row['quote_found_rate']):.3f} | {float(row['correct_but_unsupported_rate']):.3f} | "
-            f"{float(row['avg_token_saving_vs_full']):.3f} |"
-        )
-    lines.extend(
-        [
-            "",
-            "## Grounding Diagnostic Split",
-            "",
-            "| Method | Unsupported claims | Strict grounding failure | Answer supported | Rationale supported | Quote supports answer | Quote missing |",
-            "|---|---:|---:|---:|---:|---:|---:|",
-        ]
-    )
-    for row in summary:
-        lines.append(
-            f"| {row['method']} | {float(row['unsupported_claim_rate']):.3f} | "
-            f"{float(row['strict_grounding_failure_rate']):.3f} | {float(row['answer_supported_rate']):.3f} | "
-            f"{float(row['rationale_supported_rate']):.3f} | {float(row['quote_supports_answer_rate']):.3f} | "
-            f"{float(row['quote_missing_rate']):.3f} |"
-        )
-    lines.extend(
-        [
-            "",
-            "## Pairwise Grounded Accuracy vs LongLLMLingua",
-            "",
-            "| Method | Compared | Win | Tie | Loss |",
-            "|---|---:|---:|---:|---:|",
-        ]
-    )
-    for row in pairwise:
-        lines.append(
-            f"| {row['method']} | {int(row['compared'])} | {int(row['wins'])} | "
-            f"{int(row['ties'])} | {int(row['losses'])} |"
-        )
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+def _write_grounded_readout(summary, pairwise, path):
+    from submission.evaluation.reporting import write_readout
+    write_readout(summary, pairwise, path)
